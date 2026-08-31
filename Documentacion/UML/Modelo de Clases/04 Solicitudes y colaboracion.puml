@@ -1,0 +1,231 @@
+@startuml
+title Solicitudes y colaboración - Barrio Solidario
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor #F7FBFF
+skinparam classBorderColor #78B7F2
+skinparam classFontColor #263238
+skinparam classHeaderBackgroundColor #DCEEFF
+skinparam ArrowColor #5F6870
+skinparam packageBorderColor #5F6870
+skinparam packageBackgroundColor #FFFFFF
+skinparam packageFontColor #3F454C
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #B0A96E
+
+package "Solicitudes y colaboración" {
+class SolicitudAsistencia {
+  + idSolicitud: Integer {readOnly}
+  + titulo: String
+  + descripcion: String
+  + fechaRequerida: Date
+  + horaInicio: DateTime
+  + horaFin: DateTime
+  + fechaCreacion: DateTime {readOnly}
+  + fechaPublicacion: DateTime
+  + ubicacionAproximada: String
+  + observaciones: String
+  --
+  + crear(): void
+  + actualizar(): void
+  + publicar(): void
+  + cancelar(): void
+  + cambiarEstado(): void
+  + consultarDetalle(): Solicitud
+  + consultarPostulaciones(): List
+  + consultarHistorial(): List
+  + agregarMensaje(): void
+  + registrarIncidencia(): void
+  + cerrar(): void
+  - validarDatosObligatorios(): Boolean
+  - validarTransicionEstado(): Boolean
+}
+
+class HistorialSolicitud {
+  + idHistorial: Integer {readOnly}
+  + fechaHora: DateTime {readOnly}
+  + estadoAnterior: String
+  + estadoNuevo: String
+  + motivo: String
+  + observacion: String
+  --
+  + registrarCambio(): void
+  + consultarDetalle(): Historial
+  - validarTransicion(): Boolean
+}
+
+class Postulacion {
+  + idPostulacion: Integer {readOnly}
+  + fechaPostulacion: DateTime
+  + mensaje: String
+  + disponibilidadPropuesta: String
+  + fechaRetiro: DateTime
+  --
+  + registrar(): void
+  + actualizarMensaje(): void
+  + retirar(): void
+  + cambiarEstado(): void
+  + consultarEstado(): Estado
+  + consultarResolucion(): Resolucion
+  - validarSolicitudDisponible(): Boolean
+  - validarDuplicidad(): Boolean
+}
+
+class ResolucionPostulacion {
+  + idResolucion: Integer {readOnly}
+  + decision: String
+  + fechaResolucion: DateTime
+  + motivo: String
+  + observaciones: String
+  --
+  + aceptar(): Asignacion
+  + rechazar(): void
+  + consultarResolucion(): Resolucion
+  - validarPostulacionPendiente(): Boolean
+}
+
+class Asignacion {
+  + idAsignacion: Integer {readOnly}
+  + fechaAsignacion: DateTime
+  + fechaConfirmacion: DateTime
+  + fechaFinalizacion: DateTime
+  + observaciones: String
+  + motivoCancelacion: String
+  --
+  + crear(): void
+  + confirmar(): void
+  + rechazar(): void
+  + cancelar(): void
+  + finalizar(): void
+  + reasignar(): Asignacion
+  + crearCoordinacion(): Coordinacion
+  + programarJornada(): Jornada
+  + consultarEstado(): Estado
+  - validarAsignacionActiva(): Boolean
+}
+}
+package "Participantes de referencia" {
+class AdultoMayor {
+  + fechaNacimiento: Date
+  + necesidadesApoyo: String
+  + preferenciaContacto: String
+  + estadoValidacion: String
+  --
+  + registrarSolicitud(): Solicitud
+  + actualizarSolicitud(): void
+  + cancelarSolicitud(): void
+  + consultarSolicitudes(): List
+  + consultarPostulaciones(): List
+  + seleccionarPostulacion(): void
+  + confirmarAtencion(): void
+  + reportarIncidencia(): Incidencia
+  + calificarAtencion(): Calificacion
+}
+
+class Voluntario {
+  + disponibilidad: String
+  + zonasAtencion: String
+  + experiencia: String
+  + estadoValidacion: String
+  + fechaValidacion: DateTime
+  + calificacionPromedio: Decimal {readOnly}
+  --
+  + actualizarDisponibilidad(): void
+  + consultarSolicitudesCompatibles(): List
+  + postularse(): Postulacion
+  + retirarPostulacion(): void
+  + confirmarAsignacion(): void
+  + rechazarAsignacion(): void
+  + consultarJornadas(): List
+  + iniciarJornada(): void
+  + finalizarJornada(): void
+  + reportarIncidencia(): Incidencia
+}
+
+class Usuario {
+  + idUsuario: Integer {readOnly}
+  + nombres: String
+  + apellidos: String
+  + identificacion: String
+  + correo: String
+  + telefono: String
+  + nombreUsuario: String
+  + fechaRegistro: DateTime {readOnly}
+  + fechaUltimoAcceso: DateTime {readOnly}
+  + mfaHabilitado: Boolean
+  + aceptacionPoliticas: Boolean
+  - contrasenaCifrada: String
+  - tokenRecuperacion: String
+  - intentosFallidos: Integer
+  --
+  + registrar(): void
+  + autenticar(): Boolean
+  + cerrarSesion(): void
+  + actualizarPerfil(): void
+  + cambiarContrasena(): Boolean
+  + solicitarRecuperacion(): void
+  + recuperarContrasena(): Boolean
+  + activarMFA(): void
+  + bloquear(): void
+  + desbloquear(): void
+  + consultarRoles(): List
+  + poseePermiso(): Boolean
+  # cambiarEstado(): void
+  - validarCredenciales(): Boolean
+}
+}
+package "Catálogos de referencia" {
+class TipoAyuda {
+  + estaDisponible(): Boolean
+  + requiereUbicacion(): Boolean
+}
+
+class Prioridad {
+  + nivel: Integer
+  + tiempoObjetivoHoras: Integer
+  --
+  + compararCon(): Integer
+  + requiereAtencionInmediata(): Boolean
+}
+
+class EstadoSolicitud {
+  + permiteEdicion(): Boolean
+  + permitePostulacion(): Boolean
+  + permiteCancelacion(): Boolean
+  + permiteCierre(): Boolean
+}
+
+class EstadoPostulacion {
+  + permiteResolucion(): Boolean
+  + permiteRetiro(): Boolean
+  + esEstadoFinal(): Boolean
+}
+
+class EstadoAsignacion {
+  + permiteConfirmacion(): Boolean
+  + permiteCancelacion(): Boolean
+  + permiteJornada(): Boolean
+  + esEstadoFinal(): Boolean
+}
+}
+AdultoMayor "1" -- "0..*" SolicitudAsistencia : requiere
+Usuario "1" -- "0..*" SolicitudAsistencia : registra
+TipoAyuda "1" -- "0..*" SolicitudAsistencia : clasifica
+Prioridad "1" -- "0..*" SolicitudAsistencia : prioriza
+EstadoSolicitud "1" -- "0..*" SolicitudAsistencia : estado
+SolicitudAsistencia "1" *-- "1..*" HistorialSolicitud : historial
+Usuario "1" -- "0..*" HistorialSolicitud : registra
+SolicitudAsistencia "1" -- "0..*" Postulacion : recibe
+Voluntario "1" -- "0..*" Postulacion : presenta
+EstadoPostulacion "1" -- "0..*" Postulacion : estado
+Postulacion "1" *-- "0..1" ResolucionPostulacion : resolución
+Usuario "1" -- "0..*" ResolucionPostulacion : resuelve
+ResolucionPostulacion "1" -- "0..1" Asignacion : origina
+SolicitudAsistencia "1" -- "0..*" Asignacion : mantiene
+Voluntario "1" -- "0..*" Asignacion : recibe
+EstadoAsignacion "1" -- "0..*" Asignacion : estado
+@enduml

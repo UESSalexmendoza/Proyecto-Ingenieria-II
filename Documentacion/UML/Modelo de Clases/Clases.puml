@@ -1,0 +1,229 @@
+@startuml
+title Diagrama general de clases - Barrio Solidario
+
+left to right direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam nodesep 35
+skinparam ranksep 50
+
+skinparam class {
+    BackgroundColor white
+    BorderColor #5A5A5A
+    ArrowColor #5A5A5A
+    FontColor #222222
+}
+
+skinparam package {
+    BorderColor #8B2E2E
+    FontColor #8B2E2E
+}
+
+hide empty members
+hide circle
+
+legend right
+  |= Relación |= Notación |
+  | Generalización | Triángulo vacío |
+  | Asociación | Línea continua |
+  | Composición | Rombo relleno |
+  | Clase asociativa | Clase intermedia |
+endlegend
+
+package "Catálogos y estados" #F8ECEC {
+
+    abstract class Catalogo <<abstract>>
+
+    class Rol
+    class EstadoUsuario
+    class TipoAyuda
+    class EstadoSolicitud
+    class MotivoCancelacion
+    class EstadoPostulacion
+    class EstadoAsignacion
+    class EstadoJornada
+    class TipoIncidencia
+    class EstadoIncidencia
+    class Parentesco
+    class Prioridad
+    class TipoEvento
+
+    Catalogo <|-- Rol
+    Catalogo <|-- EstadoUsuario
+    Catalogo <|-- TipoAyuda
+    Catalogo <|-- EstadoSolicitud
+    Catalogo <|-- MotivoCancelacion
+    Catalogo <|-- EstadoPostulacion
+    Catalogo <|-- EstadoAsignacion
+    Catalogo <|-- EstadoJornada
+    Catalogo <|-- TipoIncidencia
+    Catalogo <|-- EstadoIncidencia
+    Catalogo <|-- Parentesco
+    Catalogo <|-- Prioridad
+    Catalogo <|-- TipoEvento
+}
+
+package "Identidad y participantes" #EEF3F8 {
+
+    class Usuario
+    class UsuarioRol <<clase asociativa>>
+    class Administrador
+    class Moderador
+    class Voluntario
+    class AdultoMayor
+    class FamiliarCuidador
+    class RelacionCuidado <<clase asociativa>>
+    class Ubicacion
+
+    Usuario <|-- Administrador
+    Usuario <|-- Moderador
+    Usuario <|-- Voluntario
+    Usuario <|-- AdultoMayor
+    Usuario <|-- FamiliarCuidador
+}
+
+package "Solicitudes de asistencia" #F3F7EE {
+
+    class SolicitudAsistencia
+    class HistorialSolicitud
+}
+
+package "Postulación, asignación y atención" #FFF7E6 {
+
+    class Postulacion
+    class ResolucionPostulacion
+    class Asignacion
+    class Coordinacion
+    class Jornada
+    class Mensaje
+}
+
+package "Evaluación, comunicación y control" #F2EEF7 {
+
+    class Notificacion
+    class Calificacion
+    class Incidencia
+    class Auditoria
+}
+
+' ============================================================
+' IDENTIDAD, ROLES Y UBICACIONES
+' ============================================================
+
+Usuario "1" -- "0..*" UsuarioRol : posee >
+Rol "1" -- "0..*" UsuarioRol : asigna >
+
+EstadoUsuario "1" -- "0..*" Usuario : clasifica >
+
+Usuario "1" o-- "0..*" Ubicacion : registra >
+
+FamiliarCuidador "1" -- "0..*" RelacionCuidado : mantiene >
+AdultoMayor "1" -- "0..*" RelacionCuidado : participa >
+Parentesco "1" -- "0..*" RelacionCuidado : clasifica >
+
+' ============================================================
+' SOLICITUDES
+' ============================================================
+
+AdultoMayor "1" -- "0..*" SolicitudAsistencia : requiere >
+Usuario "1" -- "0..*" SolicitudAsistencia : registra >
+
+TipoAyuda "1" -- "0..*" SolicitudAsistencia : clasifica >
+Prioridad "1" -- "0..*" SolicitudAsistencia : prioriza >
+EstadoSolicitud "1" -- "0..*" SolicitudAsistencia : establece estado >
+
+Ubicacion "0..1" -- "0..*" SolicitudAsistencia : localiza >
+MotivoCancelacion "0..1" -- "0..*" SolicitudAsistencia : justifica cancelación >
+
+SolicitudAsistencia "1" *-- "1..*" HistorialSolicitud : conserva >
+Usuario "1" -- "0..*" HistorialSolicitud : registra cambios >
+
+' ============================================================
+' POSTULACIÓN Y RESOLUCIÓN
+' ============================================================
+
+SolicitudAsistencia "1" -- "0..*" Postulacion : recibe >
+Voluntario "1" -- "0..*" Postulacion : presenta >
+EstadoPostulacion "1" -- "0..*" Postulacion : clasifica >
+
+Postulacion "1" *-- "0..1" ResolucionPostulacion : recibe >
+Usuario "1" -- "0..*" ResolucionPostulacion : resuelve >
+
+ResolucionPostulacion "1" -- "0..1" Asignacion : origina >
+
+' ============================================================
+' ASIGNACIÓN, COORDINACIÓN Y JORNADA
+' ============================================================
+
+SolicitudAsistencia "1" -- "0..*" Asignacion : mantiene >
+Voluntario "1" -- "0..*" Asignacion : recibe >
+EstadoAsignacion "1" -- "0..*" Asignacion : clasifica >
+
+note on link
+  Una solicitud puede conservar varias
+  asignaciones históricas, pero solamente
+  una asignación puede permanecer activa.
+end note
+
+Asignacion "1" *-- "0..*" Coordinacion : contiene >
+Asignacion "1" *-- "1..*" Jornada : programa >
+EstadoJornada "1" -- "0..*" Jornada : clasifica >
+
+' ============================================================
+' MENSAJERÍA Y NOTIFICACIONES
+' ============================================================
+
+SolicitudAsistencia "1" -- "0..*" Mensaje : contiene >
+Jornada "0..1" -- "0..*" Mensaje : contextualiza >
+Usuario "1" -- "0..*" Mensaje : envía >
+
+Usuario "1" -- "0..*" Notificacion : recibe >
+
+Notificacion ..> SolicitudAsistencia : puede referenciar
+Notificacion ..> Postulacion : puede referenciar
+Notificacion ..> Asignacion : puede referenciar
+Notificacion ..> Jornada : puede referenciar
+Notificacion ..> Incidencia : puede referenciar
+
+' ============================================================
+' CALIFICACIONES
+' ============================================================
+
+Jornada "1" -- "0..*" Calificacion : recibe >
+Usuario "1" -- "0..*" Calificacion : registra >
+Calificacion "0..*" --> "1" Usuario : evalúa >
+
+note right of Calificacion
+  Solo puede registrarse después
+  de finalizar la jornada.
+end note
+
+' ============================================================
+' INCIDENCIAS
+' ============================================================
+
+SolicitudAsistencia "0..1" -- "0..*" Incidencia : genera >
+Jornada "0..1" -- "0..*" Incidencia : genera >
+Usuario "1" -- "0..*" Incidencia : reporta >
+Moderador "0..1" -- "0..*" Incidencia : gestiona >
+
+TipoIncidencia "1" -- "0..*" Incidencia : clasifica >
+EstadoIncidencia "1" -- "0..*" Incidencia : establece estado >
+
+' ============================================================
+' AUDITORÍA
+' ============================================================
+
+Usuario "0..1" -- "0..*" Auditoria : ejecuta acción >
+TipoEvento "1" -- "0..*" Auditoria : clasifica >
+
+Auditoria ..> SolicitudAsistencia : registra cambios
+Auditoria ..> Postulacion : registra cambios
+Auditoria ..> Asignacion : registra cambios
+Auditoria ..> Jornada : registra cambios
+Auditoria ..> Incidencia : registra cambios
+
+@enduml

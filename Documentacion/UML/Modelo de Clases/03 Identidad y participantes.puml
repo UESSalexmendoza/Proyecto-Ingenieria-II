@@ -1,0 +1,221 @@
+@startuml
+title Identidad y participantes - Barrio Solidario
+left to right direction
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor #F7FBFF
+skinparam classBorderColor #78B7F2
+skinparam classFontColor #263238
+skinparam classHeaderBackgroundColor #DCEEFF
+skinparam ArrowColor #5F6870
+skinparam packageBorderColor #5F6870
+skinparam packageBackgroundColor #FFFFFF
+skinparam packageFontColor #3F454C
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #B0A96E
+
+package "Identidad y participantes" {
+class Usuario {
+  + idUsuario: Integer {readOnly}
+  + nombres: String
+  + apellidos: String
+  + identificacion: String
+  + correo: String
+  + telefono: String
+  + nombreUsuario: String
+  + fechaRegistro: DateTime {readOnly}
+  + fechaUltimoAcceso: DateTime {readOnly}
+  + mfaHabilitado: Boolean
+  + aceptacionPoliticas: Boolean
+  - contrasenaCifrada: String
+  - tokenRecuperacion: String
+  - intentosFallidos: Integer
+  --
+  + registrar(): void
+  + autenticar(): Boolean
+  + cerrarSesion(): void
+  + actualizarPerfil(): void
+  + cambiarContrasena(): Boolean
+  + solicitarRecuperacion(): void
+  + recuperarContrasena(): Boolean
+  + activarMFA(): void
+  + bloquear(): void
+  + desbloquear(): void
+  + consultarRoles(): List
+  + poseePermiso(): Boolean
+  # cambiarEstado(): void
+  - validarCredenciales(): Boolean
+}
+
+class UsuarioRol <<clase asociativa>> {
+  + idUsuarioRol: Integer {readOnly}
+  + fechaAsignacion: DateTime
+  + fechaFinalizacion: DateTime
+  + activo: Boolean
+  --
+  + asignar(): void
+  + activar(): void
+  + desactivar(): void
+  + finalizar(): void
+  + consultarVigencia(): Boolean
+}
+
+class Administrador {
+  + fechaAsignacion: DateTime
+  + nivelAdministrativo: Integer
+  --
+  + crearUsuario(): Usuario
+  + actualizarUsuario(): void
+  + suspenderUsuario(): void
+  + reactivarUsuario(): void
+  + asignarRol(): void
+  + retirarRol(): void
+  + administrarCatalogo(): void
+  + consultarReportes(): List
+  + revisarAuditoria(): List
+}
+
+class Moderador {
+  + fechaAsignacion: DateTime
+  + nivelModeracion: Integer
+  + disponible: Boolean
+  --
+  + revisarIncidencia(): void
+  + asignarseIncidencia(): void
+  + aplicarMedida(): void
+  + revertirMedida(): void
+  + revisarMensaje(): void
+  + ocultarContenido(): void
+  + escalarIncidencia(): void
+  + resolverIncidencia(): void
+  + cerrarIncidencia(): void
+}
+
+class Voluntario {
+  + disponibilidad: String
+  + zonasAtencion: String
+  + experiencia: String
+  + estadoValidacion: String
+  + fechaValidacion: DateTime
+  + calificacionPromedio: Decimal {readOnly}
+  --
+  + actualizarDisponibilidad(): void
+  + consultarSolicitudesCompatibles(): List
+  + postularse(): Postulacion
+  + retirarPostulacion(): void
+  + confirmarAsignacion(): void
+  + rechazarAsignacion(): void
+  + consultarJornadas(): List
+  + iniciarJornada(): void
+  + finalizarJornada(): void
+  + reportarIncidencia(): Incidencia
+}
+
+class AdultoMayor {
+  + fechaNacimiento: Date
+  + necesidadesApoyo: String
+  + preferenciaContacto: String
+  + estadoValidacion: String
+  --
+  + registrarSolicitud(): Solicitud
+  + actualizarSolicitud(): void
+  + cancelarSolicitud(): void
+  + consultarSolicitudes(): List
+  + consultarPostulaciones(): List
+  + seleccionarPostulacion(): void
+  + confirmarAtencion(): void
+  + reportarIncidencia(): Incidencia
+  + calificarAtencion(): Calificacion
+}
+
+class FamiliarCuidador {
+  + estadoValidacion: String
+  + fechaValidacion: DateTime
+  + observaciones: String
+  --
+  + solicitarVinculacion(): RelacionCuidado
+  + consultarAdultosAutorizados(): List
+  + registrarSolicitud(): Solicitud
+  + actualizarSolicitud(): void
+  + cancelarSolicitud(): void
+  + consultarSeguimiento(): List
+  + seleccionarPostulacion(): void
+  + coordinarJornada(): void
+  + reportarIncidencia(): Incidencia
+}
+
+class RelacionCuidado <<clase asociativa>> {
+  + idRelacion: Integer {readOnly}
+  + fechaSolicitud: DateTime
+  + fechaAutorizacion: DateTime
+  + fechaRevocacion: DateTime
+  + estado: String
+  + alcanceAutorizacion: String
+  + observaciones: String
+  --
+  + solicitar(): void
+  + autorizar(): void
+  + rechazar(): void
+  + suspender(): void
+  + reactivar(): void
+  + revocar(): void
+  + estaActiva(): Boolean
+  + permiteAccion(): Boolean
+}
+
+class Ubicacion {
+  + idUbicacion: Integer {readOnly}
+  + provincia: String
+  + ciudad: String
+  + sector: String
+  + direccionReferencia: String
+  + latitud: Decimal
+  + longitud: Decimal
+  + principal: Boolean
+  + nivelPrecision: String
+  --
+  + registrar(): void
+  + actualizar(): void
+  + definirPrincipal(): void
+  + obtenerUbicacionAproximada(): String
+  + calcularDistancia(): Decimal
+  + ocultarDatosSensibles(): Ubicacion
+}
+}
+package "Referencias" {
+class Rol {
+  + nivelAcceso: Integer
+  --
+  + asignarPermiso(): void
+  + retirarPermiso(): void
+  + contienePermiso(): Boolean
+  + consultarPermisos(): List
+}
+
+class EstadoUsuario {
+  + permiteAcceso(): Boolean
+  + permiteReactivacion(): Boolean
+  + permiteModificacion(): Boolean
+}
+
+class Parentesco {
+  + requiereDocumento(): Boolean
+  + permiteRepresentacion(): Boolean
+}
+}
+Usuario <|-- Administrador
+Usuario <|-- Moderador
+Usuario <|-- Voluntario
+Usuario <|-- AdultoMayor
+Usuario <|-- FamiliarCuidador
+Usuario "1" -- "0..*" UsuarioRol : posee
+Rol "1" -- "0..*" UsuarioRol : asigna
+EstadoUsuario "1" -- "0..*" Usuario : clasifica
+Usuario "1" o-- "0..*" Ubicacion : registra
+FamiliarCuidador "1" -- "0..*" RelacionCuidado : mantiene
+AdultoMayor "1" -- "0..*" RelacionCuidado : participa
+Parentesco "1" -- "0..*" RelacionCuidado : clasifica
+@enduml

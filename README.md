@@ -1,129 +1,216 @@
 # Barrio Solidario
 
-## Plataforma de atención de necesidades comunitarias
+**Plataforma de Atención de Necesidades**
 
-**Barrio Solidario** es un proyecto académico de Ingeniería de Software II orientado al diseño de una plataforma web para coordinar asistencia comunitaria segura, accesible y trazable para adultos mayores.
+Proyecto académico desarrollado para la asignatura **Ingeniería de Software II** de la Universidad Espíritu Santo (UEES).
 
-La solución permitirá que adultos mayores, familiares o cuidadores autorizados registren solicitudes de ayuda y que voluntarios disponibles puedan postularse para atenderlas. La plataforma contempla el registro y validación de participantes, solicitudes, asignaciones, coordinación de jornadas, notificaciones, evaluaciones, incidencias, reportes y auditoría.
+Barrio Solidario propone una plataforma web para conectar a adultos mayores y sus cuidadores con voluntarios e instituciones aliadas, facilitando el registro, la coordinación y el seguimiento de solicitudes de asistencia comunitaria.
+
+> **Estado actual:** Sprint 2 cerrado. Se completaron las actividades de documentación, planificación, modelado y diseño funcional. La construcción del MVP continuará en el Sprint 3.
+
+---
+
+## Objetivo del proyecto
+
+Diseñar y construir una aplicación accesible, segura y trazable que permita:
+
+- Registrar usuarios de acuerdo con su rol.
+- Crear solicitudes de asistencia comunitaria.
+- Relacionar solicitudes con voluntarios disponibles.
+- Coordinar y dar seguimiento a la atención.
+- Mantener trazabilidad sobre las acciones realizadas.
+- Proteger la información de los participantes.
+
+## Caso de estudio
+
+En muchas comunidades, las necesidades de los adultos mayores se atienden mediante comunicaciones informales que dificultan la coordinación y el seguimiento. Barrio Solidario busca organizar este proceso mediante una plataforma centralizada, con responsabilidades definidas y registro de cada actividad.
 
 ## Objetivo del repositorio
 
-Este repositorio centraliza la documentación académica, los artefactos de análisis, los elementos de gestión Scrum y las evidencias generadas durante el proyecto. Los documentos editables se conservan en formato Word, Excel o PowerPoint y sus versiones de consulta se publican en PDF.
+Este repositorio centraliza la documentación académica, los artefactos de análisis y diseño, los elementos de gestión Scrum y las evidencias generadas durante el proyecto. Los documentos editables se conservan en Word, Excel o PowerPoint, mientras que sus versiones de consulta y entrega se publican en PDF.
+
+También constituye el punto de referencia para consultar la evolución del alcance, las decisiones del equipo, la planificación de los Sprints y la trazabilidad entre requisitos, historias de usuario, clases y pantallas.
+
+## Alcance del MVP
+
+La primera versión se limita a las funcionalidades indispensables que pueden construirse y validarse dentro del tiempo disponible:
+
+1. **Portal público:** información general, propósito, funcionamiento, usuarios, beneficios, métricas, aliados y contacto.
+2. **Registro y acceso:** creación de cuenta, inicio de sesión y recuperación o cambio de contraseña.
+3. **Panel principal autenticado:** acceso básico del usuario y visualización inicial de las opciones disponibles según su rol.
+
+Las funciones de coordinación avanzada, asignaciones, mensajería, incidencias, administración, auditoría y reportes permanecen documentadas para una versión posterior.
+
+## Actores principales
+
+| Actor | Participación en la plataforma |
+|---|---|
+| Adulto mayor | Registra solicitudes y consulta su estado. |
+| Cuidador o familiar | Gestiona solicitudes en representación del adulto mayor. |
+| Voluntario | Consulta necesidades y se postula para brindar asistencia. |
+| Coordinación | Revisa solicitudes, asigna voluntarios y coordina atenciones. |
+| Institución aliada | Apoya o canaliza solicitudes de acuerdo con su capacidad. |
+| Moderación y administración | Gestiona usuarios, catálogos, incidencias, seguridad y trazabilidad. |
 
 ## Equipo del proyecto
 
-| Integrante | Rol |
+| Integrante | Rol principal |
 |---|---|
-| Ing. Victoria García Velásquez | Patrocinadora académica y principal interesada |
 | Alex Mendoza Morante | Scrum Master |
 | Víctor Tello Bravo | Product Owner |
 | Kevin Carriel Bonoso | Arquitecto de software |
-| Mario Luzardo Fierro | Ingeniero de frontend, UI/UX y accesibilidad |
-| Luis Ramírez Conejo | Ingeniero de backend y datos |
-| Luis Rodríguez Barrera | Ingeniero de calidad, pruebas y seguridad |
+| Mario Luzardo Fierro | Frontend, UI/UX y accesibilidad |
+| Luis Ramírez Conejo | Backend y datos |
+| Luis Rodríguez Barrera | Calidad, pruebas y seguridad |
 
-## Estructura del repositorio
+**Docente y patrocinadora académica:** Ing. Victoria García Velásquez, Mgtr., Ph. D. (c).
+
+## Organización por Sprints
+
+| Sprint | Enfoque principal | Estado |
+|---|---|---|
+| Sprint 1 | Definición del caso, actores, requisitos, historias de usuario, backlog y organización del equipo. | Completado |
+| Sprint 2 | Continuidad documental, unidades de trabajo, diseño no gráfico, modelo de clases, wireframes y alcance del MVP. | Completado |
+| Sprint 3 | Construcción y validación del MVP. | Siguiente etapa |
+| Sprint 4 | Integración, pruebas, presentación y cierre del proyecto. | Pendiente |
+
+## Resultados del Sprint 2
+
+- Acta de Constitución y requerimientos actualizados.
+- Documento de Visión consolidado.
+- Historias de usuario revisadas y priorizadas.
+- Actividades y unidades de trabajo detalladas.
+- Product Backlog organizado en la herramienta de planificación.
+- Diseño no gráfico del modelo Scrum.
+- Modelo de clases con atributos, métodos y relaciones.
+- Diagramas generales y segmentados del modelo de clases.
+- Flujo general de navegación.
+- Wireframes del portal público y de los módulos por rol.
+- Lineamientos visuales y criterios básicos de accesibilidad.
+- Trazabilidad entre requisitos, historias de usuario, clases y pantallas.
+- Definición del MVP y exclusiones para una segunda versión.
+
+## Cadena de trazabilidad
+
+Cada elemento del diseño debe mantener una relación verificable:
+
+**Requisito ↔ Historia de usuario ↔ Clase del sistema ↔ Pantalla**
+
+Ejemplo:
+
+| Requisito | Historia de usuario | Clase | Pantalla |
+|---|---|---|---|
+| RF-04 Registrar solicitud | HU-16 Crear solicitud de asistencia | `SolicitudAsistencia` | Registrar solicitud |
+
+Esta relación permite comprobar que cada pantalla responde a una necesidad documentada y que cuenta con soporte dentro del modelo del sistema.
+
+## Estructura documental del repositorio
 
 ```text
-Documentacion/
-├── 00 Ingenieria de Software I/
-├── 03 Gestion de Sprints/
-├── 04 Evidencias/
-├── 00 Vision General.docx
-├── 00 Vision General.pdf
-├── 01 Acta de Constitucion.docx
-├── 01 Acta de Constitucion.pdf
-├── 02 Vision.docx
-├── 02 Vision.pdf
-├── 03 Especificacion de Requerimientos.docx
-├── 03 Especificacion de Requerimientos.pdf
-├── 04 Modelo de Analisis.docx
-├── 04 Modelo de Analisis.pdf
-├── 05 Product Backlog.docx
-├── 05 Product Backlog.pdf
-├── 05 Product Backlog.xlsx
-├── 06 Plan y Seguimiento.docx
-├── 06 Plan y Seguimiento.pdf
-├── Presentacion Barrio Solidario.pptx
-├── Presentacion Barrio Solidario 02.pptx
-└── S02 Plantilla_Vision_.docx
+Barrio-Solidario/
+├── 03 Gestion de Sprints/        # Planificación, actas y cierres de Sprint
+├── 04 Evidencias/                # Capturas, validaciones y evidencias de trabajo
+├── Modelos/                      # Modelos conceptuales y diagramas
+├── UML/                          # Archivos PlantUML, Mermaid o exportaciones UML
+├── 00 Vision General.docx/pdf    # Documento principal del proyecto
+├── 01 Acta de Constitucion.*     # Constitución, roles y acuerdos
+├── 02 Vision.docx/pdf            # Antecedente documental de la visión
+├── 03 Especificacion de Requerimientos.*
+├── 04 Modelo de Analisis.*
+├── 05 Product Backlog.*
+├── 06 Plan y Seguimiento.*
+├── 07 Plan y Seguimiento del Sprint 2.*
+├── 08 Presentacion.*             # Presentación académica del proyecto
+└── S02 Plantilla_Vision_.docx    # Plantilla académica de referencia
 ```
+
+> Los nombres pueden ajustarse para evitar duplicados y mantener una numeración única. Se recomienda conservar en la raíz únicamente los documentos principales y ubicar actas, evidencias, modelos y versiones anteriores en sus carpetas correspondientes.
 
 ## Documentos principales
 
-| Código | Documento | Descripción |
+| Código | Documento | Contenido |
 |---|---|---|
-| DOC-01 | Acta de Constitución | Formaliza el propósito, alcance inicial, participantes, roles, responsabilidades, acuerdos y herramientas de trabajo. |
-| DOC-02 | Documento de Visión | Presenta el problema, la oportunidad, los interesados, el alcance y la visión general del producto. |
-| DOC-03 | Especificación de Requisitos de Software | Documenta los requisitos funcionales y no funcionales que deberá cumplir la plataforma. |
-| DOC-04 | Modelo de Análisis | Describe los actores, casos de uso, interacciones y conceptos principales del dominio. |
-| DOC-05 | Product Backlog | Organiza las épicas, historias de usuario, prioridades, responsables y criterios de aceptación. |
-| DOC-06 | Plan y Seguimiento | Registra la planificación de los sprints, actividades, unidades de trabajo, responsables, estados y mecanismos de seguimiento. |
+| 00 | Visión General | Alcance, interesados, requisitos, historias, modelos y diseño. |
+| 01 | Acta de Constitución | Equipo, roles, responsabilidades, acuerdos y herramientas. |
+| 03 | Especificación de Requerimientos | Requisitos funcionales, no funcionales y reglas del sistema. |
+| 04 | Modelo de Análisis | Actores, procesos, clases y relaciones principales. |
+| 05 | Product Backlog | Épicas, historias de usuario, prioridad y responsables. |
+| 06 | Plan y Seguimiento | Planificación general y control del proyecto. |
+| 07 | Planificación del Sprint 2 | Objetivos, actividades, unidades de trabajo y resultados. |
+| 08 | Presentación | Resumen ejecutivo de los Sprints 1 y 2. |
 
 ## Archivos complementarios
 
-- **00 Visión General:** versión inicial consolidada utilizada como fuente para separar la documentación especializada. Se conserva como antecedente y no reemplaza a los documentos DOC-01 a DOC-06.
-- **05 Product Backlog.xlsx:** versión tabular del backlog para consulta, organización y control.
-- **Presentaciones:** material utilizado para explicar el proyecto, su alcance y la distribución del trabajo.
-- **S02 Plantilla_Vision_.docx:** plantilla académica de referencia utilizada durante la preparación documental.
+- **00 Visión General:** documento consolidado que reúne el alcance, los interesados, los requisitos, las historias de usuario y los modelos desarrollados.
+- **02 Visión:** antecedente documental conservado para mantener el historial del proyecto.
+- **05 Product Backlog.xlsx:** versión tabular utilizada para organizar y consultar épicas, historias y responsables.
+- **Presentaciones:** materiales empleados para explicar el proyecto, el avance de los Sprints y la distribución del trabajo.
+- **S02 Plantilla_Vision_.docx:** plantilla académica utilizada como referencia para estructurar la documentación.
+- **Actas de Sprint:** registros de planificación, seguimiento, revisión, retrospectiva y cierre almacenados en `03 Gestion de Sprints`.
 
-## Carpetas
+## Carpetas principales
 
 ### `00 Ingenieria de Software I`
 
-Contiene antecedentes o productos elaborados en la asignatura previa que sirven como referencia para la continuidad del proyecto.
+Contiene antecedentes o productos de la asignatura previa que sirven como referencia para la continuidad del proyecto.
 
 ### `03 Gestion de Sprints`
 
-Contiene la planificación y los registros operativos de cada Sprint, incluyendo actas, metas, actividades, reportes de seguimiento, revisión y retrospectiva.
+Contiene la planificación de cada Sprint, las actas de reunión y cierre, las metas, las actividades, las unidades de trabajo y las retrospectivas.
 
 ### `04 Evidencias`
 
-Contiene capturas de reuniones, registros de Jira, actas, entregables y demás archivos que demuestran la ejecución de las actividades.
+Contiene capturas de reuniones, registros de Jira, validaciones, entregables y otros archivos que demuestran la ejecución de las actividades.
 
-## Metodología de trabajo
+### `Modelos`
 
-El proyecto utiliza Scrum complementado con un tablero Kanban en Jira:
+Contiene los modelos conceptuales, de dominio, clases, relaciones y demás representaciones utilizadas durante el análisis.
 
-1. El Product Owner organiza y prioriza el Product Backlog.
-2. El equipo selecciona las historias correspondientes a la meta de cada Sprint.
-3. Las unidades de trabajo se gestionan en los estados `To Do`, `In Progress`, `In Review` y `Done`.
-4. El Scrum Master facilita la coordinación y el tratamiento de impedimentos.
-5. El responsable de calidad revisa los criterios de aceptación, las evidencias y los defectos.
-6. El Product Owner valida los resultados funcionales antes del cierre.
+### `UML`
 
-Las reuniones periódicas de seguimiento se realizan los martes de 21:00 a 22:00 y también a demanda cuando el proyecto lo requiere.
+Contiene los archivos fuente y las exportaciones de los diagramas generales y segmentados del proyecto.
 
-## Plan de sprints
+## Herramientas de trabajo
 
-| Sprint | Objetivo general |
+- **Jira:** gestión del Product Backlog, historias de usuario, unidades de trabajo, responsables, estados y evidencias.
+- **Google Meet:** reuniones de planificación y seguimiento.
+- **Google Drive:** almacenamiento colaborativo de documentos.
+- **Git:** control de versiones y organización de los entregables.
+- **PlantUML y Mermaid:** elaboración de diagramas técnicos.
+- **Herramientas de wireframing:** representación de pantallas y flujos de navegación.
+
+## Lineamientos visuales
+
+| Color | Uso principal |
 |---|---|
-| Sprint 1 | Organizar el proyecto, levantar requisitos y establecer los artefactos iniciales. |
-| Sprint 2 | Construir la base técnica e implementar registro, acceso y perfiles. |
-| Sprint 3 | Implementar solicitudes, postulaciones, asignaciones y coordinación. |
-| Sprint 4 | Incorporar evaluaciones, incidencias, reportes y realizar la validación integral. |
+| `#2A3966` | Encabezados, navegación y elementos institucionales. |
+| `#C92351` | Acciones principales y elementos destacados. |
+| `#FFFFFF` | Fondos y espacios de lectura. |
+| `#E9EBF0` | Separadores, tarjetas y campos. |
+| `#212937` | Texto principal. |
 
-## Herramientas
+La interfaz deberá mantener contraste suficiente, navegación comprensible, etiquetas visibles y compatibilidad con diferentes tamaños de pantalla.
 
-- **Jira:** Product Backlog, sprints, asignaciones, estados y evidencias.
-- **Microsoft Word:** elaboración de documentos académicos.
-- **Microsoft Excel:** organización tabular del Product Backlog y controles complementarios.
-- **Microsoft PowerPoint:** presentación del proyecto y resultados.
-- **Git:** control de versiones y conservación del historial de cambios.
+## Criterios de control documental
 
-## Convenciones documentales
+- Conservar una única versión vigente de cada documento principal.
+- Registrar fecha, versión, responsable y descripción del cambio.
+- Evitar archivos duplicados con nombres ambiguos como `final`, `final2` o `último`.
+- Almacenar las versiones anteriores en una carpeta de histórico.
+- Vincular cada evidencia con la actividad o unidad de trabajo correspondiente.
+- Actualizar este README al cierre de cada Sprint.
 
-- Los archivos `.docx`, `.xlsx` y `.pptx` corresponden a las versiones editables.
-- Los archivos `.pdf` corresponden a versiones de consulta o entrega.
-- La numeración inicial identifica el orden documental del proyecto.
-- Los cambios relevantes deben registrarse en la tabla de control de versiones del documento correspondiente.
-- Jira constituye la fuente operativa para estados, asignaciones, estimaciones y evidencias de ejecución.
+## Próximos pasos
 
-## Estado actual
+1. Seleccionar las historias de usuario que formarán parte del MVP.
+2. Preparar la estructura inicial de la aplicación.
+3. Implementar el portal público y el módulo de acceso.
+4. Construir el panel principal autenticado.
+5. Ejecutar pruebas funcionales, de accesibilidad y seguridad.
+6. Registrar avances y evidencias en Jira y Git.
 
-El proyecto se encuentra en el Sprint 1, enfocado en la organización del equipo, levantamiento de requisitos, creación del Product Backlog, configuración de Jira y consolidación de los artefactos iniciales de ingeniería de software.
+---
 
-## Uso académico
-
-Este repositorio ha sido elaborado con fines académicos para la asignatura **Ingeniería de Software II** de la Universidad Espíritu Santo. La información y los documentos aquí contenidos corresponden al proyecto Barrio Solidario y al trabajo desarrollado por el equipo asignado.
-
+**Grupo IV - Ingeniería de Software II**  
+**Universidad Espíritu Santo - UEES**  
+**Guayaquil, Ecuador - 2026**

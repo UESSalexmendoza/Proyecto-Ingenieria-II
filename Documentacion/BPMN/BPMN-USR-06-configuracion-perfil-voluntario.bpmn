@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+ xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+ xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+ xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+ id="Definitions_PerfilVoluntario" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_PerfilVoluntario">
+  <bpmn:participant id="Participant_PerfilVoluntario" name="Barrio Solidario - Configuración del perfil del voluntario" processRef="Process_PerfilVoluntario" />
+ </bpmn:collaboration>
+ <bpmn:process id="Process_PerfilVoluntario" name="Configuración, revisión y activación del perfil del voluntario" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_PerfilVoluntario">
+   <bpmn:lane id="Lane_Voluntario" name="Voluntario">
+    <bpmn:flowNodeRef>Start_Configurar</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AbrirPerfil</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_CompletarDatos</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConfigurarHabilidades</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_ConfigurarCobertura</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConfigurarDisponibilidad</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_AdjuntarDocumentos</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_AccionVoluntario</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_CorregirPerfil</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AtenderObservaciones</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_DefinirEstadoDisponibilidad</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario">
+    <bpmn:flowNodeRef>Task_CargarPerfil</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_GuardarBorrador</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>End_Borrador</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ValidarPerfil</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_PerfilValido</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CrearRevision</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_ActivarPerfil</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_MantenerInactivo</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_AplicarDisponibilidad</bpmn:flowNodeRef><bpmn:flowNodeRef>End_PerfilActivo</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>End_PerfilRechazado</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Revision" name="Moderación / Coordinación">
+    <bpmn:flowNodeRef>Task_RevisarPerfil</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_DecisionRevision</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Notificaciones" name="Notificaciones y auditoría">
+    <bpmn:flowNodeRef>Task_NotificarPendiente</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarObservaciones</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_NotificarResultado</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarTrazabilidad</bpmn:flowNodeRef>
+   </bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_Configurar" name="Voluntario requiere configurar su perfil" />
+  <bpmn:userTask id="Task_AbrirPerfil" name="Abrir Perfil y disponibilidad" />
+  <bpmn:serviceTask id="Task_CargarPerfil" name="Cargar datos y estado actual" />
+  <bpmn:userTask id="Task_CompletarDatos" name="Completar datos personales y contacto" />
+  <bpmn:userTask id="Task_ConfigurarHabilidades" name="Seleccionar habilidades y tipos de asistencia" />
+  <bpmn:userTask id="Task_ConfigurarCobertura" name="Definir zona, radio aproximado y movilidad" />
+  <bpmn:userTask id="Task_ConfigurarDisponibilidad" name="Configurar días, horarios y restricciones" />
+  <bpmn:userTask id="Task_AdjuntarDocumentos" name="Adjuntar requisitos y aceptar políticas" />
+  <bpmn:exclusiveGateway id="Gateway_AccionVoluntario" name="¿Guardar o enviar?" />
+  <bpmn:serviceTask id="Task_GuardarBorrador" name="Guardar perfil como borrador" />
+  <bpmn:endEvent id="End_Borrador" name="Configuración guardada" />
+  <bpmn:serviceTask id="Task_ValidarPerfil" name="Validar campos, cobertura, disponibilidad y documentos" />
+  <bpmn:exclusiveGateway id="Gateway_PerfilValido" name="¿Perfil completo y válido?" />
+  <bpmn:userTask id="Task_CorregirPerfil" name="Corregir campos y requisitos" />
+  <bpmn:serviceTask id="Task_CrearRevision" name="Crear revisión con estado pendiente" />
+  <bpmn:sendTask id="Task_NotificarPendiente" name="Notificar recepción para revisión" />
+  <bpmn:userTask id="Task_RevisarPerfil" name="Revisar identidad, aptitud, documentos y restricciones" />
+  <bpmn:exclusiveGateway id="Gateway_DecisionRevision" name="¿Resultado de revisión?" />
+  <bpmn:sendTask id="Task_NotificarObservaciones" name="Notificar observaciones" />
+  <bpmn:userTask id="Task_AtenderObservaciones" name="Completar información observada" />
+  <bpmn:serviceTask id="Task_ActivarPerfil" name="Aprobar y activar perfil de voluntario" />
+  <bpmn:serviceTask id="Task_MantenerInactivo" name="Rechazar y mantener perfil no operativo" />
+  <bpmn:userTask id="Task_DefinirEstadoDisponibilidad" name="Definir disponible o no disponible" />
+  <bpmn:serviceTask id="Task_AplicarDisponibilidad" name="Aplicar disponibilidad y habilitar coincidencias" />
+  <bpmn:sendTask id="Task_NotificarResultado" name="Notificar estado y resultado" />
+  <bpmn:serviceTask id="Task_RegistrarTrazabilidad" name="Registrar versión, decisión, disponibilidad y responsable" />
+  <bpmn:endEvent id="End_PerfilActivo" name="Perfil activo y configurable" />
+  <bpmn:endEvent id="End_PerfilRechazado" name="Perfil no habilitado" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_Configurar" targetRef="Task_AbrirPerfil" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_AbrirPerfil" targetRef="Task_CargarPerfil" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_CargarPerfil" targetRef="Task_CompletarDatos" />
+  <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_CompletarDatos" targetRef="Task_ConfigurarHabilidades" />
+  <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_ConfigurarHabilidades" targetRef="Task_ConfigurarCobertura" />
+  <bpmn:sequenceFlow id="Flow_06" sourceRef="Task_ConfigurarCobertura" targetRef="Task_ConfigurarDisponibilidad" />
+  <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_ConfigurarDisponibilidad" targetRef="Task_AdjuntarDocumentos" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_AdjuntarDocumentos" targetRef="Gateway_AccionVoluntario" />
+  <bpmn:sequenceFlow id="Flow_09" name="Guardar borrador" sourceRef="Gateway_AccionVoluntario" targetRef="Task_GuardarBorrador" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_GuardarBorrador" targetRef="End_Borrador" />
+  <bpmn:sequenceFlow id="Flow_11" name="Enviar a revisión" sourceRef="Gateway_AccionVoluntario" targetRef="Task_ValidarPerfil" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_ValidarPerfil" targetRef="Gateway_PerfilValido" />
+  <bpmn:sequenceFlow id="Flow_13" name="No" sourceRef="Gateway_PerfilValido" targetRef="Task_CorregirPerfil" />
+  <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_CorregirPerfil" targetRef="Task_ValidarPerfil" />
+  <bpmn:sequenceFlow id="Flow_15" name="Sí" sourceRef="Gateway_PerfilValido" targetRef="Task_CrearRevision" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_CrearRevision" targetRef="Task_NotificarPendiente" />
+  <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_NotificarPendiente" targetRef="Task_RevisarPerfil" />
+  <bpmn:sequenceFlow id="Flow_18" sourceRef="Task_RevisarPerfil" targetRef="Gateway_DecisionRevision" />
+  <bpmn:sequenceFlow id="Flow_19" name="Observado" sourceRef="Gateway_DecisionRevision" targetRef="Task_NotificarObservaciones" />
+  <bpmn:sequenceFlow id="Flow_20" sourceRef="Task_NotificarObservaciones" targetRef="Task_AtenderObservaciones" />
+  <bpmn:sequenceFlow id="Flow_21" sourceRef="Task_AtenderObservaciones" targetRef="Task_ValidarPerfil" />
+  <bpmn:sequenceFlow id="Flow_22" name="Aprobado" sourceRef="Gateway_DecisionRevision" targetRef="Task_ActivarPerfil" />
+  <bpmn:sequenceFlow id="Flow_23" sourceRef="Task_ActivarPerfil" targetRef="Task_DefinirEstadoDisponibilidad" />
+  <bpmn:sequenceFlow id="Flow_24" sourceRef="Task_DefinirEstadoDisponibilidad" targetRef="Task_AplicarDisponibilidad" />
+  <bpmn:sequenceFlow id="Flow_25" sourceRef="Task_AplicarDisponibilidad" targetRef="Task_NotificarResultado" />
+  <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_NotificarResultado" targetRef="Task_RegistrarTrazabilidad" />
+  <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_RegistrarTrazabilidad" targetRef="End_PerfilActivo" />
+  <bpmn:sequenceFlow id="Flow_28" name="Rechazado" sourceRef="Gateway_DecisionRevision" targetRef="Task_MantenerInactivo" />
+  <bpmn:sequenceFlow id="Flow_29" sourceRef="Task_MantenerInactivo" targetRef="End_PerfilRechazado" />
+
+  <bpmn:textAnnotation id="Annotation_Privacidad"><bpmn:text>La ubicación exacta del voluntario no se publica. Se utiliza zona y radio aproximado para coincidencias. El perfil operativo sólo será visible para funciones autorizadas de coordinación y para solicitudes compatibles. La disponibilidad puede modificarse sin repetir la aprobación, salvo cambios sustanciales del perfil.</bpmn:text></bpmn:textAnnotation>
+  <bpmn:association id="Association_Privacidad" sourceRef="Task_ConfigurarCobertura" targetRef="Annotation_Privacidad" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_PerfilVoluntario"><bpmndi:BPMNPlane id="Plane_PerfilVoluntario" bpmnElement="Collaboration_PerfilVoluntario">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_PerfilVoluntario" isHorizontal="true"><dc:Bounds x="30" y="30" width="4240" height="830"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneVol_di" bpmnElement="Lane_Voluntario" isHorizontal="true"><dc:Bounds x="60" y="30" width="4210" height="210"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="240" width="4210" height="210"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneRev_di" bpmnElement="Lane_Revision" isHorizontal="true"><dc:Bounds x="60" y="450" width="4210" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneNotif_di" bpmnElement="Lane_Notificaciones" isHorizontal="true"><dc:Bounds x="60" y="655" width="4210" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_Configurar"><dc:Bounds x="105" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Abrir_di" bpmnElement="Task_AbrirPerfil"><dc:Bounds x="180" y="92" width="155" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cargar_di" bpmnElement="Task_CargarPerfil"><dc:Bounds x="380" y="300" width="160" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Datos_di" bpmnElement="Task_CompletarDatos"><dc:Bounds x="590" y="92" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Habilidades_di" bpmnElement="Task_ConfigurarHabilidades"><dc:Bounds x="810" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cobertura_di" bpmnElement="Task_ConfigurarCobertura"><dc:Bounds x="1040" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Disponibilidad_di" bpmnElement="Task_ConfigurarDisponibilidad"><dc:Bounds x="1270" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Documentos_di" bpmnElement="Task_AdjuntarDocumentos"><dc:Bounds x="1500" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwAccion_di" bpmnElement="Gateway_AccionVoluntario" isMarkerVisible="true"><dc:Bounds x="1730" y="105" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Borrador_di" bpmnElement="Task_GuardarBorrador"><dc:Bounds x="1830" y="255" width="160" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndBorrador_di" bpmnElement="End_Borrador"><dc:Bounds x="2040" y="270" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Validar_di" bpmnElement="Task_ValidarPerfil"><dc:Bounds x="1830" y="345" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwValido_di" bpmnElement="Gateway_PerfilValido" isMarkerVisible="true"><dc:Bounds x="2060" y="358" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Corregir_di" bpmnElement="Task_CorregirPerfil"><dc:Bounds x="2020" y="92" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="CrearRevision_di" bpmnElement="Task_CrearRevision"><dc:Bounds x="2170" y="345" width="175" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifPendiente_di" bpmnElement="Task_NotificarPendiente"><dc:Bounds x="2390" y="715" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Revisar_di" bpmnElement="Task_RevisarPerfil"><dc:Bounds x="2610" y="515" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwDecision_di" bpmnElement="Gateway_DecisionRevision" isMarkerVisible="true"><dc:Bounds x="2850" y="528" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifObs_di" bpmnElement="Task_NotificarObservaciones"><dc:Bounds x="2940" y="715" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Atender_di" bpmnElement="Task_AtenderObservaciones"><dc:Bounds x="2940" y="92" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Activar_di" bpmnElement="Task_ActivarPerfil"><dc:Bounds x="2990" y="300" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Inactivo_di" bpmnElement="Task_MantenerInactivo"><dc:Bounds x="2990" y="600" width="180" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="DefinirDisp_di" bpmnElement="Task_DefinirEstadoDisponibilidad"><dc:Bounds x="3220" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="AplicarDisp_di" bpmnElement="Task_AplicarDisponibilidad"><dc:Bounds x="3450" y="300" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifResult_di" bpmnElement="Task_NotificarResultado"><dc:Bounds x="3680" y="715" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Trazabilidad_di" bpmnElement="Task_RegistrarTrazabilidad"><dc:Bounds x="3900" y="715" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndActivo_di" bpmnElement="End_PerfilActivo"><dc:Bounds x="4140" y="732" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndRechazado_di" bpmnElement="End_PerfilRechazado"><dc:Bounds x="3220" y="607" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Annotation_di" bpmnElement="Annotation_Privacidad"><dc:Bounds x="1010" y="180" width="750" height="45"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="130"/><di:waypoint x="180" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="335" y="130"/><di:waypoint x="355" y="130"/><di:waypoint x="355" y="338"/><di:waypoint x="380" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="540" y="338"/><di:waypoint x="565" y="338"/><di:waypoint x="565" y="130"/><di:waypoint x="590" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="760" y="130"/><di:waypoint x="810" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="990" y="130"/><di:waypoint x="1040" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="1220" y="130"/><di:waypoint x="1270" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="1450" y="130"/><di:waypoint x="1500" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="1680" y="130"/><di:waypoint x="1730" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="1755" y="155"/><di:waypoint x="1755" y="288"/><di:waypoint x="1830" y="288"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1990" y="288"/><di:waypoint x="2040" y="288"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1780" y="130"/><di:waypoint x="1800" y="130"/><di:waypoint x="1800" y="383"/><di:waypoint x="1830" y="383"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="2010" y="383"/><di:waypoint x="2060" y="383"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="2085" y="358"/><di:waypoint x="2085" y="168"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="2020" y="130"/><di:waypoint x="1920" y="130"/><di:waypoint x="1920" y="345"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="2110" y="383"/><di:waypoint x="2170" y="383"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="2345" y="383"/><di:waypoint x="2365" y="383"/><di:waypoint x="2365" y="750"/><di:waypoint x="2390" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="2560" y="750"/><di:waypoint x="2585" y="750"/><di:waypoint x="2585" y="553"/><di:waypoint x="2610" y="553"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F18_di" bpmnElement="Flow_18"><di:waypoint x="2800" y="553"/><di:waypoint x="2850" y="553"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F19_di" bpmnElement="Flow_19"><di:waypoint x="2875" y="578"/><di:waypoint x="2875" y="750"/><di:waypoint x="2940" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F20_di" bpmnElement="Flow_20"><di:waypoint x="3025" y="715"/><di:waypoint x="3025" y="168"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F21_di" bpmnElement="Flow_21"><di:waypoint x="2940" y="130"/><di:waypoint x="2900" y="130"/><di:waypoint x="2900" y="470"/><di:waypoint x="1920" y="470"/><di:waypoint x="1920" y="421"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F22_di" bpmnElement="Flow_22"><di:waypoint x="2900" y="553"/><di:waypoint x="2960" y="553"/><di:waypoint x="2960" y="335"/><di:waypoint x="2990" y="335"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F23_di" bpmnElement="Flow_23"><di:waypoint x="3170" y="335"/><di:waypoint x="3195" y="335"/><di:waypoint x="3195" y="130"/><di:waypoint x="3220" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F24_di" bpmnElement="Flow_24"><di:waypoint x="3400" y="130"/><di:waypoint x="3425" y="130"/><di:waypoint x="3425" y="338"/><di:waypoint x="3450" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F25_di" bpmnElement="Flow_25"><di:waypoint x="3630" y="338"/><di:waypoint x="3655" y="338"/><di:waypoint x="3655" y="750"/><di:waypoint x="3680" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F26_di" bpmnElement="Flow_26"><di:waypoint x="3850" y="750"/><di:waypoint x="3900" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F27_di" bpmnElement="Flow_27"><di:waypoint x="4090" y="750"/><di:waypoint x="4140" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F28_di" bpmnElement="Flow_28"><di:waypoint x="2875" y="578"/><di:waypoint x="2875" y="625"/><di:waypoint x="2990" y="625"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F29_di" bpmnElement="Flow_29"><di:waypoint x="3170" y="625"/><di:waypoint x="3220" y="625"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="Assoc_di" bpmnElement="Association_Privacidad"><di:waypoint x="1130" y="168"/><di:waypoint x="1130" y="180"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

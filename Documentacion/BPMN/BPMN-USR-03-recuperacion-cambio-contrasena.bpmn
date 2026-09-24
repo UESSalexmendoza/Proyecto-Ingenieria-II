@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+ xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+ xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+ xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+ id="Definitions_Contrasena" targetNamespace="https://barriosolidario.org/bpmn">
+
+ <bpmn:collaboration id="Collaboration_Contrasena">
+  <bpmn:participant id="Participant_Contrasena" name="Barrio Solidario - Recuperación y cambio de contraseña" processRef="Process_Contrasena" />
+ </bpmn:collaboration>
+
+ <bpmn:process id="Process_Contrasena" name="Recuperación y cambio de contraseña" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_Contrasena">
+   <bpmn:lane id="Lane_Usuario" name="Usuario">
+    <bpmn:flowNodeRef>Start_Recuperacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_SolicitarRecuperacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_AbrirEnlace</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ReintentarRecuperacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Start_Cambio</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_IngresarClaveActual</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_CorregirClaveActual</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_DefinirNuevaClave</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_CorregirNuevaClave</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario">
+    <bpmn:flowNodeRef>Task_ProcesarSolicitud</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_CuentaElegible</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_GenerarToken</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ValidarToken</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_TokenValido</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ValidarClaveActual</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_ClaveActualValida</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ValidarNuevaClave</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_NuevaClaveValida</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ActualizarCredencial</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_InvalidarSesiones</bpmn:flowNodeRef><bpmn:flowNodeRef>End_Actualizada</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>End_SolicitudProcesada</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Seguridad" name="Notificaciones y auditoría de seguridad">
+    <bpmn:flowNodeRef>Task_RespuestaGenerica</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EnviarEnlace</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_NotificarEnlaceInvalido</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarCambio</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_RegistrarAuditoria</bpmn:flowNodeRef>
+   </bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_Recuperacion" name="Olvidó la contraseña" />
+  <bpmn:userTask id="Task_SolicitarRecuperacion" name="Ingresar correo o usuario" />
+  <bpmn:serviceTask id="Task_ProcesarSolicitud" name="Procesar solicitud sin revelar existencia de cuenta" />
+  <bpmn:sendTask id="Task_RespuestaGenerica" name="Mostrar respuesta genérica" />
+  <bpmn:exclusiveGateway id="Gateway_CuentaElegible" name="¿Cuenta existente y habilitada?" />
+  <bpmn:endEvent id="End_SolicitudProcesada" name="Solicitud procesada" />
+  <bpmn:serviceTask id="Task_GenerarToken" name="Generar token único con vencimiento" />
+  <bpmn:sendTask id="Task_EnviarEnlace" name="Enviar enlace seguro de recuperación" />
+  <bpmn:userTask id="Task_AbrirEnlace" name="Abrir enlace de recuperación" />
+  <bpmn:serviceTask id="Task_ValidarToken" name="Validar token, vigencia y uso" />
+  <bpmn:exclusiveGateway id="Gateway_TokenValido" name="¿Token válido?" />
+  <bpmn:sendTask id="Task_NotificarEnlaceInvalido" name="Informar enlace inválido o vencido" />
+  <bpmn:userTask id="Task_ReintentarRecuperacion" name="Solicitar un nuevo enlace" />
+
+  <bpmn:startEvent id="Start_Cambio" name="Usuario autenticado solicita cambio" />
+  <bpmn:userTask id="Task_IngresarClaveActual" name="Ingresar contraseña actual" />
+  <bpmn:serviceTask id="Task_ValidarClaveActual" name="Validar contraseña actual" />
+  <bpmn:exclusiveGateway id="Gateway_ClaveActualValida" name="¿Contraseña actual válida?" />
+  <bpmn:userTask id="Task_CorregirClaveActual" name="Corregir contraseña actual" />
+  <bpmn:userTask id="Task_DefinirNuevaClave" name="Ingresar y confirmar nueva contraseña" />
+  <bpmn:serviceTask id="Task_ValidarNuevaClave" name="Validar política, coincidencia e historial" />
+  <bpmn:exclusiveGateway id="Gateway_NuevaClaveValida" name="¿Nueva contraseña válida?" />
+  <bpmn:userTask id="Task_CorregirNuevaClave" name="Corregir nueva contraseña" />
+  <bpmn:serviceTask id="Task_ActualizarCredencial" name="Actualizar contraseña y consumir token" />
+  <bpmn:serviceTask id="Task_InvalidarSesiones" name="Invalidar otras sesiones activas" />
+  <bpmn:sendTask id="Task_NotificarCambio" name="Notificar cambio de contraseña" />
+  <bpmn:serviceTask id="Task_RegistrarAuditoria" name="Registrar evento de seguridad" />
+  <bpmn:endEvent id="End_Actualizada" name="Contraseña actualizada" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_Recuperacion" targetRef="Task_SolicitarRecuperacion" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_SolicitarRecuperacion" targetRef="Task_ProcesarSolicitud" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_ProcesarSolicitud" targetRef="Task_RespuestaGenerica" />
+  <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_RespuestaGenerica" targetRef="Gateway_CuentaElegible" />
+  <bpmn:sequenceFlow id="Flow_05" name="No" sourceRef="Gateway_CuentaElegible" targetRef="End_SolicitudProcesada" />
+  <bpmn:sequenceFlow id="Flow_06" name="Sí" sourceRef="Gateway_CuentaElegible" targetRef="Task_GenerarToken" />
+  <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_GenerarToken" targetRef="Task_EnviarEnlace" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_EnviarEnlace" targetRef="Task_AbrirEnlace" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_AbrirEnlace" targetRef="Task_ValidarToken" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_ValidarToken" targetRef="Gateway_TokenValido" />
+  <bpmn:sequenceFlow id="Flow_11" name="No" sourceRef="Gateway_TokenValido" targetRef="Task_NotificarEnlaceInvalido" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_NotificarEnlaceInvalido" targetRef="Task_ReintentarRecuperacion" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_ReintentarRecuperacion" targetRef="Task_SolicitarRecuperacion" />
+  <bpmn:sequenceFlow id="Flow_14" name="Sí" sourceRef="Gateway_TokenValido" targetRef="Task_DefinirNuevaClave" />
+  <bpmn:sequenceFlow id="Flow_15" sourceRef="Start_Cambio" targetRef="Task_IngresarClaveActual" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_IngresarClaveActual" targetRef="Task_ValidarClaveActual" />
+  <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_ValidarClaveActual" targetRef="Gateway_ClaveActualValida" />
+  <bpmn:sequenceFlow id="Flow_18" name="No" sourceRef="Gateway_ClaveActualValida" targetRef="Task_CorregirClaveActual" />
+  <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_CorregirClaveActual" targetRef="Task_IngresarClaveActual" />
+  <bpmn:sequenceFlow id="Flow_20" name="Sí" sourceRef="Gateway_ClaveActualValida" targetRef="Task_DefinirNuevaClave" />
+  <bpmn:sequenceFlow id="Flow_21" sourceRef="Task_DefinirNuevaClave" targetRef="Task_ValidarNuevaClave" />
+  <bpmn:sequenceFlow id="Flow_22" sourceRef="Task_ValidarNuevaClave" targetRef="Gateway_NuevaClaveValida" />
+  <bpmn:sequenceFlow id="Flow_23" name="No" sourceRef="Gateway_NuevaClaveValida" targetRef="Task_CorregirNuevaClave" />
+  <bpmn:sequenceFlow id="Flow_24" sourceRef="Task_CorregirNuevaClave" targetRef="Task_DefinirNuevaClave" />
+  <bpmn:sequenceFlow id="Flow_25" name="Sí" sourceRef="Gateway_NuevaClaveValida" targetRef="Task_ActualizarCredencial" />
+  <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_ActualizarCredencial" targetRef="Task_InvalidarSesiones" />
+  <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_InvalidarSesiones" targetRef="Task_NotificarCambio" />
+  <bpmn:sequenceFlow id="Flow_28" sourceRef="Task_NotificarCambio" targetRef="Task_RegistrarAuditoria" />
+  <bpmn:sequenceFlow id="Flow_29" sourceRef="Task_RegistrarAuditoria" targetRef="End_Actualizada" />
+
+  <bpmn:textAnnotation id="Annotation_Seguridad"><bpmn:text>La respuesta de recuperación es genérica para evitar revelar si una cuenta existe. El token es de un solo uso, tiene vigencia limitada y queda invalidado al completar el cambio.</bpmn:text></bpmn:textAnnotation>
+  <bpmn:association id="Association_Seguridad" sourceRef="Task_ProcesarSolicitud" targetRef="Annotation_Seguridad" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_Contrasena"><bpmndi:BPMNPlane id="Plane_Contrasena" bpmnElement="Collaboration_Contrasena">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_Contrasena" isHorizontal="true"><dc:Bounds x="30" y="30" width="3980" height="700"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneUsuario_di" bpmnElement="Lane_Usuario" isHorizontal="true"><dc:Bounds x="60" y="30" width="3950" height="240"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlataforma_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="270" width="3950" height="250"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneSeguridad_di" bpmnElement="Lane_Seguridad" isHorizontal="true"><dc:Bounds x="60" y="520" width="3950" height="210"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="StartRec_di" bpmnElement="Start_Recuperacion"><dc:Bounds x="105" y="100" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="SolicitarRec_di" bpmnElement="Task_SolicitarRecuperacion"><dc:Bounds x="180" y="80" width="165" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Procesar_di" bpmnElement="Task_ProcesarSolicitud"><dc:Bounds x="390" y="330" width="195" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Resp_di" bpmnElement="Task_RespuestaGenerica"><dc:Bounds x="630" y="580" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwElegible_di" bpmnElement="Gateway_CuentaElegible" isMarkerVisible="true"><dc:Bounds x="850" y="343" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndProcesada_di" bpmnElement="End_SolicitudProcesada"><dc:Bounds x="940" y="445" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Token_di" bpmnElement="Task_GenerarToken"><dc:Bounds x="950" y="330" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Enviar_di" bpmnElement="Task_EnviarEnlace"><dc:Bounds x="1180" y="580" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Abrir_di" bpmnElement="Task_AbrirEnlace"><dc:Bounds x="1410" y="80" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="ValidarToken_di" bpmnElement="Task_ValidarToken"><dc:Bounds x="1630" y="330" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwToken_di" bpmnElement="Gateway_TokenValido" isMarkerVisible="true"><dc:Bounds x="1850" y="343" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifInv_di" bpmnElement="Task_NotificarEnlaceInvalido"><dc:Bounds x="1810" y="580" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Reintentar_di" bpmnElement="Task_ReintentarRecuperacion"><dc:Bounds x="1810" y="175" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="StartCambio_di" bpmnElement="Start_Cambio"><dc:Bounds x="1060" y="190" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="ClaveActual_di" bpmnElement="Task_IngresarClaveActual"><dc:Bounds x="1140" y="170" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="ValidarActual_di" bpmnElement="Task_ValidarClaveActual"><dc:Bounds x="1360" y="430" width="165" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwActual_di" bpmnElement="Gateway_ClaveActualValida" isMarkerVisible="true"><dc:Bounds x="1570" y="440" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="CorregirActual_di" bpmnElement="Task_CorregirClaveActual"><dc:Bounds x="1530" y="175" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Nueva_di" bpmnElement="Task_DefinirNuevaClave"><dc:Bounds x="2040" y="80" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="ValidarNueva_di" bpmnElement="Task_ValidarNuevaClave"><dc:Bounds x="2280" y="330" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwNueva_di" bpmnElement="Gateway_NuevaClaveValida" isMarkerVisible="true"><dc:Bounds x="2520" y="343" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="CorregirNueva_di" bpmnElement="Task_CorregirNuevaClave"><dc:Bounds x="2470" y="80" width="175" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Actualizar_di" bpmnElement="Task_ActualizarCredencial"><dc:Bounds x="2650" y="330" width="185" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Invalidar_di" bpmnElement="Task_InvalidarSesiones"><dc:Bounds x="2880" y="330" width="175" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifCambio_di" bpmnElement="Task_NotificarCambio"><dc:Bounds x="3100" y="580" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Auditoria_di" bpmnElement="Task_RegistrarAuditoria"><dc:Bounds x="3330" y="580" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndActualizada_di" bpmnElement="End_Actualizada"><dc:Bounds x="3560" y="597" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Annotation_di" bpmnElement="Annotation_Seguridad"><dc:Bounds x="410" y="275" width="430" height="45"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="118"/><di:waypoint x="180" y="118"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="345" y="118"/><di:waypoint x="365" y="118"/><di:waypoint x="365" y="368"/><di:waypoint x="390" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="585" y="368"/><di:waypoint x="605" y="368"/><di:waypoint x="605" y="615"/><di:waypoint x="630" y="615"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="800" y="615"/><di:waypoint x="825" y="615"/><di:waypoint x="825" y="368"/><di:waypoint x="850" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="875" y="393"/><di:waypoint x="875" y="463"/><di:waypoint x="940" y="463"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="900" y="368"/><di:waypoint x="950" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="1130" y="368"/><di:waypoint x="1155" y="368"/><di:waypoint x="1155" y="615"/><di:waypoint x="1180" y="615"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="1360" y="615"/><di:waypoint x="1385" y="615"/><di:waypoint x="1385" y="118"/><di:waypoint x="1410" y="118"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="1580" y="118"/><di:waypoint x="1605" y="118"/><di:waypoint x="1605" y="368"/><di:waypoint x="1630" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1800" y="368"/><di:waypoint x="1850" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1875" y="393"/><di:waypoint x="1875" y="580"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="1900" y="580"/><di:waypoint x="1900" y="245"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="1810" y="210"/><di:waypoint x="400" y="210"/><di:waypoint x="400" y="156"/><di:waypoint x="263" y="156"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="1900" y="368"/><di:waypoint x="2010" y="368"/><di:waypoint x="2010" y="118"/><di:waypoint x="2040" y="118"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="1096" y="208"/><di:waypoint x="1140" y="208"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="1310" y="208"/><di:waypoint x="1335" y="208"/><di:waypoint x="1335" y="465"/><di:waypoint x="1360" y="465"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="1525" y="465"/><di:waypoint x="1570" y="465"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F18_di" bpmnElement="Flow_18"><di:waypoint x="1595" y="440"/><di:waypoint x="1595" y="245"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F19_di" bpmnElement="Flow_19"><di:waypoint x="1530" y="210"/><di:waypoint x="1450" y="210"/><di:waypoint x="1450" y="170"/><di:waypoint x="1225" y="170"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F20_di" bpmnElement="Flow_20"><di:waypoint x="1620" y="465"/><di:waypoint x="2000" y="465"/><di:waypoint x="2000" y="118"/><di:waypoint x="2040" y="118"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F21_di" bpmnElement="Flow_21"><di:waypoint x="2230" y="118"/><di:waypoint x="2255" y="118"/><di:waypoint x="2255" y="368"/><di:waypoint x="2280" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F22_di" bpmnElement="Flow_22"><di:waypoint x="2470" y="368"/><di:waypoint x="2520" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F23_di" bpmnElement="Flow_23"><di:waypoint x="2545" y="343"/><di:waypoint x="2545" y="156"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F24_di" bpmnElement="Flow_24"><di:waypoint x="2470" y="118"/><di:waypoint x="2260" y="118"/><di:waypoint x="2260" y="100"/><di:waypoint x="2135" y="100"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F25_di" bpmnElement="Flow_25"><di:waypoint x="2570" y="368"/><di:waypoint x="2650" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F26_di" bpmnElement="Flow_26"><di:waypoint x="2835" y="368"/><di:waypoint x="2880" y="368"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F27_di" bpmnElement="Flow_27"><di:waypoint x="3055" y="368"/><di:waypoint x="3075" y="368"/><di:waypoint x="3075" y="615"/><di:waypoint x="3100" y="615"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F28_di" bpmnElement="Flow_28"><di:waypoint x="3280" y="615"/><di:waypoint x="3330" y="615"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F29_di" bpmnElement="Flow_29"><di:waypoint x="3510" y="615"/><di:waypoint x="3560" y="615"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="Assoc_di" bpmnElement="Association_Seguridad"><di:waypoint x="487" y="330"/><di:waypoint x="487" y="320"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

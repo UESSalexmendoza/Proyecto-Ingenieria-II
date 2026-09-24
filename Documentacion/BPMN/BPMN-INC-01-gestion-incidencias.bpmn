@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_GestionIncidencias" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_GestionIncidencias"><bpmn:participant id="Participant_GestionIncidencias" name="Barrio Solidario - Gestión de incidencias" processRef="Process_GestionIncidencias" /></bpmn:collaboration>
+ <bpmn:process id="Process_GestionIncidencias" name="Gestión de incidencias" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_GestionIncidencias">
+   <bpmn:lane id="Lane_Reportante" name="Solicitante / Cuidador / Voluntario"><bpmn:flowNodeRef>Start_Incidencia</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarIncidencia</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConsultarResultado</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario"><bpmn:flowNodeRef>Task_CrearRegistro</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ActualizarEstado</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CerrarIncidencia</bpmn:flowNodeRef><bpmn:flowNodeRef>End_IncidenciaCerrada</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Coordinacion" name="Coordinación / Moderación"><bpmn:flowNodeRef>Task_RevisarIncidencia</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_Atencion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AtenderIncidencia</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EscalarIncidencia</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarSolucion</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_Resuelta</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Notificaciones" name="Notificaciones y seguimiento"><bpmn:flowNodeRef>Task_NotificarCoordinacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarActualizacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarCierre</bpmn:flowNodeRef></bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_Incidencia" name="Se presenta una incidencia" />
+  <bpmn:userTask id="Task_RegistrarIncidencia" name="Describir incidencia y solicitud relacionada" />
+  <bpmn:serviceTask id="Task_CrearRegistro" name="Crear incidencia en estado Reportada" />
+  <bpmn:sendTask id="Task_NotificarCoordinacion" name="Notificar nueva incidencia a Coordinación" />
+  <bpmn:userTask id="Task_RevisarIncidencia" name="Revisar incidencia y definir responsable" />
+  <bpmn:exclusiveGateway id="Gateway_Atencion" name="¿Cómo se atenderá?" />
+  <bpmn:userTask id="Task_AtenderIncidencia" name="Atender directamente" />
+  <bpmn:userTask id="Task_EscalarIncidencia" name="Escalar al responsable correspondiente" />
+  <bpmn:serviceTask id="Task_ActualizarEstado" name="Actualizar estado de la incidencia" />
+  <bpmn:sendTask id="Task_NotificarActualizacion" name="Notificar avance al reportante" />
+  <bpmn:userTask id="Task_RegistrarSolucion" name="Registrar solución o acción realizada" />
+  <bpmn:exclusiveGateway id="Gateway_Resuelta" name="¿Incidencia resuelta?" />
+  <bpmn:userTask id="Task_ConsultarResultado" name="Consultar resultado de la incidencia" />
+  <bpmn:serviceTask id="Task_CerrarIncidencia" name="Cambiar estado a Cerrada" />
+  <bpmn:sendTask id="Task_NotificarCierre" name="Notificar cierre al reportante" />
+  <bpmn:endEvent id="End_IncidenciaCerrada" name="Incidencia cerrada" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_Incidencia" targetRef="Task_RegistrarIncidencia" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_RegistrarIncidencia" targetRef="Task_CrearRegistro" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_CrearRegistro" targetRef="Task_NotificarCoordinacion" />
+  <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_NotificarCoordinacion" targetRef="Task_RevisarIncidencia" />
+  <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_RevisarIncidencia" targetRef="Gateway_Atencion" />
+  <bpmn:sequenceFlow id="Flow_06" name="Directa" sourceRef="Gateway_Atencion" targetRef="Task_AtenderIncidencia" />
+  <bpmn:sequenceFlow id="Flow_07" name="Escalada" sourceRef="Gateway_Atencion" targetRef="Task_EscalarIncidencia" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_AtenderIncidencia" targetRef="Task_ActualizarEstado" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_EscalarIncidencia" targetRef="Task_ActualizarEstado" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_ActualizarEstado" targetRef="Task_NotificarActualizacion" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_NotificarActualizacion" targetRef="Task_RegistrarSolucion" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_RegistrarSolucion" targetRef="Gateway_Resuelta" />
+  <bpmn:sequenceFlow id="Flow_13" name="No" sourceRef="Gateway_Resuelta" targetRef="Task_AtenderIncidencia" />
+  <bpmn:sequenceFlow id="Flow_14" name="Sí" sourceRef="Gateway_Resuelta" targetRef="Task_ConsultarResultado" />
+  <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_ConsultarResultado" targetRef="Task_CerrarIncidencia" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_CerrarIncidencia" targetRef="Task_NotificarCierre" />
+  <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_NotificarCierre" targetRef="End_IncidenciaCerrada" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_GestionIncidencias"><bpmndi:BPMNPlane id="Plane_GestionIncidencias" bpmnElement="Collaboration_GestionIncidencias">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_GestionIncidencias" isHorizontal="true"><dc:Bounds x="30" y="30" width="3230" height="850"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneRep_di" bpmnElement="Lane_Reportante" isHorizontal="true"><dc:Bounds x="60" y="30" width="3200" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="235" width="3200" height="210"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneCoord_di" bpmnElement="Lane_Coordinacion" isHorizontal="true"><dc:Bounds x="60" y="445" width="3200" height="215"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneNotif_di" bpmnElement="Lane_Notificaciones" isHorizontal="true"><dc:Bounds x="60" y="660" width="3200" height="220"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_Incidencia"><dc:Bounds x="105" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Registrar_di" bpmnElement="Task_RegistrarIncidencia"><dc:Bounds x="180" y="90" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Crear_di" bpmnElement="Task_CrearRegistro"><dc:Bounds x="420" y="280" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifCoord_di" bpmnElement="Task_NotificarCoordinacion"><dc:Bounds x="655" y="705" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Revisar_di" bpmnElement="Task_RevisarIncidencia"><dc:Bounds x="895" y="495" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwAtencion_di" bpmnElement="Gateway_Atencion" isMarkerVisible="true"><dc:Bounds x="1135" y="505" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Atender_di" bpmnElement="Task_AtenderIncidencia"><dc:Bounds x="1235" y="465" width="175" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Escalar_di" bpmnElement="Task_EscalarIncidencia"><dc:Bounds x="1235" y="570" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Estado_di" bpmnElement="Task_ActualizarEstado"><dc:Bounds x="1470" y="280" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifAvance_di" bpmnElement="Task_NotificarActualizacion"><dc:Bounds x="1700" y="705" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Solucion_di" bpmnElement="Task_RegistrarSolucion"><dc:Bounds x="1940" y="495" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwResuelta_di" bpmnElement="Gateway_Resuelta" isMarkerVisible="true"><dc:Bounds x="2175" y="505" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Consultar_di" bpmnElement="Task_ConsultarResultado"><dc:Bounds x="2275" y="90" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cerrar_di" bpmnElement="Task_CerrarIncidencia"><dc:Bounds x="2510" y="280" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifCierre_di" bpmnElement="Task_NotificarCierre"><dc:Bounds x="2740" y="705" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="End_di" bpmnElement="End_IncidenciaCerrada"><dc:Bounds x="2975" y="720" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="130"/><di:waypoint x="180" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="370" y="128"/><di:waypoint x="395" y="128"/><di:waypoint x="395" y="315"/><di:waypoint x="420" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="605" y="315"/><di:waypoint x="630" y="315"/><di:waypoint x="630" y="737"/><di:waypoint x="655" y="737"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="845" y="737"/><di:waypoint x="870" y="737"/><di:waypoint x="870" y="530"/><di:waypoint x="895" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="1085" y="530"/><di:waypoint x="1135" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="1160" y="505"/><di:waypoint x="1160" y="497"/><di:waypoint x="1235" y="497"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="1160" y="555"/><di:waypoint x="1160" y="602"/><di:waypoint x="1235" y="602"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="1410" y="497"/><di:waypoint x="1445" y="497"/><di:waypoint x="1445" y="315"/><di:waypoint x="1470" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="1420" y="602"/><di:waypoint x="1445" y="602"/><di:waypoint x="1445" y="315"/><di:waypoint x="1470" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1650" y="315"/><di:waypoint x="1675" y="315"/><di:waypoint x="1675" y="737"/><di:waypoint x="1700" y="737"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1890" y="737"/><di:waypoint x="1915" y="737"/><di:waypoint x="1915" y="530"/><di:waypoint x="1940" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="2125" y="530"/><di:waypoint x="2175" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="2200" y="555"/><di:waypoint x="2200" y="640"/><di:waypoint x="1322" y="640"/><di:waypoint x="1322" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="2200" y="505"/><di:waypoint x="2200" y="125"/><di:waypoint x="2275" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="2460" y="125"/><di:waypoint x="2485" y="125"/><di:waypoint x="2485" y="315"/><di:waypoint x="2510" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="2690" y="315"/><di:waypoint x="2715" y="315"/><di:waypoint x="2715" y="737"/><di:waypoint x="2740" y="737"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="2925" y="737"/><di:waypoint x="2975" y="738"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

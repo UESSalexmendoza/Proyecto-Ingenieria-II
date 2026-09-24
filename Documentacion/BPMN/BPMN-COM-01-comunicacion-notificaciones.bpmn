@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_ComunicacionNotificaciones" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_ComunicacionNotificaciones"><bpmn:participant id="Participant_ComunicacionNotificaciones" name="Barrio Solidario - Comunicación y notificaciones" processRef="Process_ComunicacionNotificaciones" /></bpmn:collaboration>
+ <bpmn:process id="Process_ComunicacionNotificaciones" name="Comunicación y notificaciones de Barrio Solidario" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_ComunicacionNotificaciones">
+   <bpmn:lane id="Lane_Emisor" name="Solicitante / Voluntario / Coordinación"><bpmn:flowNodeRef>Start_Comunicacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_TipoComunicacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AbrirConversacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RedactarMensaje</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EnviarMensaje</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario"><bpmn:flowNodeRef>Task_RegistrarMensaje</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_DetectarEvento</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CrearNotificacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EntregarComunicacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_MarcarLeida</bpmn:flowNodeRef><bpmn:flowNodeRef>End_ComunicacionRegistrada</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Destinatario" name="Destinatario"><bpmn:flowNodeRef>Task_RecibirAviso</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConsultarContenido</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_DeseaResponder</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RedactarRespuesta</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Registro" name="Registro y seguimiento"><bpmn:flowNodeRef>Task_ActualizarConversacion</bpmn:flowNodeRef></bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_Comunicacion" name="Se requiere comunicar información" />
+  <bpmn:exclusiveGateway id="Gateway_TipoComunicacion" name="¿Tipo de comunicación?" />
+  <bpmn:userTask id="Task_AbrirConversacion" name="Abrir conversación general o de una solicitud" />
+  <bpmn:userTask id="Task_RedactarMensaje" name="Redactar mensaje" />
+  <bpmn:userTask id="Task_EnviarMensaje" name="Enviar mensaje" />
+  <bpmn:serviceTask id="Task_RegistrarMensaje" name="Registrar mensaje en la conversación" />
+  <bpmn:serviceTask id="Task_DetectarEvento" name="Detectar evento relevante del sistema" />
+  <bpmn:serviceTask id="Task_CrearNotificacion" name="Crear notificación automática" />
+  <bpmn:sendTask id="Task_EntregarComunicacion" name="Entregar mensaje o notificación" />
+  <bpmn:userTask id="Task_RecibirAviso" name="Recibir aviso" />
+  <bpmn:userTask id="Task_ConsultarContenido" name="Consultar mensaje o notificación" />
+  <bpmn:serviceTask id="Task_MarcarLeida" name="Marcar comunicación como leída" />
+  <bpmn:exclusiveGateway id="Gateway_DeseaResponder" name="¿Desea responder?" />
+  <bpmn:userTask id="Task_RedactarRespuesta" name="Redactar y enviar respuesta" />
+  <bpmn:serviceTask id="Task_ActualizarConversacion" name="Actualizar conversación y fecha del último mensaje" />
+  <bpmn:endEvent id="End_ComunicacionRegistrada" name="Comunicación registrada" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_Comunicacion" targetRef="Gateway_TipoComunicacion" />
+  <bpmn:sequenceFlow id="Flow_02" name="Mensaje" sourceRef="Gateway_TipoComunicacion" targetRef="Task_AbrirConversacion" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_AbrirConversacion" targetRef="Task_RedactarMensaje" />
+  <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_RedactarMensaje" targetRef="Task_EnviarMensaje" />
+  <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_EnviarMensaje" targetRef="Task_RegistrarMensaje" />
+  <bpmn:sequenceFlow id="Flow_06" name="Notificación automática" sourceRef="Gateway_TipoComunicacion" targetRef="Task_DetectarEvento" />
+  <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_DetectarEvento" targetRef="Task_CrearNotificacion" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_CrearNotificacion" targetRef="Task_EntregarComunicacion" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_RegistrarMensaje" targetRef="Task_EntregarComunicacion" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_EntregarComunicacion" targetRef="Task_RecibirAviso" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_RecibirAviso" targetRef="Task_ConsultarContenido" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_ConsultarContenido" targetRef="Task_MarcarLeida" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_MarcarLeida" targetRef="Gateway_DeseaResponder" />
+  <bpmn:sequenceFlow id="Flow_14" name="Sí" sourceRef="Gateway_DeseaResponder" targetRef="Task_RedactarRespuesta" />
+  <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_RedactarRespuesta" targetRef="Task_ActualizarConversacion" />
+  <bpmn:sequenceFlow id="Flow_16" name="No" sourceRef="Gateway_DeseaResponder" targetRef="Task_ActualizarConversacion" />
+  <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_ActualizarConversacion" targetRef="End_ComunicacionRegistrada" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_ComunicacionNotificaciones"><bpmndi:BPMNPlane id="Plane_ComunicacionNotificaciones" bpmnElement="Collaboration_ComunicacionNotificaciones">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_ComunicacionNotificaciones" isHorizontal="true"><dc:Bounds x="30" y="30" width="3130" height="840"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneEmisor_di" bpmnElement="Lane_Emisor" isHorizontal="true"><dc:Bounds x="60" y="30" width="3100" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="235" width="3100" height="215"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneDest_di" bpmnElement="Lane_Destinatario" isHorizontal="true"><dc:Bounds x="60" y="450" width="3100" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneReg_di" bpmnElement="Lane_Registro" isHorizontal="true"><dc:Bounds x="60" y="655" width="3100" height="215"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_Comunicacion"><dc:Bounds x="105" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwTipo_di" bpmnElement="Gateway_TipoComunicacion" isMarkerVisible="true"><dc:Bounds x="190" y="105" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Abrir_di" bpmnElement="Task_AbrirConversacion"><dc:Bounds x="290" y="80" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Redactar_di" bpmnElement="Task_RedactarMensaje"><dc:Bounds x="530" y="80" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Enviar_di" bpmnElement="Task_EnviarMensaje"><dc:Bounds x="750" y="80" width="165" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Registrar_di" bpmnElement="Task_RegistrarMensaje"><dc:Bounds x="965" y="280" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Detectar_di" bpmnElement="Task_DetectarEvento"><dc:Bounds x="290" y="365" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Crear_di" bpmnElement="Task_CrearNotificacion"><dc:Bounds x="530" y="365" width="180" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Entregar_di" bpmnElement="Task_EntregarComunicacion"><dc:Bounds x="1200" y="280" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Recibir_di" bpmnElement="Task_RecibirAviso"><dc:Bounds x="1440" y="505" width="170" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Consultar_di" bpmnElement="Task_ConsultarContenido"><dc:Bounds x="1660" y="505" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Leida_di" bpmnElement="Task_MarcarLeida"><dc:Bounds x="1895" y="280" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwResp_di" bpmnElement="Gateway_DeseaResponder" isMarkerVisible="true"><dc:Bounds x="2125" y="290" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Respuesta_di" bpmnElement="Task_RedactarRespuesta"><dc:Bounds x="2225" y="505" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Actualizar_di" bpmnElement="Task_ActualizarConversacion"><dc:Bounds x="2460" y="715" width="195" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="End_di" bpmnElement="End_ComunicacionRegistrada"><dc:Bounds x="2705" y="732" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="130"/><di:waypoint x="190" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="240" y="130"/><di:waypoint x="265" y="130"/><di:waypoint x="265" y="115"/><di:waypoint x="290" y="115"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="480" y="115"/><di:waypoint x="530" y="115"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="700" y="115"/><di:waypoint x="750" y="115"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="915" y="115"/><di:waypoint x="940" y="115"/><di:waypoint x="940" y="315"/><di:waypoint x="965" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="215" y="155"/><di:waypoint x="215" y="397"/><di:waypoint x="290" y="397"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="480" y="397"/><di:waypoint x="530" y="397"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="710" y="397"/><di:waypoint x="1175" y="397"/><di:waypoint x="1175" y="315"/><di:waypoint x="1200" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="1150" y="315"/><di:waypoint x="1200" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1390" y="315"/><di:waypoint x="1415" y="315"/><di:waypoint x="1415" y="537"/><di:waypoint x="1440" y="537"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1610" y="537"/><di:waypoint x="1660" y="537"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="1845" y="537"/><di:waypoint x="1870" y="537"/><di:waypoint x="1870" y="315"/><di:waypoint x="1895" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="2075" y="315"/><di:waypoint x="2125" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="2150" y="340"/><di:waypoint x="2150" y="537"/><di:waypoint x="2225" y="537"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="2410" y="537"/><di:waypoint x="2435" y="537"/><di:waypoint x="2435" y="750"/><di:waypoint x="2460" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="2175" y="315"/><di:waypoint x="2435" y="315"/><di:waypoint x="2435" y="750"/><di:waypoint x="2460" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="2655" y="750"/><di:waypoint x="2705" y="750"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

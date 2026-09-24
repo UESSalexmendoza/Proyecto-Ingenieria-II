@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+ xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+ xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+ xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+ id="Definitions_GestionPerfil" targetNamespace="https://barriosolidario.org/bpmn">
+
+ <bpmn:collaboration id="Collaboration_GestionPerfil">
+  <bpmn:participant id="Participant_GestionPerfil" name="Barrio Solidario - Gestión del perfil" processRef="Process_GestionPerfil" />
+ </bpmn:collaboration>
+
+ <bpmn:process id="Process_GestionPerfil" name="Gestión y actualización del perfil de usuario" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_GestionPerfil">
+   <bpmn:lane id="Lane_Usuario" name="Usuario autenticado">
+    <bpmn:flowNodeRef>Start_GestionPerfil</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_ConsultarPerfil</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_SeleccionarActualizacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_EditarDatosComunes</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_EditarDatosRol</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_EditarDatosSensibles</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_ConfirmarIdentidad</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_CorregirInformacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_AtenderObservaciones</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario">
+    <bpmn:flowNodeRef>Task_CargarPerfilPermisos</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_TipoActualizacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_Reautenticacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_ValidarInformacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_InformacionValida</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_RequiereRevision</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_GuardarCambios</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_CrearSolicitudRevision</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_AplicarCambiosAprobados</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_MantenerPerfilAnterior</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>End_PerfilActualizado</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>End_CambioRechazado</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Revision" name="Moderación / Administración">
+    <bpmn:flowNodeRef>Task_RevisarCambios</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_DecisionRevision</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Auditoria" name="Notificaciones y auditoría">
+    <bpmn:flowNodeRef>Task_NotificarPendiente</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_NotificarObservaciones</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_NotificarResultado</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_RegistrarTrazabilidad</bpmn:flowNodeRef>
+   </bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_GestionPerfil" name="Necesidad de consultar o actualizar perfil" />
+  <bpmn:userTask id="Task_ConsultarPerfil" name="Ingresar a Mi perfil" />
+  <bpmn:serviceTask id="Task_CargarPerfilPermisos" name="Cargar perfil y campos autorizados según rol" />
+  <bpmn:userTask id="Task_SeleccionarActualizacion" name="Seleccionar información a actualizar" />
+  <bpmn:exclusiveGateway id="Gateway_TipoActualizacion" name="¿Tipo de actualización?" />
+  <bpmn:userTask id="Task_EditarDatosComunes" name="Editar datos comunes y preferencias" />
+  <bpmn:userTask id="Task_EditarDatosRol" name="Editar información específica del rol" />
+  <bpmn:userTask id="Task_EditarDatosSensibles" name="Editar identidad, contacto o vínculo" />
+  <bpmn:exclusiveGateway id="Gateway_Reautenticacion" name="¿Requiere confirmar identidad?" />
+  <bpmn:userTask id="Task_ConfirmarIdentidad" name="Confirmar contraseña o segundo factor" />
+  <bpmn:serviceTask id="Task_ValidarInformacion" name="Validar formato, integridad y permisos" />
+  <bpmn:exclusiveGateway id="Gateway_InformacionValida" name="¿Información válida?" />
+  <bpmn:userTask id="Task_CorregirInformacion" name="Corregir información indicada" />
+  <bpmn:exclusiveGateway id="Gateway_RequiereRevision" name="¿Cambio requiere revisión?" />
+  <bpmn:serviceTask id="Task_GuardarCambios" name="Guardar cambios autorizados" />
+  <bpmn:serviceTask id="Task_CrearSolicitudRevision" name="Crear solicitud de revisión manteniendo perfil vigente" />
+  <bpmn:sendTask id="Task_NotificarPendiente" name="Notificar cambio pendiente" />
+  <bpmn:userTask id="Task_RevisarCambios" name="Revisar evidencias, vínculo y requisitos del rol" />
+  <bpmn:exclusiveGateway id="Gateway_DecisionRevision" name="¿Resultado de la revisión?" />
+  <bpmn:sendTask id="Task_NotificarObservaciones" name="Notificar observaciones" />
+  <bpmn:userTask id="Task_AtenderObservaciones" name="Completar o corregir cambios" />
+  <bpmn:serviceTask id="Task_AplicarCambiosAprobados" name="Aplicar cambios aprobados" />
+  <bpmn:serviceTask id="Task_MantenerPerfilAnterior" name="Rechazar cambio y mantener perfil anterior" />
+  <bpmn:sendTask id="Task_NotificarResultado" name="Notificar resultado de actualización" />
+  <bpmn:serviceTask id="Task_RegistrarTrazabilidad" name="Registrar versión, responsable, fecha y cambios" />
+  <bpmn:endEvent id="End_PerfilActualizado" name="Perfil actualizado" />
+  <bpmn:endEvent id="End_CambioRechazado" name="Cambio rechazado" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_GestionPerfil" targetRef="Task_ConsultarPerfil" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_ConsultarPerfil" targetRef="Task_CargarPerfilPermisos" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_CargarPerfilPermisos" targetRef="Task_SeleccionarActualizacion" />
+  <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_SeleccionarActualizacion" targetRef="Gateway_TipoActualizacion" />
+  <bpmn:sequenceFlow id="Flow_05" name="Datos comunes" sourceRef="Gateway_TipoActualizacion" targetRef="Task_EditarDatosComunes" />
+  <bpmn:sequenceFlow id="Flow_06" name="Datos del rol" sourceRef="Gateway_TipoActualizacion" targetRef="Task_EditarDatosRol" />
+  <bpmn:sequenceFlow id="Flow_07" name="Datos sensibles" sourceRef="Gateway_TipoActualizacion" targetRef="Task_EditarDatosSensibles" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_EditarDatosComunes" targetRef="Gateway_Reautenticacion" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_EditarDatosRol" targetRef="Gateway_Reautenticacion" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_EditarDatosSensibles" targetRef="Gateway_Reautenticacion" />
+  <bpmn:sequenceFlow id="Flow_11" name="Sí" sourceRef="Gateway_Reautenticacion" targetRef="Task_ConfirmarIdentidad" />
+  <bpmn:sequenceFlow id="Flow_12" name="No" sourceRef="Gateway_Reautenticacion" targetRef="Task_ValidarInformacion" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_ConfirmarIdentidad" targetRef="Task_ValidarInformacion" />
+  <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_ValidarInformacion" targetRef="Gateway_InformacionValida" />
+  <bpmn:sequenceFlow id="Flow_15" name="No" sourceRef="Gateway_InformacionValida" targetRef="Task_CorregirInformacion" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_CorregirInformacion" targetRef="Task_ValidarInformacion" />
+  <bpmn:sequenceFlow id="Flow_17" name="Sí" sourceRef="Gateway_InformacionValida" targetRef="Gateway_RequiereRevision" />
+  <bpmn:sequenceFlow id="Flow_18" name="No" sourceRef="Gateway_RequiereRevision" targetRef="Task_GuardarCambios" />
+  <bpmn:sequenceFlow id="Flow_19" name="Sí" sourceRef="Gateway_RequiereRevision" targetRef="Task_CrearSolicitudRevision" />
+  <bpmn:sequenceFlow id="Flow_20" sourceRef="Task_CrearSolicitudRevision" targetRef="Task_NotificarPendiente" />
+  <bpmn:sequenceFlow id="Flow_21" sourceRef="Task_NotificarPendiente" targetRef="Task_RevisarCambios" />
+  <bpmn:sequenceFlow id="Flow_22" sourceRef="Task_RevisarCambios" targetRef="Gateway_DecisionRevision" />
+  <bpmn:sequenceFlow id="Flow_23" name="Observado" sourceRef="Gateway_DecisionRevision" targetRef="Task_NotificarObservaciones" />
+  <bpmn:sequenceFlow id="Flow_24" sourceRef="Task_NotificarObservaciones" targetRef="Task_AtenderObservaciones" />
+  <bpmn:sequenceFlow id="Flow_25" sourceRef="Task_AtenderObservaciones" targetRef="Task_ValidarInformacion" />
+  <bpmn:sequenceFlow id="Flow_26" name="Aprobado" sourceRef="Gateway_DecisionRevision" targetRef="Task_AplicarCambiosAprobados" />
+  <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_AplicarCambiosAprobados" targetRef="Task_NotificarResultado" />
+  <bpmn:sequenceFlow id="Flow_28" sourceRef="Task_GuardarCambios" targetRef="Task_NotificarResultado" />
+  <bpmn:sequenceFlow id="Flow_29" sourceRef="Task_NotificarResultado" targetRef="Task_RegistrarTrazabilidad" />
+  <bpmn:sequenceFlow id="Flow_30" sourceRef="Task_RegistrarTrazabilidad" targetRef="End_PerfilActualizado" />
+  <bpmn:sequenceFlow id="Flow_31" name="Rechazado" sourceRef="Gateway_DecisionRevision" targetRef="Task_MantenerPerfilAnterior" />
+  <bpmn:sequenceFlow id="Flow_32" sourceRef="Task_MantenerPerfilAnterior" targetRef="End_CambioRechazado" />
+
+  <bpmn:textAnnotation id="Annotation_Roles"><bpmn:text>Datos por rol: Adulto mayor: apoyos, restricciones y preferencias de contacto. Cuidador: vínculo y autorización. Voluntario: habilidades, zona, horarios y disponibilidad. Institución: datos y responsable. Cambios de identidad, vínculo, rol o documentos requieren revisión.</bpmn:text></bpmn:textAnnotation>
+  <bpmn:association id="Association_Roles" sourceRef="Task_EditarDatosRol" targetRef="Annotation_Roles" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_GestionPerfil"><bpmndi:BPMNPlane id="Plane_GestionPerfil" bpmnElement="Collaboration_GestionPerfil">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_GestionPerfil" isHorizontal="true"><dc:Bounds x="30" y="30" width="4010" height="830"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneUsuario_di" bpmnElement="Lane_Usuario" isHorizontal="true"><dc:Bounds x="60" y="30" width="3980" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlataforma_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="235" width="3980" height="215"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneRevision_di" bpmnElement="Lane_Revision" isHorizontal="true"><dc:Bounds x="60" y="450" width="3980" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneAuditoria_di" bpmnElement="Lane_Auditoria" isHorizontal="true"><dc:Bounds x="60" y="655" width="3980" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_GestionPerfil"><dc:Bounds x="105" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Consultar_di" bpmnElement="Task_ConsultarPerfil"><dc:Bounds x="180" y="92" width="150" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cargar_di" bpmnElement="Task_CargarPerfilPermisos"><dc:Bounds x="380" y="300" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Seleccionar_di" bpmnElement="Task_SeleccionarActualizacion"><dc:Bounds x="610" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwTipo_di" bpmnElement="Gateway_TipoActualizacion" isMarkerVisible="true"><dc:Bounds x="840" y="105" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Comunes_di" bpmnElement="Task_EditarDatosComunes"><dc:Bounds x="940" y="50" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Rol_di" bpmnElement="Task_EditarDatosRol"><dc:Bounds x="940" y="125" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Sensibles_di" bpmnElement="Task_EditarDatosSensibles"><dc:Bounds x="1160" y="92" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwReauth_di" bpmnElement="Gateway_Reautenticacion" isMarkerVisible="true"><dc:Bounds x="1380" y="105" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Confirmar_di" bpmnElement="Task_ConfirmarIdentidad"><dc:Bounds x="1480" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Validar_di" bpmnElement="Task_ValidarInformacion"><dc:Bounds x="1710" y="300" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwValida_di" bpmnElement="Gateway_InformacionValida" isMarkerVisible="true"><dc:Bounds x="1940" y="313" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Corregir_di" bpmnElement="Task_CorregirInformacion"><dc:Bounds x="1900" y="92" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwRevision_di" bpmnElement="Gateway_RequiereRevision" isMarkerVisible="true"><dc:Bounds x="2070" y="313" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Guardar_di" bpmnElement="Task_GuardarCambios"><dc:Bounds x="2200" y="260" width="160" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="CrearRev_di" bpmnElement="Task_CrearSolicitudRevision"><dc:Bounds x="2200" y="360" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifPendiente_di" bpmnElement="Task_NotificarPendiente"><dc:Bounds x="2440" y="715" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Revisar_di" bpmnElement="Task_RevisarCambios"><dc:Bounds x="2660" y="515" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwDecision_di" bpmnElement="Gateway_DecisionRevision" isMarkerVisible="true"><dc:Bounds x="2890" y="528" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifObs_di" bpmnElement="Task_NotificarObservaciones"><dc:Bounds x="2980" y="715" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Atender_di" bpmnElement="Task_AtenderObservaciones"><dc:Bounds x="2980" y="92" width="170" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Aplicar_di" bpmnElement="Task_AplicarCambiosAprobados"><dc:Bounds x="3000" y="260" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Mantener_di" bpmnElement="Task_MantenerPerfilAnterior"><dc:Bounds x="3000" y="605" width="190" height="45"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifResultado_di" bpmnElement="Task_NotificarResultado"><dc:Bounds x="3230" y="715" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Trazabilidad_di" bpmnElement="Task_RegistrarTrazabilidad"><dc:Bounds x="3460" y="715" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndActualizado_di" bpmnElement="End_PerfilActualizado"><dc:Bounds x="3700" y="732" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndRechazado_di" bpmnElement="End_CambioRechazado"><dc:Bounds x="3240" y="610" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Annotation_di" bpmnElement="Annotation_Roles"><dc:Bounds x="940" y="190" width="610" height="38"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="130"/><di:waypoint x="180" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="330" y="130"/><di:waypoint x="355" y="130"/><di:waypoint x="355" y="338"/><di:waypoint x="380" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="560" y="338"/><di:waypoint x="585" y="338"/><di:waypoint x="585" y="130"/><di:waypoint x="610" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="790" y="130"/><di:waypoint x="840" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="865" y="105"/><di:waypoint x="865" y="85"/><di:waypoint x="940" y="85"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="890" y="130"/><di:waypoint x="915" y="130"/><di:waypoint x="915" y="160"/><di:waypoint x="940" y="160"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="865" y="155"/><di:waypoint x="865" y="215"/><di:waypoint x="1135" y="215"/><di:waypoint x="1135" y="130"/><di:waypoint x="1160" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="1110" y="85"/><di:waypoint x="1350" y="85"/><di:waypoint x="1350" y="130"/><di:waypoint x="1380" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="1110" y="160"/><di:waypoint x="1350" y="160"/><di:waypoint x="1350" y="130"/><di:waypoint x="1380" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1330" y="130"/><di:waypoint x="1380" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1430" y="130"/><di:waypoint x="1480" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="1405" y="155"/><di:waypoint x="1405" y="338"/><di:waypoint x="1710" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="1660" y="130"/><di:waypoint x="1685" y="130"/><di:waypoint x="1685" y="338"/><di:waypoint x="1710" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="1890" y="338"/><di:waypoint x="1940" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="1965" y="313"/><di:waypoint x="1965" y="168"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="1900" y="130"/><di:waypoint x="1800" y="130"/><di:waypoint x="1800" y="300"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="1990" y="338"/><di:waypoint x="2070" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F18_di" bpmnElement="Flow_18"><di:waypoint x="2095" y="313"/><di:waypoint x="2095" y="295"/><di:waypoint x="2200" y="295"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F19_di" bpmnElement="Flow_19"><di:waypoint x="2120" y="338"/><di:waypoint x="2170" y="338"/><di:waypoint x="2170" y="395"/><di:waypoint x="2200" y="395"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F20_di" bpmnElement="Flow_20"><di:waypoint x="2390" y="395"/><di:waypoint x="2415" y="395"/><di:waypoint x="2415" y="750"/><di:waypoint x="2440" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F21_di" bpmnElement="Flow_21"><di:waypoint x="2610" y="750"/><di:waypoint x="2635" y="750"/><di:waypoint x="2635" y="553"/><di:waypoint x="2660" y="553"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F22_di" bpmnElement="Flow_22"><di:waypoint x="2840" y="553"/><di:waypoint x="2890" y="553"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F23_di" bpmnElement="Flow_23"><di:waypoint x="2915" y="578"/><di:waypoint x="2915" y="750"/><di:waypoint x="2980" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F24_di" bpmnElement="Flow_24"><di:waypoint x="3065" y="715"/><di:waypoint x="3065" y="168"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F25_di" bpmnElement="Flow_25"><di:waypoint x="2980" y="130"/><di:waypoint x="2900" y="130"/><di:waypoint x="2900" y="470"/><di:waypoint x="1800" y="470"/><di:waypoint x="1800" y="376"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F26_di" bpmnElement="Flow_26"><di:waypoint x="2940" y="553"/><di:waypoint x="2970" y="553"/><di:waypoint x="2970" y="295"/><di:waypoint x="3000" y="295"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F27_di" bpmnElement="Flow_27"><di:waypoint x="3180" y="295"/><di:waypoint x="3205" y="295"/><di:waypoint x="3205" y="750"/><di:waypoint x="3230" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F28_di" bpmnElement="Flow_28"><di:waypoint x="2360" y="295"/><di:waypoint x="3205" y="295"/><di:waypoint x="3205" y="750"/><di:waypoint x="3230" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F29_di" bpmnElement="Flow_29"><di:waypoint x="3410" y="750"/><di:waypoint x="3460" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F30_di" bpmnElement="Flow_30"><di:waypoint x="3650" y="750"/><di:waypoint x="3700" y="750"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F31_di" bpmnElement="Flow_31"><di:waypoint x="2915" y="578"/><di:waypoint x="2915" y="628"/><di:waypoint x="3000" y="628"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F32_di" bpmnElement="Flow_32"><di:waypoint x="3190" y="628"/><di:waypoint x="3240" y="628"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="Assoc_di" bpmnElement="Association_Roles"><di:waypoint x="1025" y="195"/><di:waypoint x="1025" y="190"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

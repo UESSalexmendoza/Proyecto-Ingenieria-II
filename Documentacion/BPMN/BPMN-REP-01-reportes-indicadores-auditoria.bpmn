@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_ReportesIndicadoresAuditoria" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_ReportesIndicadoresAuditoria"><bpmn:participant id="Participant_ReportesIndicadoresAuditoria" name="Barrio Solidario - Reportes, indicadores y auditoría" processRef="Process_ReportesIndicadoresAuditoria" /></bpmn:collaboration>
+ <bpmn:process id="Process_ReportesIndicadoresAuditoria" name="Consulta de reportes, indicadores y auditoría" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_ReportesIndicadoresAuditoria">
+   <bpmn:lane id="Lane_Usuario" name="Administrador / Coordinación"><bpmn:flowNodeRef>Start_Consulta</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AbrirModulo</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_TipoConsulta</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_SeleccionarReporte</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_SeleccionarIndicadores</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_SeleccionarAuditoria</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_DefinirFiltros</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConsultarResultados</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_Exportar</bpmn:flowNodeRef><bpmn:flowNodeRef>End_ConsultaFinalizada</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario"><bpmn:flowNodeRef>Task_ProcesarConsulta</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_MostrarResultados</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_GenerarArchivo</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Registro" name="Registro y seguimiento"><bpmn:flowNodeRef>Task_RegistrarConsulta</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EntregarArchivo</bpmn:flowNodeRef></bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_Consulta" name="Se requiere consultar información" />
+  <bpmn:userTask id="Task_AbrirModulo" name="Abrir módulo de reportes" />
+  <bpmn:exclusiveGateway id="Gateway_TipoConsulta" name="¿Qué se desea consultar?" />
+  <bpmn:userTask id="Task_SeleccionarReporte" name="Seleccionar reporte" />
+  <bpmn:userTask id="Task_SeleccionarIndicadores" name="Seleccionar indicadores" />
+  <bpmn:userTask id="Task_SeleccionarAuditoria" name="Seleccionar registro de auditoría" />
+  <bpmn:userTask id="Task_DefinirFiltros" name="Definir período y filtros" />
+  <bpmn:serviceTask id="Task_ProcesarConsulta" name="Procesar información solicitada" />
+  <bpmn:serviceTask id="Task_MostrarResultados" name="Mostrar resultados" />
+  <bpmn:userTask id="Task_ConsultarResultados" name="Consultar resultados y detalle" />
+  <bpmn:serviceTask id="Task_RegistrarConsulta" name="Registrar consulta realizada" />
+  <bpmn:exclusiveGateway id="Gateway_Exportar" name="¿Desea exportar?" />
+  <bpmn:serviceTask id="Task_GenerarArchivo" name="Generar archivo de resultados" />
+  <bpmn:sendTask id="Task_EntregarArchivo" name="Entregar archivo al usuario" />
+  <bpmn:endEvent id="End_ConsultaFinalizada" name="Consulta finalizada" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_Consulta" targetRef="Task_AbrirModulo" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_AbrirModulo" targetRef="Gateway_TipoConsulta" />
+  <bpmn:sequenceFlow id="Flow_03" name="Reporte" sourceRef="Gateway_TipoConsulta" targetRef="Task_SeleccionarReporte" />
+  <bpmn:sequenceFlow id="Flow_04" name="Indicadores" sourceRef="Gateway_TipoConsulta" targetRef="Task_SeleccionarIndicadores" />
+  <bpmn:sequenceFlow id="Flow_05" name="Auditoría" sourceRef="Gateway_TipoConsulta" targetRef="Task_SeleccionarAuditoria" />
+  <bpmn:sequenceFlow id="Flow_06" sourceRef="Task_SeleccionarReporte" targetRef="Task_DefinirFiltros" />
+  <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_SeleccionarIndicadores" targetRef="Task_DefinirFiltros" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_SeleccionarAuditoria" targetRef="Task_DefinirFiltros" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_DefinirFiltros" targetRef="Task_ProcesarConsulta" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_ProcesarConsulta" targetRef="Task_MostrarResultados" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_MostrarResultados" targetRef="Task_ConsultarResultados" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_ConsultarResultados" targetRef="Task_RegistrarConsulta" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_RegistrarConsulta" targetRef="Gateway_Exportar" />
+  <bpmn:sequenceFlow id="Flow_14" name="Sí" sourceRef="Gateway_Exportar" targetRef="Task_GenerarArchivo" />
+  <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_GenerarArchivo" targetRef="Task_EntregarArchivo" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_EntregarArchivo" targetRef="End_ConsultaFinalizada" />
+  <bpmn:sequenceFlow id="Flow_17" name="No" sourceRef="Gateway_Exportar" targetRef="End_ConsultaFinalizada" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_ReportesIndicadoresAuditoria"><bpmndi:BPMNPlane id="Plane_ReportesIndicadoresAuditoria" bpmnElement="Collaboration_ReportesIndicadoresAuditoria">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_ReportesIndicadoresAuditoria" isHorizontal="true"><dc:Bounds x="30" y="30" width="3260" height="700"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneUser_di" bpmnElement="Lane_Usuario" isHorizontal="true"><dc:Bounds x="60" y="30" width="3230" height="240"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="270" width="3230" height="210"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneReg_di" bpmnElement="Lane_Registro" isHorizontal="true"><dc:Bounds x="60" y="480" width="3230" height="250"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_Consulta"><dc:Bounds x="105" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Abrir_di" bpmnElement="Task_AbrirModulo"><dc:Bounds x="180" y="90" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwTipo_di" bpmnElement="Gateway_TipoConsulta" isMarkerVisible="true"><dc:Bounds x="410" y="100" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Reporte_di" bpmnElement="Task_SeleccionarReporte"><dc:Bounds x="510" y="45" width="175" height="55"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Indicadores_di" bpmnElement="Task_SeleccionarIndicadores"><dc:Bounds x="510" y="110" width="175" height="55"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Auditoria_di" bpmnElement="Task_SeleccionarAuditoria"><dc:Bounds x="510" y="175" width="185" height="55"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Filtros_di" bpmnElement="Task_DefinirFiltros"><dc:Bounds x="745" y="90" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Procesar_di" bpmnElement="Task_ProcesarConsulta"><dc:Bounds x="975" y="320" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Mostrar_di" bpmnElement="Task_MostrarResultados"><dc:Bounds x="1210" y="320" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Consultar_di" bpmnElement="Task_ConsultarResultados"><dc:Bounds x="1440" y="90" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RegConsulta_di" bpmnElement="Task_RegistrarConsulta"><dc:Bounds x="1675" y="535" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwExportar_di" bpmnElement="Gateway_Exportar" isMarkerVisible="true"><dc:Bounds x="1910" y="545" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Generar_di" bpmnElement="Task_GenerarArchivo"><dc:Bounds x="2010" y="320" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Entregar_di" bpmnElement="Task_EntregarArchivo"><dc:Bounds x="2245" y="535" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="End_di" bpmnElement="End_ConsultaFinalizada"><dc:Bounds x="2480" y="552" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="130"/><di:waypoint x="180" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="360" y="125"/><di:waypoint x="410" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="435" y="100"/><di:waypoint x="435" y="72"/><di:waypoint x="510" y="72"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="460" y="125"/><di:waypoint x="485" y="125"/><di:waypoint x="485" y="137"/><di:waypoint x="510" y="137"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="435" y="150"/><di:waypoint x="435" y="202"/><di:waypoint x="510" y="202"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="685" y="72"/><di:waypoint x="720" y="72"/><di:waypoint x="720" y="125"/><di:waypoint x="745" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="685" y="137"/><di:waypoint x="720" y="137"/><di:waypoint x="720" y="125"/><di:waypoint x="745" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="695" y="202"/><di:waypoint x="720" y="202"/><di:waypoint x="720" y="125"/><di:waypoint x="745" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="925" y="125"/><di:waypoint x="950" y="125"/><di:waypoint x="950" y="355"/><di:waypoint x="975" y="355"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1160" y="355"/><di:waypoint x="1210" y="355"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1390" y="355"/><di:waypoint x="1415" y="355"/><di:waypoint x="1415" y="125"/><di:waypoint x="1440" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="1625" y="125"/><di:waypoint x="1650" y="125"/><di:waypoint x="1650" y="570"/><di:waypoint x="1675" y="570"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="1860" y="570"/><di:waypoint x="1910" y="570"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="1935" y="545"/><di:waypoint x="1935" y="355"/><di:waypoint x="2010" y="355"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="2195" y="355"/><di:waypoint x="2220" y="355"/><di:waypoint x="2220" y="570"/><di:waypoint x="2245" y="570"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="2430" y="570"/><di:waypoint x="2480" y="570"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="1960" y="570"/><di:waypoint x="2480" y="570"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

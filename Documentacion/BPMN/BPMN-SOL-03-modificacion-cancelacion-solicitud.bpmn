@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+ xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+ xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+ xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+ id="Definitions_ModificacionCancelacion" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_ModificacionCancelacion">
+  <bpmn:participant id="Participant_ModificacionCancelacion" name="Barrio Solidario - Modificación o cancelación de solicitud" processRef="Process_ModificacionCancelacion" />
+ </bpmn:collaboration>
+ <bpmn:process id="Process_ModificacionCancelacion" name="Modificación o cancelación de una solicitud de asistencia" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_ModificacionCancelacion">
+   <bpmn:lane id="Lane_Solicitante" name="Adulto mayor / Cuidador autorizado">
+    <bpmn:flowNodeRef>Start_GestionarSolicitud</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_SeleccionarSolicitud</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_Accion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EditarDatos</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_IndicarMotivo</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConfirmarCancelacion</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario">
+    <bpmn:flowNodeRef>Task_ValidarTitularEstado</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_Permitida</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_MostrarRestriccion</bpmn:flowNodeRef><bpmn:flowNodeRef>End_NoPermitida</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_ValidarCambios</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_CambioMaterial</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_ActualizarVersion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RetirarPublicacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_EnviarRevision</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ActualizarCambioMenor</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>End_Modificada</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CancelarLiberar</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>End_Cancelada</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Coordinacion" name="Coordinación / Moderación">
+    <bpmn:flowNodeRef>Gateway_AtencionActiva</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EvaluarCancelacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_AutorizaCancelacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarNoAutorizada</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Notificaciones" name="Notificaciones y auditoría">
+    <bpmn:flowNodeRef>Task_NotificarModificacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarCancelacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_NotificarNoAutorizada</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarTrazabilidad</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_RegistrarCancelacion</bpmn:flowNodeRef>
+   </bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_GestionarSolicitud" name="Usuario solicita modificar o cancelar" />
+  <bpmn:userTask id="Task_SeleccionarSolicitud" name="Seleccionar solicitud y consultar estado" />
+  <bpmn:serviceTask id="Task_ValidarTitularEstado" name="Validar titularidad, permisos y estado" />
+  <bpmn:exclusiveGateway id="Gateway_Permitida" name="¿Gestión permitida?" />
+  <bpmn:userTask id="Task_MostrarRestriccion" name="Informar restricción y alternativas de soporte" />
+  <bpmn:endEvent id="End_NoPermitida" name="Gestión no permitida" />
+  <bpmn:exclusiveGateway id="Gateway_Accion" name="¿Acción solicitada?" />
+
+  <bpmn:userTask id="Task_EditarDatos" name="Editar información permitida y justificar cambio" />
+  <bpmn:serviceTask id="Task_ValidarCambios" name="Validar campos, seguridad y datos sensibles" />
+  <bpmn:exclusiveGateway id="Gateway_CambioMaterial" name="¿Cambio material o solicitud publicada?" />
+  <bpmn:serviceTask id="Task_ActualizarVersion" name="Crear nueva versión de la solicitud" />
+  <bpmn:serviceTask id="Task_RetirarPublicacion" name="Retirar temporalmente la publicación" />
+  <bpmn:serviceTask id="Task_EnviarRevision" name="Cambiar estado a Pendiente de revisión" />
+  <bpmn:serviceTask id="Task_ActualizarCambioMenor" name="Guardar cambio menor sin alterar asignación" />
+  <bpmn:sendTask id="Task_NotificarModificacion" name="Notificar modificación y estado resultante" />
+  <bpmn:endEvent id="End_Modificada" name="Solicitud modificada" />
+
+  <bpmn:userTask id="Task_IndicarMotivo" name="Indicar motivo de cancelación" />
+  <bpmn:userTask id="Task_ConfirmarCancelacion" name="Confirmar cancelación" />
+  <bpmn:exclusiveGateway id="Gateway_AtencionActiva" name="¿Existe asignación o atención activa?" />
+  <bpmn:userTask id="Task_EvaluarCancelacion" name="Evaluar impacto, seguridad y compromisos vigentes" />
+  <bpmn:exclusiveGateway id="Gateway_AutorizaCancelacion" name="¿Cancelación autorizada?" />
+  <bpmn:userTask id="Task_RegistrarNoAutorizada" name="Registrar motivo y alternativa de coordinación" />
+  <bpmn:sendTask id="Task_NotificarNoAutorizada" name="Notificar que la cancelación requiere coordinación" />
+  <bpmn:serviceTask id="Task_CancelarLiberar" name="Cancelar, retirar publicación y liberar asignación" />
+  <bpmn:sendTask id="Task_NotificarCancelacion" name="Notificar al solicitante, voluntario y coordinación" />
+  <bpmn:serviceTask id="Task_RegistrarTrazabilidad" name="Registrar acción, motivo, versión, fecha y responsable" />
+  <bpmn:serviceTask id="Task_RegistrarCancelacion" name="Registrar cancelación, estado anterior, motivo y responsable" />
+  <bpmn:endEvent id="End_Cancelada" name="Solicitud cancelada" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_GestionarSolicitud" targetRef="Task_SeleccionarSolicitud" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_SeleccionarSolicitud" targetRef="Task_ValidarTitularEstado" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_ValidarTitularEstado" targetRef="Gateway_Permitida" />
+  <bpmn:sequenceFlow id="Flow_04" name="No" sourceRef="Gateway_Permitida" targetRef="Task_MostrarRestriccion" />
+  <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_MostrarRestriccion" targetRef="End_NoPermitida" />
+  <bpmn:sequenceFlow id="Flow_06" name="Sí" sourceRef="Gateway_Permitida" targetRef="Gateway_Accion" />
+  <bpmn:sequenceFlow id="Flow_07" name="Modificar" sourceRef="Gateway_Accion" targetRef="Task_EditarDatos" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_EditarDatos" targetRef="Task_ValidarCambios" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_ValidarCambios" targetRef="Gateway_CambioMaterial" />
+  <bpmn:sequenceFlow id="Flow_10" name="Sí" sourceRef="Gateway_CambioMaterial" targetRef="Task_ActualizarVersion" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_ActualizarVersion" targetRef="Task_RetirarPublicacion" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_RetirarPublicacion" targetRef="Task_EnviarRevision" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_EnviarRevision" targetRef="Task_NotificarModificacion" />
+  <bpmn:sequenceFlow id="Flow_14" name="No" sourceRef="Gateway_CambioMaterial" targetRef="Task_ActualizarCambioMenor" />
+  <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_ActualizarCambioMenor" targetRef="Task_NotificarModificacion" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_NotificarModificacion" targetRef="Task_RegistrarTrazabilidad" />
+  <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_RegistrarTrazabilidad" targetRef="End_Modificada" />
+  <bpmn:sequenceFlow id="Flow_18" name="Cancelar" sourceRef="Gateway_Accion" targetRef="Task_IndicarMotivo" />
+  <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_IndicarMotivo" targetRef="Task_ConfirmarCancelacion" />
+  <bpmn:sequenceFlow id="Flow_20" sourceRef="Task_ConfirmarCancelacion" targetRef="Gateway_AtencionActiva" />
+  <bpmn:sequenceFlow id="Flow_21" name="No" sourceRef="Gateway_AtencionActiva" targetRef="Task_CancelarLiberar" />
+  <bpmn:sequenceFlow id="Flow_22" name="Sí" sourceRef="Gateway_AtencionActiva" targetRef="Task_EvaluarCancelacion" />
+  <bpmn:sequenceFlow id="Flow_23" sourceRef="Task_EvaluarCancelacion" targetRef="Gateway_AutorizaCancelacion" />
+  <bpmn:sequenceFlow id="Flow_24" name="Sí" sourceRef="Gateway_AutorizaCancelacion" targetRef="Task_CancelarLiberar" />
+  <bpmn:sequenceFlow id="Flow_25" name="No" sourceRef="Gateway_AutorizaCancelacion" targetRef="Task_RegistrarNoAutorizada" />
+  <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_RegistrarNoAutorizada" targetRef="Task_NotificarNoAutorizada" />
+  <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_NotificarNoAutorizada" targetRef="End_NoPermitida" />
+  <bpmn:sequenceFlow id="Flow_28" sourceRef="Task_CancelarLiberar" targetRef="Task_NotificarCancelacion" />
+  <bpmn:sequenceFlow id="Flow_29" sourceRef="Task_NotificarCancelacion" targetRef="Task_RegistrarCancelacion" />
+  <bpmn:sequenceFlow id="Flow_30" sourceRef="Task_RegistrarCancelacion" targetRef="End_Cancelada" />
+
+  <bpmn:textAnnotation id="Annotation_Reglas"><bpmn:text>No se permite modificar ni cancelar una solicitud Atendida, Cerrada, Rechazada o Cancelada. Los cambios de necesidad, prioridad, ubicación, horario o beneficiario generan una nueva versión y revisión. Durante una atención activa, la cancelación requiere coordinación para proteger a las partes y registrar el resultado.</bpmn:text></bpmn:textAnnotation>
+  <bpmn:association id="Association_Reglas" sourceRef="Task_ValidarTitularEstado" targetRef="Annotation_Reglas" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_ModificacionCancelacion"><bpmndi:BPMNPlane id="Plane_ModificacionCancelacion" bpmnElement="Collaboration_ModificacionCancelacion">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_ModificacionCancelacion" isHorizontal="true"><dc:Bounds x="30" y="30" width="4090" height="850"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneSol_di" bpmnElement="Lane_Solicitante" isHorizontal="true"><dc:Bounds x="60" y="30" width="4060" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="235" width="4060" height="225"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneCoord_di" bpmnElement="Lane_Coordinacion" isHorizontal="true"><dc:Bounds x="60" y="460" width="4060" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneNotif_di" bpmnElement="Lane_Notificaciones" isHorizontal="true"><dc:Bounds x="60" y="665" width="4060" height="215"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_GestionarSolicitud"><dc:Bounds x="105" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Seleccionar_di" bpmnElement="Task_SeleccionarSolicitud"><dc:Bounds x="180" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Validar_di" bpmnElement="Task_ValidarTitularEstado"><dc:Bounds x="410" y="300" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwPermitida_di" bpmnElement="Gateway_Permitida" isMarkerVisible="true"><dc:Bounds x="650" y="313" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Restriccion_di" bpmnElement="Task_MostrarRestriccion"><dc:Bounds x="750" y="370" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndNo_di" bpmnElement="End_NoPermitida"><dc:Bounds x="990" y="387" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwAccion_di" bpmnElement="Gateway_Accion" isMarkerVisible="true"><dc:Bounds x="750" y="105" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Editar_di" bpmnElement="Task_EditarDatos"><dc:Bounds x="850" y="70" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="ValCambios_di" bpmnElement="Task_ValidarCambios"><dc:Bounds x="1090" y="270" width="185" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwMaterial_di" bpmnElement="Gateway_CambioMaterial" isMarkerVisible="true"><dc:Bounds x="1325" y="283" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Version_di" bpmnElement="Task_ActualizarVersion"><dc:Bounds x="1425" y="250" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Retirar_di" bpmnElement="Task_RetirarPublicacion"><dc:Bounds x="1645" y="250" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Revision_di" bpmnElement="Task_EnviarRevision"><dc:Bounds x="1875" y="250" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Menor_di" bpmnElement="Task_ActualizarCambioMenor"><dc:Bounds x="1425" y="355" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifMod_di" bpmnElement="Task_NotificarModificacion"><dc:Bounds x="2110" y="705" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Traz_di" bpmnElement="Task_RegistrarTrazabilidad"><dc:Bounds x="2350" y="705" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndMod_di" bpmnElement="End_Modificada"><dc:Bounds x="2590" y="722" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Motivo_di" bpmnElement="Task_IndicarMotivo"><dc:Bounds x="850" y="150" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Confirmar_di" bpmnElement="Task_ConfirmarCancelacion"><dc:Bounds x="1080" y="150" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwActiva_di" bpmnElement="Gateway_AtencionActiva" isMarkerVisible="true"><dc:Bounds x="1310" y="500" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EvaluarCan_di" bpmnElement="Task_EvaluarCancelacion"><dc:Bounds x="1410" y="495" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwAutoriza_di" bpmnElement="Gateway_AutorizaCancelacion" isMarkerVisible="true"><dc:Bounds x="1650" y="505" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NoAutor_di" bpmnElement="Task_RegistrarNoAutorizada"><dc:Bounds x="1750" y="575" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifNo_di" bpmnElement="Task_NotificarNoAutorizada"><dc:Bounds x="1990" y="790" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cancelar_di" bpmnElement="Task_CancelarLiberar"><dc:Bounds x="1760" y="330" width="200" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifCan_di" bpmnElement="Task_NotificarCancelacion"><dc:Bounds x="2010" y="790" width="200" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RegCan_di" bpmnElement="Task_RegistrarCancelacion"><dc:Bounds x="2260" y="790" width="200" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndCan_di" bpmnElement="End_Cancelada"><dc:Bounds x="2510" y="807" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Annotation_di" bpmnElement="Annotation_Reglas"><dc:Bounds x="415" y="385" width="790" height="55"/></bpmndi:BPMNShape>
+
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="130"/><di:waypoint x="180" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="360" y="130"/><di:waypoint x="385" y="130"/><di:waypoint x="385" y="338"/><di:waypoint x="410" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="600" y="338"/><di:waypoint x="650" y="338"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="675" y="363"/><di:waypoint x="675" y="405"/><di:waypoint x="750" y="405"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="940" y="405"/><di:waypoint x="990" y="405"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="675" y="313"/><di:waypoint x="675" y="130"/><di:waypoint x="750" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="800" y="130"/><di:waypoint x="825" y="130"/><di:waypoint x="825" y="108"/><di:waypoint x="850" y="108"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="1040" y="108"/><di:waypoint x="1065" y="108"/><di:waypoint x="1065" y="308"/><di:waypoint x="1090" y="308"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="1275" y="308"/><di:waypoint x="1325" y="308"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1375" y="308"/><di:waypoint x="1425" y="285"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1595" y="285"/><di:waypoint x="1645" y="285"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="1825" y="285"/><di:waypoint x="1875" y="285"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="2055" y="285"/><di:waypoint x="2080" y="285"/><di:waypoint x="2080" y="740"/><di:waypoint x="2110" y="740"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="1350" y="333"/><di:waypoint x="1350" y="390"/><di:waypoint x="1425" y="390"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="1615" y="390"/><di:waypoint x="2080" y="390"/><di:waypoint x="2080" y="740"/><di:waypoint x="2110" y="740"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="2300" y="740"/><di:waypoint x="2350" y="740"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="2540" y="740"/><di:waypoint x="2590" y="740"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F18_di" bpmnElement="Flow_18"><di:waypoint x="775" y="155"/><di:waypoint x="775" y="185"/><di:waypoint x="850" y="185"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F19_di" bpmnElement="Flow_19"><di:waypoint x="1030" y="185"/><di:waypoint x="1080" y="185"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F20_di" bpmnElement="Flow_20"><di:waypoint x="1260" y="185"/><di:waypoint x="1285" y="185"/><di:waypoint x="1285" y="525"/><di:waypoint x="1310" y="525"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F21_di" bpmnElement="Flow_21"><di:waypoint x="1335" y="500"/><di:waypoint x="1335" y="365"/><di:waypoint x="1760" y="365"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F22_di" bpmnElement="Flow_22"><di:waypoint x="1360" y="525"/><di:waypoint x="1410" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F23_di" bpmnElement="Flow_23"><di:waypoint x="1600" y="530"/><di:waypoint x="1650" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F24_di" bpmnElement="Flow_24"><di:waypoint x="1675" y="505"/><di:waypoint x="1675" y="365"/><di:waypoint x="1760" y="365"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F25_di" bpmnElement="Flow_25"><di:waypoint x="1675" y="555"/><di:waypoint x="1675" y="610"/><di:waypoint x="1750" y="610"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F26_di" bpmnElement="Flow_26"><di:waypoint x="1940" y="610"/><di:waypoint x="1965" y="610"/><di:waypoint x="1965" y="825"/><di:waypoint x="1990" y="825"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F27_di" bpmnElement="Flow_27"><di:waypoint x="2180" y="825"/><di:waypoint x="2210" y="825"/><di:waypoint x="2210" y="440"/><di:waypoint x="1008" y="440"/><di:waypoint x="1008" y="423"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F28_di" bpmnElement="Flow_28"><di:waypoint x="1960" y="365"/><di:waypoint x="1985" y="365"/><di:waypoint x="1985" y="825"/><di:waypoint x="2010" y="825"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F29_di" bpmnElement="Flow_29"><di:waypoint x="2210" y="825"/><di:waypoint x="2260" y="825"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F30_di" bpmnElement="Flow_30"><di:waypoint x="2460" y="825"/><di:waypoint x="2510" y="825"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="Assoc_di" bpmnElement="Association_Reglas"><di:waypoint x="505" y="376"/><di:waypoint x="505" y="385"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

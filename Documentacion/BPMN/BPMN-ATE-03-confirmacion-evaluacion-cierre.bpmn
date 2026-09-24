@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_ConfirmacionEvaluacionCierre" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_ConfirmacionEvaluacionCierre"><bpmn:participant id="Participant_ConfirmacionEvaluacionCierre" name="Barrio Solidario - Confirmación, evaluación y cierre" processRef="Process_ConfirmacionEvaluacionCierre" /></bpmn:collaboration>
+ <bpmn:process id="Process_ConfirmacionEvaluacionCierre" name="Confirmación, evaluación y cierre de la atención" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_ConfirmacionEvaluacionCierre">
+   <bpmn:lane id="Lane_Voluntario" name="Voluntario"><bpmn:flowNodeRef>Start_CierreSolicitado</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CompletarInforme</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CorregirInforme</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario"><bpmn:flowNodeRef>Task_ValidarInforme</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_InformeCompleto</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarPendienteConfirmacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_RespuestaPlazo</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_GuardarEvaluacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ReabrirAtencion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CerrarSolicitud</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RevocarAccesos</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ActualizarMetricas</bpmn:flowNodeRef><bpmn:flowNodeRef>End_Cerrada</bpmn:flowNodeRef><bpmn:flowNodeRef>End_Reabierta</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Solicitante" name="Adulto mayor / Cuidador autorizado"><bpmn:flowNodeRef>Task_RevisarCierre</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_ConfirmaAtencion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarDesacuerdo</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EvaluarAtencion</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Coordinacion" name="Coordinación / Moderación"><bpmn:flowNodeRef>Task_GestionarSinRespuesta</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RevisarDesacuerdo</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_RequiereContinuidad</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RevisarExpediente</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_DecisionCierre</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_DefinirObservaciones</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AprobarCierre</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Notificaciones" name="Notificaciones y auditoría"><bpmn:flowNodeRef>Task_SolicitarCorreccion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarSolicitante</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_EnviarRecordatorio</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarReapertura</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarObservaciones</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarCierre</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarTrazabilidad</bpmn:flowNodeRef></bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_CierreSolicitado" name="Voluntario solicita cierre" />
+  <bpmn:userTask id="Task_CompletarInforme" name="Completar resultado, actividades y observaciones finales" />
+  <bpmn:serviceTask id="Task_ValidarInforme" name="Validar campos mínimos y evidencias permitidas" />
+  <bpmn:exclusiveGateway id="Gateway_InformeCompleto" name="¿Informe completo?" />
+  <bpmn:sendTask id="Task_SolicitarCorreccion" name="Solicitar corrección del informe" />
+  <bpmn:userTask id="Task_CorregirInforme" name="Corregir y reenviar informe" />
+  <bpmn:serviceTask id="Task_RegistrarPendienteConfirmacion" name="Cambiar estado a Pendiente de confirmación" />
+  <bpmn:sendTask id="Task_NotificarSolicitante" name="Solicitar confirmación al adulto mayor o cuidador" />
+  <bpmn:exclusiveGateway id="Gateway_RespuestaPlazo" name="¿Responde dentro del plazo?" />
+  <bpmn:sendTask id="Task_EnviarRecordatorio" name="Enviar recordatorio y escalar seguimiento" />
+  <bpmn:userTask id="Task_GestionarSinRespuesta" name="Contactar al cuidador o validar por canal alternativo" />
+  <bpmn:userTask id="Task_RevisarCierre" name="Revisar resumen de la atención recibida" />
+  <bpmn:exclusiveGateway id="Gateway_ConfirmaAtencion" name="¿Confirma la atención?" />
+  <bpmn:userTask id="Task_RegistrarDesacuerdo" name="Registrar desacuerdo, actividad pendiente o incidencia" />
+  <bpmn:userTask id="Task_RevisarDesacuerdo" name="Revisar versiones, avances e incidencia reportada" />
+  <bpmn:exclusiveGateway id="Gateway_RequiereContinuidad" name="¿Requiere continuar la atención?" />
+  <bpmn:serviceTask id="Task_ReabrirAtencion" name="Reabrir atención y cambiar estado a En seguimiento" />
+  <bpmn:sendTask id="Task_NotificarReapertura" name="Notificar reapertura y acción requerida" />
+  <bpmn:endEvent id="End_Reabierta" name="Atención reabierta" />
+  <bpmn:userTask id="Task_EvaluarAtencion" name="Calificar atención y registrar comentario opcional" />
+  <bpmn:serviceTask id="Task_GuardarEvaluacion" name="Guardar evaluación separada de datos sensibles" />
+  <bpmn:userTask id="Task_RevisarExpediente" name="Revisar informe, confirmación, evaluación e incidencias" />
+  <bpmn:exclusiveGateway id="Gateway_DecisionCierre" name="¿Decisión de cierre?" />
+  <bpmn:userTask id="Task_DefinirObservaciones" name="Definir correcciones o soportes requeridos" />
+  <bpmn:sendTask id="Task_NotificarObservaciones" name="Notificar observaciones al voluntario" />
+  <bpmn:userTask id="Task_AprobarCierre" name="Aprobar cierre de la atención" />
+  <bpmn:serviceTask id="Task_CerrarSolicitud" name="Cambiar solicitud a Atendida / Cerrada" />
+  <bpmn:serviceTask id="Task_RevocarAccesos" name="Revocar acceso a ubicación y contacto compartidos" />
+  <bpmn:serviceTask id="Task_ActualizarMetricas" name="Actualizar métricas y antecedentes del voluntario" />
+  <bpmn:sendTask id="Task_NotificarCierre" name="Notificar cierre definitivo a las partes" />
+  <bpmn:serviceTask id="Task_RegistrarTrazabilidad" name="Registrar decisión, evaluación, estados, fecha y responsable" />
+  <bpmn:endEvent id="End_Cerrada" name="Solicitud cerrada" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_CierreSolicitado" targetRef="Task_CompletarInforme" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_CompletarInforme" targetRef="Task_ValidarInforme" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_ValidarInforme" targetRef="Gateway_InformeCompleto" />
+  <bpmn:sequenceFlow id="Flow_04" name="No" sourceRef="Gateway_InformeCompleto" targetRef="Task_SolicitarCorreccion" />
+  <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_SolicitarCorreccion" targetRef="Task_CorregirInforme" />
+  <bpmn:sequenceFlow id="Flow_06" sourceRef="Task_CorregirInforme" targetRef="Task_ValidarInforme" />
+  <bpmn:sequenceFlow id="Flow_07" name="Sí" sourceRef="Gateway_InformeCompleto" targetRef="Task_RegistrarPendienteConfirmacion" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_RegistrarPendienteConfirmacion" targetRef="Task_NotificarSolicitante" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_NotificarSolicitante" targetRef="Gateway_RespuestaPlazo" />
+  <bpmn:sequenceFlow id="Flow_10" name="No" sourceRef="Gateway_RespuestaPlazo" targetRef="Task_EnviarRecordatorio" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_EnviarRecordatorio" targetRef="Task_GestionarSinRespuesta" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_GestionarSinRespuesta" targetRef="Task_RevisarCierre" />
+  <bpmn:sequenceFlow id="Flow_13" name="Sí" sourceRef="Gateway_RespuestaPlazo" targetRef="Task_RevisarCierre" />
+  <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_RevisarCierre" targetRef="Gateway_ConfirmaAtencion" />
+  <bpmn:sequenceFlow id="Flow_15" name="No" sourceRef="Gateway_ConfirmaAtencion" targetRef="Task_RegistrarDesacuerdo" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_RegistrarDesacuerdo" targetRef="Task_RevisarDesacuerdo" />
+  <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_RevisarDesacuerdo" targetRef="Gateway_RequiereContinuidad" />
+  <bpmn:sequenceFlow id="Flow_18" name="Sí" sourceRef="Gateway_RequiereContinuidad" targetRef="Task_ReabrirAtencion" />
+  <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_ReabrirAtencion" targetRef="Task_NotificarReapertura" />
+  <bpmn:sequenceFlow id="Flow_20" sourceRef="Task_NotificarReapertura" targetRef="End_Reabierta" />
+  <bpmn:sequenceFlow id="Flow_21" name="No" sourceRef="Gateway_RequiereContinuidad" targetRef="Task_RevisarExpediente" />
+  <bpmn:sequenceFlow id="Flow_22" name="Sí" sourceRef="Gateway_ConfirmaAtencion" targetRef="Task_EvaluarAtencion" />
+  <bpmn:sequenceFlow id="Flow_23" sourceRef="Task_EvaluarAtencion" targetRef="Task_GuardarEvaluacion" />
+  <bpmn:sequenceFlow id="Flow_24" sourceRef="Task_GuardarEvaluacion" targetRef="Task_RevisarExpediente" />
+  <bpmn:sequenceFlow id="Flow_25" sourceRef="Task_RevisarExpediente" targetRef="Gateway_DecisionCierre" />
+  <bpmn:sequenceFlow id="Flow_26" name="Observar" sourceRef="Gateway_DecisionCierre" targetRef="Task_DefinirObservaciones" />
+  <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_DefinirObservaciones" targetRef="Task_NotificarObservaciones" />
+  <bpmn:sequenceFlow id="Flow_28" sourceRef="Task_NotificarObservaciones" targetRef="Task_CorregirInforme" />
+  <bpmn:sequenceFlow id="Flow_29" name="Reabrir" sourceRef="Gateway_DecisionCierre" targetRef="Task_ReabrirAtencion" />
+  <bpmn:sequenceFlow id="Flow_30" name="Aprobar" sourceRef="Gateway_DecisionCierre" targetRef="Task_AprobarCierre" />
+  <bpmn:sequenceFlow id="Flow_31" sourceRef="Task_AprobarCierre" targetRef="Task_CerrarSolicitud" />
+  <bpmn:sequenceFlow id="Flow_32" sourceRef="Task_CerrarSolicitud" targetRef="Task_RevocarAccesos" />
+  <bpmn:sequenceFlow id="Flow_33" sourceRef="Task_RevocarAccesos" targetRef="Task_ActualizarMetricas" />
+  <bpmn:sequenceFlow id="Flow_34" sourceRef="Task_ActualizarMetricas" targetRef="Task_NotificarCierre" />
+  <bpmn:sequenceFlow id="Flow_35" sourceRef="Task_NotificarCierre" targetRef="Task_RegistrarTrazabilidad" />
+  <bpmn:sequenceFlow id="Flow_36" sourceRef="Task_RegistrarTrazabilidad" targetRef="End_Cerrada" />
+
+  <bpmn:textAnnotation id="Annotation_Cierre"><bpmn:text>La falta de respuesta del adulto mayor no produce cierre automático: Coordinación debe contactar al cuidador o utilizar un canal alternativo accesible. La evaluación es opcional y no sustituye la confirmación. Al cerrar se revocan los accesos temporales a contacto y ubicación.</bpmn:text></bpmn:textAnnotation>
+  <bpmn:association id="Association_Cierre" sourceRef="Task_GestionarSinRespuesta" targetRef="Annotation_Cierre" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_ConfirmacionEvaluacionCierre"><bpmndi:BPMNPlane id="Plane_ConfirmacionEvaluacionCierre" bpmnElement="Collaboration_ConfirmacionEvaluacionCierre">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_ConfirmacionEvaluacionCierre" isHorizontal="true"><dc:Bounds x="30" y="30" width="4950" height="1050"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneVol_di" bpmnElement="Lane_Voluntario" isHorizontal="true"><dc:Bounds x="60" y="30" width="4920" height="195"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="225" width="4920" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneSol_di" bpmnElement="Lane_Solicitante" isHorizontal="true"><dc:Bounds x="60" y="430" width="4920" height="195"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneCoord_di" bpmnElement="Lane_Coordinacion" isHorizontal="true"><dc:Bounds x="60" y="625" width="4920" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneNotif_di" bpmnElement="Lane_Notificaciones" isHorizontal="true"><dc:Bounds x="60" y="830" width="4920" height="250"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_CierreSolicitado"><dc:Bounds x="100" y="105" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Informe_di" bpmnElement="Task_CompletarInforme"><dc:Bounds x="175" y="82" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Validar_di" bpmnElement="Task_ValidarInforme"><dc:Bounds x="415" y="270" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwInforme_di" bpmnElement="Gateway_InformeCompleto" isMarkerVisible="true"><dc:Bounds x="650" y="280" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="SolCorr_di" bpmnElement="Task_SolicitarCorreccion"><dc:Bounds x="750" y="865" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Corrige_di" bpmnElement="Task_CorregirInforme"><dc:Bounds x="985" y="150" width="180" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="PendConf_di" bpmnElement="Task_RegistrarPendienteConfirmacion"><dc:Bounds x="750" y="260" width="195" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifSol_di" bpmnElement="Task_NotificarSolicitante"><dc:Bounds x="995" y="865" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwPlazo_di" bpmnElement="Gateway_RespuestaPlazo" isMarkerVisible="true"><dc:Bounds x="1235" y="873" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Recordatorio_di" bpmnElement="Task_EnviarRecordatorio"><dc:Bounds x="1335" y="950" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="SinResp_di" bpmnElement="Task_GestionarSinRespuesta"><dc:Bounds x="1570" y="670" width="195" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RevCierre_di" bpmnElement="Task_RevisarCierre"><dc:Bounds x="1815" y="480" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwConfAten_di" bpmnElement="Gateway_ConfirmaAtencion" isMarkerVisible="true"><dc:Bounds x="2055" y="490" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Desac_di" bpmnElement="Task_RegistrarDesacuerdo"><dc:Bounds x="2155" y="550" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RevDesac_di" bpmnElement="Task_RevisarDesacuerdo"><dc:Bounds x="2395" y="670" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwCont_di" bpmnElement="Gateway_RequiereContinuidad" isMarkerVisible="true"><dc:Bounds x="2635" y="680" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Reabrir_di" bpmnElement="Task_ReabrirAtencion"><dc:Bounds x="2735" y="350" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifReabrir_di" bpmnElement="Task_NotificarReapertura"><dc:Bounds x="2975" y="950" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndReab_di" bpmnElement="End_Reabierta"><dc:Bounds x="3215" y="965" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Evaluar_di" bpmnElement="Task_EvaluarAtencion"><dc:Bounds x="2155" y="455" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GuardarEval_di" bpmnElement="Task_GuardarEvaluacion"><dc:Bounds x="2395" y="260" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Expediente_di" bpmnElement="Task_RevisarExpediente"><dc:Bounds x="2735" y="670" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwDecision_di" bpmnElement="Gateway_DecisionCierre" isMarkerVisible="true"><dc:Bounds x="2975" y="680" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Obs_di" bpmnElement="Task_DefinirObservaciones"><dc:Bounds x="3075" y="745" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifObs_di" bpmnElement="Task_NotificarObservaciones"><dc:Bounds x="3315" y="865" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Aprobar_di" bpmnElement="Task_AprobarCierre"><dc:Bounds x="3075" y="650" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cerrar_di" bpmnElement="Task_CerrarSolicitud"><dc:Bounds x="3310" y="260" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Revocar_di" bpmnElement="Task_RevocarAccesos"><dc:Bounds x="3550" y="260" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Metricas_di" bpmnElement="Task_ActualizarMetricas"><dc:Bounds x="3790" y="260" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifCierre_di" bpmnElement="Task_NotificarCierre"><dc:Bounds x="4030" y="865" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Traz_di" bpmnElement="Task_RegistrarTrazabilidad"><dc:Bounds x="4270" y="865" width="195" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndCerrada_di" bpmnElement="End_Cerrada"><dc:Bounds x="4515" y="880" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Annotation_di" bpmnElement="Annotation_Cierre"><dc:Bounds x="1560" y="750" width="850" height="55"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="136" y="123"/><di:waypoint x="175" y="120"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="365" y="120"/><di:waypoint x="390" y="120"/><di:waypoint x="390" y="305"/><di:waypoint x="415" y="305"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="600" y="305"/><di:waypoint x="650" y="305"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="675" y="330"/><di:waypoint x="675" y="897"/><di:waypoint x="750" y="897"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="935" y="897"/><di:waypoint x="960" y="897"/><di:waypoint x="960" y="182"/><di:waypoint x="985" y="182"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="1165" y="182"/><di:waypoint x="1190" y="182"/><di:waypoint x="1190" y="240"/><di:waypoint x="507" y="240"/><di:waypoint x="507" y="270"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="700" y="305"/><di:waypoint x="750" y="295"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="945" y="295"/><di:waypoint x="970" y="295"/><di:waypoint x="970" y="897"/><di:waypoint x="995" y="897"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="1185" y="897"/><di:waypoint x="1235" y="898"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1260" y="923"/><di:waypoint x="1260" y="982"/><di:waypoint x="1335" y="982"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1520" y="982"/><di:waypoint x="1545" y="982"/><di:waypoint x="1545" y="705"/><di:waypoint x="1570" y="705"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="1765" y="705"/><di:waypoint x="1790" y="705"/><di:waypoint x="1790" y="515"/><di:waypoint x="1815" y="515"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="1285" y="898"/><di:waypoint x="1780" y="898"/><di:waypoint x="1780" y="515"/><di:waypoint x="1815" y="515"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="2005" y="515"/><di:waypoint x="2055" y="515"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="2080" y="540"/><di:waypoint x="2080" y="582"/><di:waypoint x="2155" y="582"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="2345" y="582"/><di:waypoint x="2370" y="582"/><di:waypoint x="2370" y="705"/><di:waypoint x="2395" y="705"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="2585" y="705"/><di:waypoint x="2635" y="705"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F18_di" bpmnElement="Flow_18"><di:waypoint x="2660" y="680"/><di:waypoint x="2660" y="382"/><di:waypoint x="2735" y="382"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F19_di" bpmnElement="Flow_19"><di:waypoint x="2925" y="382"/><di:waypoint x="2950" y="382"/><di:waypoint x="2950" y="982"/><di:waypoint x="2975" y="982"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F20_di" bpmnElement="Flow_20"><di:waypoint x="3165" y="982"/><di:waypoint x="3215" y="983"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F21_di" bpmnElement="Flow_21"><di:waypoint x="2685" y="705"/><di:waypoint x="2735" y="705"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F22_di" bpmnElement="Flow_22"><di:waypoint x="2080" y="490"/><di:waypoint x="2155" y="487"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F23_di" bpmnElement="Flow_23"><di:waypoint x="2345" y="487"/><di:waypoint x="2370" y="487"/><di:waypoint x="2370" y="292"/><di:waypoint x="2395" y="292"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F24_di" bpmnElement="Flow_24"><di:waypoint x="2585" y="292"/><di:waypoint x="2610" y="292"/><di:waypoint x="2610" y="705"/><di:waypoint x="2735" y="705"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F25_di" bpmnElement="Flow_25"><di:waypoint x="2925" y="705"/><di:waypoint x="2975" y="705"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F26_di" bpmnElement="Flow_26"><di:waypoint x="3000" y="730"/><di:waypoint x="3000" y="777"/><di:waypoint x="3075" y="777"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F27_di" bpmnElement="Flow_27"><di:waypoint x="3265" y="777"/><di:waypoint x="3290" y="777"/><di:waypoint x="3290" y="897"/><di:waypoint x="3315" y="897"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F28_di" bpmnElement="Flow_28"><di:waypoint x="3505" y="897"/><di:waypoint x="3530" y="897"/><di:waypoint x="3530" y="105"/><di:waypoint x="1075" y="105"/><di:waypoint x="1075" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F29_di" bpmnElement="Flow_29"><di:waypoint x="2975" y="705"/><di:waypoint x="2850" y="705"/><di:waypoint x="2850" y="415"/><di:waypoint x="2830" y="415"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F30_di" bpmnElement="Flow_30"><di:waypoint x="3025" y="705"/><di:waypoint x="3075" y="682"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F31_di" bpmnElement="Flow_31"><di:waypoint x="3260" y="682"/><di:waypoint x="3285" y="682"/><di:waypoint x="3285" y="292"/><di:waypoint x="3310" y="292"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F32_di" bpmnElement="Flow_32"><di:waypoint x="3500" y="292"/><di:waypoint x="3550" y="292"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F33_di" bpmnElement="Flow_33"><di:waypoint x="3740" y="292"/><di:waypoint x="3790" y="292"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F34_di" bpmnElement="Flow_34"><di:waypoint x="3980" y="292"/><di:waypoint x="4005" y="292"/><di:waypoint x="4005" y="897"/><di:waypoint x="4030" y="897"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F35_di" bpmnElement="Flow_35"><di:waypoint x="4220" y="897"/><di:waypoint x="4270" y="897"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F36_di" bpmnElement="Flow_36"><di:waypoint x="4465" y="897"/><di:waypoint x="4515" y="898"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="Assoc_di" bpmnElement="Association_Cierre"><di:waypoint x="1667" y="740"/><di:waypoint x="1667" y="750"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

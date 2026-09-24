@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+ xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+ xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+ xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+ id="Definitions_Vinculacion" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_Vinculacion">
+  <bpmn:participant id="Participant_Vinculacion" name="Barrio Solidario - Vinculación del adulto mayor con el cuidador" processRef="Process_Vinculacion" />
+ </bpmn:collaboration>
+ <bpmn:process id="Process_Vinculacion" name="Vinculación del adulto mayor con el cuidador o familiar" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_Vinculacion">
+   <bpmn:lane id="Lane_Adulto" name="Adulto mayor">
+    <bpmn:flowNodeRef>Start_Adulto</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_SolicitarCuidador</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_ConfirmarConsentimiento</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_DefinirPermisos</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Cuidador" name="Cuidador / Familiar">
+    <bpmn:flowNodeRef>Start_Cuidador</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_SolicitarAdulto</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_AceptarResponsabilidades</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AdjuntarRespaldo</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_CorregirRespaldo</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario">
+    <bpmn:flowNodeRef>Task_ValidarParticipantes</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_ParticipantesValidos</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_Iniciador</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_RespuestaInvitacion</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_RequiereRespaldo</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ValidarRespaldo</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Gateway_RespaldoValido</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CrearSolicitudRevision</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_CrearVinculo</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AsignarPermisos</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_RegistrarRechazo</bpmn:flowNodeRef><bpmn:flowNodeRef>End_Vinculado</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>End_NoVinculado</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Revision" name="Moderación / Administración">
+    <bpmn:flowNodeRef>Task_RevisarVinculo</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_DecisionRevision</bpmn:flowNodeRef>
+   </bpmn:lane>
+   <bpmn:lane id="Lane_Notificaciones" name="Notificaciones y auditoría">
+    <bpmn:flowNodeRef>Task_NotificarSolicitudInvalida</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_InvitarCuidador</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_InvitarAdulto</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarObservaciones</bpmn:flowNodeRef>
+    <bpmn:flowNodeRef>Task_NotificarResultado</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarTrazabilidad</bpmn:flowNodeRef>
+   </bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_Adulto" name="El adulto mayor solicita acompañamiento" />
+  <bpmn:userTask id="Task_SolicitarCuidador" name="Identificar e invitar cuidador o familiar" />
+  <bpmn:startEvent id="Start_Cuidador" name="El cuidador solicita representar al adulto" />
+  <bpmn:userTask id="Task_SolicitarAdulto" name="Identificar adulto mayor y declarar vínculo" />
+  <bpmn:serviceTask id="Task_ValidarParticipantes" name="Validar cuentas, roles, duplicidad y conflictos" />
+  <bpmn:exclusiveGateway id="Gateway_ParticipantesValidos" name="¿Participantes habilitados?" />
+  <bpmn:sendTask id="Task_NotificarSolicitudInvalida" name="Informar motivo sin exponer datos personales" />
+  <bpmn:endEvent id="End_NoVinculado" name="Vinculación no creada" />
+  <bpmn:exclusiveGateway id="Gateway_Iniciador" name="¿Quién inició la solicitud?" />
+  <bpmn:sendTask id="Task_InvitarCuidador" name="Enviar invitación al cuidador" />
+  <bpmn:userTask id="Task_AceptarResponsabilidades" name="Aceptar responsabilidades y condiciones" />
+  <bpmn:sendTask id="Task_InvitarAdulto" name="Solicitar consentimiento al adulto mayor" />
+  <bpmn:userTask id="Task_ConfirmarConsentimiento" name="Confirmar consentimiento o representación" />
+  <bpmn:exclusiveGateway id="Gateway_RespuestaInvitacion" name="¿Respuesta de la contraparte?" />
+  <bpmn:serviceTask id="Task_RegistrarRechazo" name="Registrar rechazo o vencimiento" />
+  <bpmn:userTask id="Task_DefinirPermisos" name="Definir alcance de permisos del cuidador" />
+  <bpmn:exclusiveGateway id="Gateway_RequiereRespaldo" name="¿Requiere autorización o respaldo?" />
+  <bpmn:userTask id="Task_AdjuntarRespaldo" name="Adjuntar autorización o respaldo del vínculo" />
+  <bpmn:serviceTask id="Task_ValidarRespaldo" name="Validar integridad y formato del respaldo" />
+  <bpmn:exclusiveGateway id="Gateway_RespaldoValido" name="¿Respaldo válido?" />
+  <bpmn:userTask id="Task_CorregirRespaldo" name="Corregir o completar respaldo" />
+  <bpmn:serviceTask id="Task_CrearSolicitudRevision" name="Crear solicitud de revisión" />
+  <bpmn:userTask id="Task_RevisarVinculo" name="Revisar consentimiento, relación y alcance" />
+  <bpmn:exclusiveGateway id="Gateway_DecisionRevision" name="¿Decisión de revisión?" />
+  <bpmn:sendTask id="Task_NotificarObservaciones" name="Notificar observaciones" />
+  <bpmn:serviceTask id="Task_CrearVinculo" name="Crear vínculo activo entre perfiles" />
+  <bpmn:serviceTask id="Task_AsignarPermisos" name="Aplicar permisos mínimos autorizados" />
+  <bpmn:sendTask id="Task_NotificarResultado" name="Notificar resultado a ambas partes" />
+  <bpmn:serviceTask id="Task_RegistrarTrazabilidad" name="Registrar consentimiento, permisos, fechas y responsables" />
+  <bpmn:endEvent id="End_Vinculado" name="Adulto mayor y cuidador vinculados" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_Adulto" targetRef="Task_SolicitarCuidador" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_SolicitarCuidador" targetRef="Task_ValidarParticipantes" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Start_Cuidador" targetRef="Task_SolicitarAdulto" />
+  <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_SolicitarAdulto" targetRef="Task_ValidarParticipantes" />
+  <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_ValidarParticipantes" targetRef="Gateway_ParticipantesValidos" />
+  <bpmn:sequenceFlow id="Flow_06" name="No" sourceRef="Gateway_ParticipantesValidos" targetRef="Task_NotificarSolicitudInvalida" />
+  <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_NotificarSolicitudInvalida" targetRef="End_NoVinculado" />
+  <bpmn:sequenceFlow id="Flow_08" name="Sí" sourceRef="Gateway_ParticipantesValidos" targetRef="Gateway_Iniciador" />
+  <bpmn:sequenceFlow id="Flow_09" name="Adulto mayor" sourceRef="Gateway_Iniciador" targetRef="Task_InvitarCuidador" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_InvitarCuidador" targetRef="Task_AceptarResponsabilidades" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_AceptarResponsabilidades" targetRef="Gateway_RespuestaInvitacion" />
+  <bpmn:sequenceFlow id="Flow_12" name="Cuidador" sourceRef="Gateway_Iniciador" targetRef="Task_InvitarAdulto" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_InvitarAdulto" targetRef="Task_ConfirmarConsentimiento" />
+  <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_ConfirmarConsentimiento" targetRef="Gateway_RespuestaInvitacion" />
+  <bpmn:sequenceFlow id="Flow_15" name="Rechazada o vencida" sourceRef="Gateway_RespuestaInvitacion" targetRef="Task_RegistrarRechazo" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_RegistrarRechazo" targetRef="Task_NotificarResultado" />
+  <bpmn:sequenceFlow id="Flow_17" name="Aceptada" sourceRef="Gateway_RespuestaInvitacion" targetRef="Task_DefinirPermisos" />
+  <bpmn:sequenceFlow id="Flow_18" sourceRef="Task_DefinirPermisos" targetRef="Gateway_RequiereRespaldo" />
+  <bpmn:sequenceFlow id="Flow_19" name="Sí" sourceRef="Gateway_RequiereRespaldo" targetRef="Task_AdjuntarRespaldo" />
+  <bpmn:sequenceFlow id="Flow_20" sourceRef="Task_AdjuntarRespaldo" targetRef="Task_ValidarRespaldo" />
+  <bpmn:sequenceFlow id="Flow_21" sourceRef="Task_ValidarRespaldo" targetRef="Gateway_RespaldoValido" />
+  <bpmn:sequenceFlow id="Flow_22" name="No" sourceRef="Gateway_RespaldoValido" targetRef="Task_CorregirRespaldo" />
+  <bpmn:sequenceFlow id="Flow_23" sourceRef="Task_CorregirRespaldo" targetRef="Task_ValidarRespaldo" />
+  <bpmn:sequenceFlow id="Flow_24" name="Sí" sourceRef="Gateway_RespaldoValido" targetRef="Task_CrearSolicitudRevision" />
+  <bpmn:sequenceFlow id="Flow_25" name="No" sourceRef="Gateway_RequiereRespaldo" targetRef="Task_CrearSolicitudRevision" />
+  <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_CrearSolicitudRevision" targetRef="Task_RevisarVinculo" />
+  <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_RevisarVinculo" targetRef="Gateway_DecisionRevision" />
+  <bpmn:sequenceFlow id="Flow_28" name="Observado" sourceRef="Gateway_DecisionRevision" targetRef="Task_NotificarObservaciones" />
+  <bpmn:sequenceFlow id="Flow_29" sourceRef="Task_NotificarObservaciones" targetRef="Task_CorregirRespaldo" />
+  <bpmn:sequenceFlow id="Flow_30" name="Rechazado" sourceRef="Gateway_DecisionRevision" targetRef="Task_RegistrarRechazo" />
+  <bpmn:sequenceFlow id="Flow_31" name="Aprobado" sourceRef="Gateway_DecisionRevision" targetRef="Task_CrearVinculo" />
+  <bpmn:sequenceFlow id="Flow_32" sourceRef="Task_CrearVinculo" targetRef="Task_AsignarPermisos" />
+  <bpmn:sequenceFlow id="Flow_33" sourceRef="Task_AsignarPermisos" targetRef="Task_NotificarResultado" />
+  <bpmn:sequenceFlow id="Flow_34" sourceRef="Task_NotificarResultado" targetRef="Task_RegistrarTrazabilidad" />
+  <bpmn:sequenceFlow id="Flow_35" sourceRef="Task_RegistrarTrazabilidad" targetRef="End_Vinculado" />
+
+  <bpmn:textAnnotation id="Annotation_Principios"><bpmn:text>La vinculación no implica compartir contraseñas. El cuidador actúa con permisos mínimos y trazables. Se requiere consentimiento verificable del adulto mayor o representación legal documentada. El vínculo podrá revocarse posteriormente por cualquiera de las partes o por administración.</bpmn:text></bpmn:textAnnotation>
+  <bpmn:association id="Association_Principios" sourceRef="Task_DefinirPermisos" targetRef="Annotation_Principios" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_Vinculacion"><bpmndi:BPMNPlane id="Plane_Vinculacion" bpmnElement="Collaboration_Vinculacion">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_Vinculacion" isHorizontal="true"><dc:Bounds x="30" y="30" width="4400" height="1025"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="AdultoLane_di" bpmnElement="Lane_Adulto" isHorizontal="true"><dc:Bounds x="60" y="30" width="4370" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="CuidadorLane_di" bpmnElement="Lane_Cuidador" isHorizontal="true"><dc:Bounds x="60" y="235" width="4370" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="PlataformaLane_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="440" width="4370" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RevisionLane_di" bpmnElement="Lane_Revision" isHorizontal="true"><dc:Bounds x="60" y="645" width="4370" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifLane_di" bpmnElement="Lane_Notificaciones" isHorizontal="true"><dc:Bounds x="60" y="850" width="4370" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="StartAdulto_di" bpmnElement="Start_Adulto"><dc:Bounds x="110" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="SolicitarCuidador_di" bpmnElement="Task_SolicitarCuidador"><dc:Bounds x="190" y="92" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="StartCuidador_di" bpmnElement="Start_Cuidador"><dc:Bounds x="110" y="317" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="SolicitarAdulto_di" bpmnElement="Task_SolicitarAdulto"><dc:Bounds x="190" y="297" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="ValidarPart_di" bpmnElement="Task_ValidarParticipantes"><dc:Bounds x="430" y="505" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwPart_di" bpmnElement="Gateway_ParticipantesValidos" isMarkerVisible="true"><dc:Bounds x="670" y="518" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifInv_di" bpmnElement="Task_NotificarSolicitudInvalida"><dc:Bounds x="760" y="900" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndNo_di" bpmnElement="End_NoVinculado"><dc:Bounds x="1000" y="917" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwIniciador_di" bpmnElement="Gateway_Iniciador" isMarkerVisible="true"><dc:Bounds x="790" y="518" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="InvitarCuidador_di" bpmnElement="Task_InvitarCuidador"><dc:Bounds x="890" y="860" width="170" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Aceptar_di" bpmnElement="Task_AceptarResponsabilidades"><dc:Bounds x="1110" y="297" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="InvitarAdulto_di" bpmnElement="Task_InvitarAdulto"><dc:Bounds x="890" y="970" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Consentir_di" bpmnElement="Task_ConfirmarConsentimiento"><dc:Bounds x="1110" y="92" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwRespuesta_di" bpmnElement="Gateway_RespuestaInvitacion" isMarkerVisible="true"><dc:Bounds x="1360" y="518" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RegistrarRechazo_di" bpmnElement="Task_RegistrarRechazo"><dc:Bounds x="1450" y="585" width="170" height="55"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Permisos_di" bpmnElement="Task_DefinirPermisos"><dc:Bounds x="1460" y="92" width="185" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwRespaldo_di" bpmnElement="Gateway_RequiereRespaldo" isMarkerVisible="true"><dc:Bounds x="1700" y="518" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Adjuntar_di" bpmnElement="Task_AdjuntarRespaldo"><dc:Bounds x="1800" y="297" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="ValidarResp_di" bpmnElement="Task_ValidarRespaldo"><dc:Bounds x="2040" y="505" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwRespValido_di" bpmnElement="Gateway_RespaldoValido" isMarkerVisible="true"><dc:Bounds x="2270" y="518" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="CorregirResp_di" bpmnElement="Task_CorregirRespaldo"><dc:Bounds x="2240" y="297" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="CrearRevision_di" bpmnElement="Task_CrearSolicitudRevision"><dc:Bounds x="2390" y="505" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Revisar_di" bpmnElement="Task_RevisarVinculo"><dc:Bounds x="2620" y="710" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwDecision_di" bpmnElement="Gateway_DecisionRevision" isMarkerVisible="true"><dc:Bounds x="2860" y="723" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifObs_di" bpmnElement="Task_NotificarObservaciones"><dc:Bounds x="2950" y="900" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="CrearVinculo_di" bpmnElement="Task_CrearVinculo"><dc:Bounds x="2990" y="470" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="AsignarPerm_di" bpmnElement="Task_AsignarPermisos"><dc:Bounds x="3220" y="505" width="180" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifResult_di" bpmnElement="Task_NotificarResultado"><dc:Bounds x="3460" y="900" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Trazabilidad_di" bpmnElement="Task_RegistrarTrazabilidad"><dc:Bounds x="3690" y="900" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndVinculado_di" bpmnElement="End_Vinculado"><dc:Bounds x="3930" y="917" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Annotation_di" bpmnElement="Annotation_Principios"><dc:Bounds x="1440" y="180" width="670" height="45"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="146" y="130"/><di:waypoint x="190" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="370" y="130"/><di:waypoint x="400" y="130"/><di:waypoint x="400" y="543"/><di:waypoint x="430" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="146" y="335"/><di:waypoint x="190" y="335"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="370" y="335"/><di:waypoint x="400" y="335"/><di:waypoint x="400" y="543"/><di:waypoint x="430" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="620" y="543"/><di:waypoint x="670" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="695" y="568"/><di:waypoint x="695" y="935"/><di:waypoint x="760" y="935"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="950" y="935"/><di:waypoint x="1000" y="935"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="720" y="543"/><di:waypoint x="790" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="815" y="568"/><di:waypoint x="815" y="895"/><di:waypoint x="890" y="895"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1060" y="895"/><di:waypoint x="1085" y="895"/><di:waypoint x="1085" y="335"/><di:waypoint x="1110" y="335"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1300" y="335"/><di:waypoint x="1335" y="335"/><di:waypoint x="1335" y="543"/><di:waypoint x="1360" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="815" y="568"/><di:waypoint x="815" y="1005"/><di:waypoint x="890" y="1005"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="1070" y="1005"/><di:waypoint x="1085" y="1005"/><di:waypoint x="1085" y="130"/><di:waypoint x="1110" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="1300" y="130"/><di:waypoint x="1335" y="130"/><di:waypoint x="1335" y="543"/><di:waypoint x="1360" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="1385" y="568"/><di:waypoint x="1385" y="612"/><di:waypoint x="1450" y="612"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="1620" y="612"/><di:waypoint x="3430" y="612"/><di:waypoint x="3430" y="935"/><di:waypoint x="3460" y="935"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="1385" y="518"/><di:waypoint x="1385" y="130"/><di:waypoint x="1460" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F18_di" bpmnElement="Flow_18"><di:waypoint x="1645" y="130"/><di:waypoint x="1675" y="130"/><di:waypoint x="1675" y="543"/><di:waypoint x="1700" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F19_di" bpmnElement="Flow_19"><di:waypoint x="1725" y="568"/><di:waypoint x="1725" y="335"/><di:waypoint x="1800" y="335"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F20_di" bpmnElement="Flow_20"><di:waypoint x="1990" y="335"/><di:waypoint x="2015" y="335"/><di:waypoint x="2015" y="543"/><di:waypoint x="2040" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F21_di" bpmnElement="Flow_21"><di:waypoint x="2220" y="543"/><di:waypoint x="2270" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F22_di" bpmnElement="Flow_22"><di:waypoint x="2295" y="518"/><di:waypoint x="2295" y="373"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F23_di" bpmnElement="Flow_23"><di:waypoint x="2240" y="335"/><di:waypoint x="2130" y="335"/><di:waypoint x="2130" y="505"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F24_di" bpmnElement="Flow_24"><di:waypoint x="2320" y="543"/><di:waypoint x="2390" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F25_di" bpmnElement="Flow_25"><di:waypoint x="1750" y="543"/><di:waypoint x="2390" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F26_di" bpmnElement="Flow_26"><di:waypoint x="2570" y="543"/><di:waypoint x="2595" y="543"/><di:waypoint x="2595" y="748"/><di:waypoint x="2620" y="748"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F27_di" bpmnElement="Flow_27"><di:waypoint x="2810" y="748"/><di:waypoint x="2860" y="748"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F28_di" bpmnElement="Flow_28"><di:waypoint x="2885" y="773"/><di:waypoint x="2885" y="935"/><di:waypoint x="2950" y="935"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F29_di" bpmnElement="Flow_29"><di:waypoint x="3040" y="900"/><di:waypoint x="3040" y="410"/><di:waypoint x="2330" y="410"/><di:waypoint x="2330" y="335"/><di:waypoint x="2240" y="335"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F30_di" bpmnElement="Flow_30"><di:waypoint x="2910" y="748"/><di:waypoint x="2940" y="748"/><di:waypoint x="2940" y="612"/><di:waypoint x="1450" y="612"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F31_di" bpmnElement="Flow_31"><di:waypoint x="2885" y="723"/><di:waypoint x="2885" y="505"/><di:waypoint x="2990" y="505"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F32_di" bpmnElement="Flow_32"><di:waypoint x="3170" y="505"/><di:waypoint x="3220" y="543"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F33_di" bpmnElement="Flow_33"><di:waypoint x="3400" y="543"/><di:waypoint x="3430" y="543"/><di:waypoint x="3430" y="935"/><di:waypoint x="3460" y="935"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F34_di" bpmnElement="Flow_34"><di:waypoint x="3640" y="935"/><di:waypoint x="3690" y="935"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F35_di" bpmnElement="Flow_35"><di:waypoint x="3880" y="935"/><di:waypoint x="3930" y="935"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="Assoc_di" bpmnElement="Association_Principios"><di:waypoint x="1552" y="168"/><di:waypoint x="1552" y="180"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

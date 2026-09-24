@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_ModeracionUsuariosContenido" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_ModeracionUsuariosContenido"><bpmn:participant id="Participant_ModeracionUsuariosContenido" name="Barrio Solidario - Moderación de usuarios y contenido" processRef="Process_ModeracionUsuariosContenido" /></bpmn:collaboration>
+ <bpmn:process id="Process_ModeracionUsuariosContenido" name="Moderación de usuarios y contenido" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_ModeracionUsuariosContenido">
+   <bpmn:lane id="Lane_Reportante" name="Usuario reportante"><bpmn:flowNodeRef>Start_ReporteModeracion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ReportarUsuarioContenido</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConsultarResultado</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario"><bpmn:flowNodeRef>Task_RegistrarCaso</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AplicarMedida</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ArchivarSinAccion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CerrarCaso</bpmn:flowNodeRef><bpmn:flowNodeRef>End_CasoModerado</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Moderacion" name="Moderación / Administración"><bpmn:flowNodeRef>Task_RevisarCaso</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_Incumplimiento</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_DefinirMedida</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarDecision</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Notificaciones" name="Notificaciones y seguimiento"><bpmn:flowNodeRef>Task_NotificarModeracion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarDecision</bpmn:flowNodeRef></bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_ReporteModeracion" name="Se reporta un usuario o contenido" />
+  <bpmn:userTask id="Task_ReportarUsuarioContenido" name="Indicar usuario o contenido y motivo" />
+  <bpmn:serviceTask id="Task_RegistrarCaso" name="Registrar caso de moderación" />
+  <bpmn:sendTask id="Task_NotificarModeracion" name="Notificar nuevo caso a Moderación" />
+  <bpmn:userTask id="Task_RevisarCaso" name="Revisar reporte, usuario y contenido" />
+  <bpmn:exclusiveGateway id="Gateway_Incumplimiento" name="¿Existe incumplimiento?" />
+  <bpmn:userTask id="Task_DefinirMedida" name="Definir advertencia, retiro o suspensión" />
+  <bpmn:userTask id="Task_RegistrarDecision" name="Registrar decisión y motivo" />
+  <bpmn:serviceTask id="Task_AplicarMedida" name="Aplicar medida de moderación" />
+  <bpmn:serviceTask id="Task_ArchivarSinAccion" name="Archivar caso sin aplicar medida" />
+  <bpmn:sendTask id="Task_NotificarDecision" name="Notificar decisión a los usuarios relacionados" />
+  <bpmn:userTask id="Task_ConsultarResultado" name="Consultar resultado del reporte" />
+  <bpmn:serviceTask id="Task_CerrarCaso" name="Cerrar caso de moderación" />
+  <bpmn:endEvent id="End_CasoModerado" name="Caso de moderación cerrado" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_ReporteModeracion" targetRef="Task_ReportarUsuarioContenido" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_ReportarUsuarioContenido" targetRef="Task_RegistrarCaso" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_RegistrarCaso" targetRef="Task_NotificarModeracion" />
+  <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_NotificarModeracion" targetRef="Task_RevisarCaso" />
+  <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_RevisarCaso" targetRef="Gateway_Incumplimiento" />
+  <bpmn:sequenceFlow id="Flow_06" name="Sí" sourceRef="Gateway_Incumplimiento" targetRef="Task_DefinirMedida" />
+  <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_DefinirMedida" targetRef="Task_RegistrarDecision" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_RegistrarDecision" targetRef="Task_AplicarMedida" />
+  <bpmn:sequenceFlow id="Flow_09" name="No" sourceRef="Gateway_Incumplimiento" targetRef="Task_ArchivarSinAccion" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_AplicarMedida" targetRef="Task_NotificarDecision" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_ArchivarSinAccion" targetRef="Task_NotificarDecision" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_NotificarDecision" targetRef="Task_ConsultarResultado" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_ConsultarResultado" targetRef="Task_CerrarCaso" />
+  <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_CerrarCaso" targetRef="End_CasoModerado" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_ModeracionUsuariosContenido"><bpmndi:BPMNPlane id="Plane_ModeracionUsuariosContenido" bpmnElement="Collaboration_ModeracionUsuariosContenido">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_ModeracionUsuariosContenido" isHorizontal="true"><dc:Bounds x="30" y="30" width="2880" height="850"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneRep_di" bpmnElement="Lane_Reportante" isHorizontal="true"><dc:Bounds x="60" y="30" width="2850" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="235" width="2850" height="210"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneMod_di" bpmnElement="Lane_Moderacion" isHorizontal="true"><dc:Bounds x="60" y="445" width="2850" height="215"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneNot_di" bpmnElement="Lane_Notificaciones" isHorizontal="true"><dc:Bounds x="60" y="660" width="2850" height="220"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_ReporteModeracion"><dc:Bounds x="105" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Reportar_di" bpmnElement="Task_ReportarUsuarioContenido"><dc:Bounds x="180" y="90" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Registrar_di" bpmnElement="Task_RegistrarCaso"><dc:Bounds x="420" y="280" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifMod_di" bpmnElement="Task_NotificarModeracion"><dc:Bounds x="655" y="705" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Revisar_di" bpmnElement="Task_RevisarCaso"><dc:Bounds x="895" y="495" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwInc_di" bpmnElement="Gateway_Incumplimiento" isMarkerVisible="true"><dc:Bounds x="1135" y="505" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Medida_di" bpmnElement="Task_DefinirMedida"><dc:Bounds x="1235" y="465" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Decision_di" bpmnElement="Task_RegistrarDecision"><dc:Bounds x="1475" y="465" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Aplicar_di" bpmnElement="Task_AplicarMedida"><dc:Bounds x="1710" y="280" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Archivar_di" bpmnElement="Task_ArchivarSinAccion"><dc:Bounds x="1235" y="570" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifDecision_di" bpmnElement="Task_NotificarDecision"><dc:Bounds x="1945" y="705" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Consultar_di" bpmnElement="Task_ConsultarResultado"><dc:Bounds x="2185" y="90" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cerrar_di" bpmnElement="Task_CerrarCaso"><dc:Bounds x="2420" y="280" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="End_di" bpmnElement="End_CasoModerado"><dc:Bounds x="2650" y="297" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="130"/><di:waypoint x="180" y="130"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="370" y="128"/><di:waypoint x="395" y="128"/><di:waypoint x="395" y="315"/><di:waypoint x="420" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="605" y="315"/><di:waypoint x="630" y="315"/><di:waypoint x="630" y="737"/><di:waypoint x="655" y="737"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="845" y="737"/><di:waypoint x="870" y="737"/><di:waypoint x="870" y="530"/><di:waypoint x="895" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="1085" y="530"/><di:waypoint x="1135" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="1160" y="505"/><di:waypoint x="1160" y="497"/><di:waypoint x="1235" y="497"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="1425" y="497"/><di:waypoint x="1475" y="497"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="1660" y="497"/><di:waypoint x="1685" y="497"/><di:waypoint x="1685" y="315"/><di:waypoint x="1710" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="1160" y="555"/><di:waypoint x="1160" y="602"/><di:waypoint x="1235" y="602"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1895" y="315"/><di:waypoint x="1920" y="315"/><di:waypoint x="1920" y="737"/><di:waypoint x="1945" y="737"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1425" y="602"/><di:waypoint x="1920" y="602"/><di:waypoint x="1920" y="737"/><di:waypoint x="1945" y="737"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="2135" y="737"/><di:waypoint x="2160" y="737"/><di:waypoint x="2160" y="125"/><di:waypoint x="2185" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="2370" y="125"/><di:waypoint x="2395" y="125"/><di:waypoint x="2395" y="315"/><di:waypoint x="2420" y="315"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="2600" y="315"/><di:waypoint x="2650" y="315"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

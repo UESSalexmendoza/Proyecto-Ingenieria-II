@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_CoordinacionJornada" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_CoordinacionJornada"><bpmn:participant id="Participant_CoordinacionJornada" name="Barrio Solidario - Coordinación de la jornada" processRef="Process_CoordinacionJornada" /></bpmn:collaboration>
+ <bpmn:process id="Process_CoordinacionJornada" name="Coordinación de la jornada de atención" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_CoordinacionJornada">
+   <bpmn:lane id="Lane_Coordinacion" name="Coordinación"><bpmn:flowNodeRef>Start_SolicitudAsignada</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RevisarNecesidad</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_DefinirPropuesta</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AjustarPropuesta</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_Continuar</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ValidarCondiciones</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_Condiciones</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ResolverNovedad</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AutorizarJornada</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario"><bpmn:flowNodeRef>Task_ConsultarDisponibilidad</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarPropuesta</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConsolidarRespuestas</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_AmbosConfirman</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ProgramarJornada</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_HabilitarDatos</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ReprogramarEstado</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_CancelarCoordinacion</bpmn:flowNodeRef><bpmn:flowNodeRef>End_JornadaProgramada</bpmn:flowNodeRef><bpmn:flowNodeRef>End_CoordinacionCancelada</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Voluntario" name="Voluntario"><bpmn:flowNodeRef>Task_ResponderVoluntario</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConsultarInstrucciones</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Solicitante" name="Adulto mayor / Cuidador autorizado"><bpmn:flowNodeRef>Task_ResponderSolicitante</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConfirmarAcompanamiento</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Notificaciones" name="Notificaciones y auditoría"><bpmn:flowNodeRef>Task_EnviarPropuesta</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarProgramacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ProgramarRecordatorios</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarReprogramacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarCancelacion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_RegistrarTrazabilidad</bpmn:flowNodeRef></bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_SolicitudAsignada" name="Solicitud con voluntario asignado" />
+  <bpmn:userTask id="Task_RevisarNecesidad" name="Revisar necesidad, prioridad y condiciones especiales" />
+  <bpmn:serviceTask id="Task_ConsultarDisponibilidad" name="Consultar disponibilidad declarada de las partes" />
+  <bpmn:userTask id="Task_DefinirPropuesta" name="Definir fecha, hora, duración, lugar y punto de encuentro" />
+  <bpmn:serviceTask id="Task_RegistrarPropuesta" name="Registrar propuesta de jornada" />
+  <bpmn:sendTask id="Task_EnviarPropuesta" name="Enviar propuesta al voluntario y solicitante" />
+  <bpmn:userTask id="Task_ResponderVoluntario" name="Confirmar disponibilidad o proponer ajuste" />
+  <bpmn:userTask id="Task_ResponderSolicitante" name="Confirmar disponibilidad, acompañamiento o proponer ajuste" />
+  <bpmn:serviceTask id="Task_ConsolidarRespuestas" name="Consolidar respuestas y restricciones" />
+  <bpmn:exclusiveGateway id="Gateway_AmbosConfirman" name="¿Ambas partes confirman?" />
+  <bpmn:userTask id="Task_AjustarPropuesta" name="Revisar alternativas y ajustar la jornada" />
+  <bpmn:exclusiveGateway id="Gateway_Continuar" name="¿Es posible reprogramar?" />
+  <bpmn:serviceTask id="Task_ReprogramarEstado" name="Guardar nueva propuesta y mantener coordinación" />
+  <bpmn:serviceTask id="Task_CancelarCoordinacion" name="Cancelar coordinación y devolver solicitud a revisión" />
+  <bpmn:sendTask id="Task_NotificarReprogramacion" name="Notificar nueva propuesta a las partes" />
+  <bpmn:sendTask id="Task_NotificarCancelacion" name="Notificar cancelación de la coordinación" />
+  <bpmn:endEvent id="End_CoordinacionCancelada" name="Coordinación cancelada" />
+  <bpmn:serviceTask id="Task_ProgramarJornada" name="Programar jornada y cambiar estado a Coordinada" />
+  <bpmn:serviceTask id="Task_HabilitarDatos" name="Habilitar datos mínimos de contacto y ubicación" />
+  <bpmn:userTask id="Task_ConfirmarAcompanamiento" name="Confirmar acompañante o apoyo del cuidador cuando aplique" />
+  <bpmn:userTask id="Task_ValidarCondiciones" name="Verificar transporte, accesibilidad, seguridad y recursos" />
+  <bpmn:exclusiveGateway id="Gateway_Condiciones" name="¿Condiciones listas?" />
+  <bpmn:userTask id="Task_ResolverNovedad" name="Resolver novedad o ajustar condiciones" />
+  <bpmn:userTask id="Task_AutorizarJornada" name="Autorizar ejecución de la jornada" />
+  <bpmn:sendTask id="Task_NotificarProgramacion" name="Notificar programación confirmada" />
+  <bpmn:serviceTask id="Task_ProgramarRecordatorios" name="Programar recordatorios y canal de comunicación" />
+  <bpmn:userTask id="Task_ConsultarInstrucciones" name="Consultar instrucciones y datos autorizados" />
+  <bpmn:serviceTask id="Task_RegistrarTrazabilidad" name="Registrar acuerdos, cambios, confirmaciones y responsable" />
+  <bpmn:endEvent id="End_JornadaProgramada" name="Jornada coordinada" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_SolicitudAsignada" targetRef="Task_RevisarNecesidad" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_RevisarNecesidad" targetRef="Task_ConsultarDisponibilidad" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_ConsultarDisponibilidad" targetRef="Task_DefinirPropuesta" />
+  <bpmn:sequenceFlow id="Flow_04" sourceRef="Task_DefinirPropuesta" targetRef="Task_RegistrarPropuesta" />
+  <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_RegistrarPropuesta" targetRef="Task_EnviarPropuesta" />
+  <bpmn:sequenceFlow id="Flow_06" sourceRef="Task_EnviarPropuesta" targetRef="Task_ResponderVoluntario" />
+  <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_ResponderVoluntario" targetRef="Task_ResponderSolicitante" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_ResponderSolicitante" targetRef="Task_ConsolidarRespuestas" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_ConsolidarRespuestas" targetRef="Gateway_AmbosConfirman" />
+  <bpmn:sequenceFlow id="Flow_10" name="No" sourceRef="Gateway_AmbosConfirman" targetRef="Task_AjustarPropuesta" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_AjustarPropuesta" targetRef="Gateway_Continuar" />
+  <bpmn:sequenceFlow id="Flow_12" name="Sí" sourceRef="Gateway_Continuar" targetRef="Task_ReprogramarEstado" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_ReprogramarEstado" targetRef="Task_NotificarReprogramacion" />
+  <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_NotificarReprogramacion" targetRef="Task_EnviarPropuesta" />
+  <bpmn:sequenceFlow id="Flow_15" name="No" sourceRef="Gateway_Continuar" targetRef="Task_CancelarCoordinacion" />
+  <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_CancelarCoordinacion" targetRef="Task_NotificarCancelacion" />
+  <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_NotificarCancelacion" targetRef="End_CoordinacionCancelada" />
+  <bpmn:sequenceFlow id="Flow_18" name="Sí" sourceRef="Gateway_AmbosConfirman" targetRef="Task_ProgramarJornada" />
+  <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_ProgramarJornada" targetRef="Task_HabilitarDatos" />
+  <bpmn:sequenceFlow id="Flow_20" sourceRef="Task_HabilitarDatos" targetRef="Task_ConfirmarAcompanamiento" />
+  <bpmn:sequenceFlow id="Flow_21" sourceRef="Task_ConfirmarAcompanamiento" targetRef="Task_ValidarCondiciones" />
+  <bpmn:sequenceFlow id="Flow_22" sourceRef="Task_ValidarCondiciones" targetRef="Gateway_Condiciones" />
+  <bpmn:sequenceFlow id="Flow_23" name="No" sourceRef="Gateway_Condiciones" targetRef="Task_ResolverNovedad" />
+  <bpmn:sequenceFlow id="Flow_24" sourceRef="Task_ResolverNovedad" targetRef="Task_AjustarPropuesta" />
+  <bpmn:sequenceFlow id="Flow_25" name="Sí" sourceRef="Gateway_Condiciones" targetRef="Task_AutorizarJornada" />
+  <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_AutorizarJornada" targetRef="Task_NotificarProgramacion" />
+  <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_NotificarProgramacion" targetRef="Task_ProgramarRecordatorios" />
+  <bpmn:sequenceFlow id="Flow_28" sourceRef="Task_ProgramarRecordatorios" targetRef="Task_ConsultarInstrucciones" />
+  <bpmn:sequenceFlow id="Flow_29" sourceRef="Task_ConsultarInstrucciones" targetRef="Task_RegistrarTrazabilidad" />
+  <bpmn:sequenceFlow id="Flow_30" sourceRef="Task_RegistrarTrazabilidad" targetRef="End_JornadaProgramada" />
+
+  <bpmn:textAnnotation id="Annotation_Coordinacion"><bpmn:text>La jornada debe considerar las limitaciones de movilidad, accesibilidad o uso tecnológico del adulto mayor. Cuando corresponda, el cuidador o familiar autorizado confirma el acompañamiento. La ubicación exacta y el contacto se habilitan sólo al voluntario confirmado.</bpmn:text></bpmn:textAnnotation>
+  <bpmn:association id="Association_Coordinacion" sourceRef="Task_DefinirPropuesta" targetRef="Annotation_Coordinacion" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_CoordinacionJornada"><bpmndi:BPMNPlane id="Plane_CoordinacionJornada" bpmnElement="Collaboration_CoordinacionJornada">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_CoordinacionJornada" isHorizontal="true"><dc:Bounds x="30" y="30" width="4590" height="1030"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneCoord_di" bpmnElement="Lane_Coordinacion" isHorizontal="true"><dc:Bounds x="60" y="30" width="4560" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="235" width="4560" height="205"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneVol_di" bpmnElement="Lane_Voluntario" isHorizontal="true"><dc:Bounds x="60" y="440" width="4560" height="190"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneSol_di" bpmnElement="Lane_Solicitante" isHorizontal="true"><dc:Bounds x="60" y="630" width="4560" height="190"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneNot_di" bpmnElement="Lane_Notificaciones" isHorizontal="true"><dc:Bounds x="60" y="820" width="4560" height="240"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_SolicitudAsignada"><dc:Bounds x="100" y="110" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Revisar_di" bpmnElement="Task_RevisarNecesidad"><dc:Bounds x="175" y="90" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Disp_di" bpmnElement="Task_ConsultarDisponibilidad"><dc:Bounds x="415" y="285" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Propuesta_di" bpmnElement="Task_DefinirPropuesta"><dc:Bounds x="655" y="90" width="200" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RegProp_di" bpmnElement="Task_RegistrarPropuesta"><dc:Bounds x="905" y="285" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EnvProp_di" bpmnElement="Task_EnviarPropuesta"><dc:Bounds x="1135" y="850" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RespVol_di" bpmnElement="Task_ResponderVoluntario"><dc:Bounds x="1375" y="495" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="RespSol_di" bpmnElement="Task_ResponderSolicitante"><dc:Bounds x="1615" y="685" width="195" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Consolidar_di" bpmnElement="Task_ConsolidarRespuestas"><dc:Bounds x="1860" y="285" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwConf_di" bpmnElement="Gateway_AmbosConfirman" isMarkerVisible="true"><dc:Bounds x="2100" y="295" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Ajustar_di" bpmnElement="Task_AjustarPropuesta"><dc:Bounds x="2200" y="165" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwCont_di" bpmnElement="Gateway_Continuar" isMarkerVisible="true"><dc:Bounds x="2435" y="173" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Reprog_di" bpmnElement="Task_ReprogramarEstado"><dc:Bounds x="2535" y="250" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifReprog_di" bpmnElement="Task_NotificarReprogramacion"><dc:Bounds x="2770" y="835" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cancel_di" bpmnElement="Task_CancelarCoordinacion"><dc:Bounds x="2535" y="350" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifCancel_di" bpmnElement="Task_NotificarCancelacion"><dc:Bounds x="2770" y="930" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndCancel_di" bpmnElement="End_CoordinacionCancelada"><dc:Bounds x="3010" y="945" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Programar_di" bpmnElement="Task_ProgramarJornada"><dc:Bounds x="2200" y="285" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Datos_di" bpmnElement="Task_HabilitarDatos"><dc:Bounds x="2440" y="285" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Acomp_di" bpmnElement="Task_ConfirmarAcompanamiento"><dc:Bounds x="2680" y="680" width="200" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Cond_di" bpmnElement="Task_ValidarCondiciones"><dc:Bounds x="2930" y="90" width="190" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwCond_di" bpmnElement="Gateway_Condiciones" isMarkerVisible="true"><dc:Bounds x="3170" y="103" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Resolver_di" bpmnElement="Task_ResolverNovedad"><dc:Bounds x="3270" y="165" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Autorizar_di" bpmnElement="Task_AutorizarJornada"><dc:Bounds x="3270" y="90" width="185" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="NotifProg_di" bpmnElement="Task_NotificarProgramacion"><dc:Bounds x="3505" y="835" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Record_di" bpmnElement="Task_ProgramarRecordatorios"><dc:Bounds x="3745" y="835" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Instr_di" bpmnElement="Task_ConsultarInstrucciones"><dc:Bounds x="3985" y="495" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Traz_di" bpmnElement="Task_RegistrarTrazabilidad"><dc:Bounds x="4225" y="835" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="EndProg_di" bpmnElement="End_JornadaProgramada"><dc:Bounds x="4465" y="850" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Annotation_di" bpmnElement="Annotation_Coordinacion"><dc:Bounds x="650" y="175" width="820" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="136" y="128"/><di:waypoint x="175" y="128"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="365" y="128"/><di:waypoint x="390" y="128"/><di:waypoint x="390" y="323"/><di:waypoint x="415" y="323"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="605" y="323"/><di:waypoint x="630" y="323"/><di:waypoint x="630" y="128"/><di:waypoint x="655" y="128"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="855" y="128"/><di:waypoint x="880" y="128"/><di:waypoint x="880" y="320"/><di:waypoint x="905" y="320"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="1085" y="320"/><di:waypoint x="1110" y="320"/><di:waypoint x="1110" y="882"/><di:waypoint x="1135" y="882"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="1325" y="882"/><di:waypoint x="1350" y="882"/><di:waypoint x="1350" y="530"/><di:waypoint x="1375" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="1565" y="530"/><di:waypoint x="1590" y="530"/><di:waypoint x="1590" y="720"/><di:waypoint x="1615" y="720"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="1810" y="720"/><di:waypoint x="1835" y="720"/><di:waypoint x="1835" y="320"/><di:waypoint x="1860" y="320"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="2050" y="320"/><di:waypoint x="2100" y="320"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="2125" y="295"/><di:waypoint x="2125" y="198"/><di:waypoint x="2200" y="198"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="2385" y="198"/><di:waypoint x="2435" y="198"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="2460" y="223"/><di:waypoint x="2460" y="282"/><di:waypoint x="2535" y="282"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="2720" y="282"/><di:waypoint x="2745" y="282"/><di:waypoint x="2745" y="867"/><di:waypoint x="2770" y="867"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="2960" y="867"/><di:waypoint x="2985" y="867"/><di:waypoint x="2985" y="1080"/><di:waypoint x="1230" y="1080"/><di:waypoint x="1230" y="915"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="Flow_15"><di:waypoint x="2460" y="223"/><di:waypoint x="2460" y="382"/><di:waypoint x="2535" y="382"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="Flow_16"><di:waypoint x="2725" y="382"/><di:waypoint x="2750" y="382"/><di:waypoint x="2750" y="962"/><di:waypoint x="2770" y="962"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F17_di" bpmnElement="Flow_17"><di:waypoint x="2960" y="962"/><di:waypoint x="3010" y="963"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F18_di" bpmnElement="Flow_18"><di:waypoint x="2150" y="320"/><di:waypoint x="2200" y="320"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F19_di" bpmnElement="Flow_19"><di:waypoint x="2390" y="320"/><di:waypoint x="2440" y="320"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F20_di" bpmnElement="Flow_20"><di:waypoint x="2630" y="320"/><di:waypoint x="2655" y="320"/><di:waypoint x="2655" y="718"/><di:waypoint x="2680" y="718"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F21_di" bpmnElement="Flow_21"><di:waypoint x="2880" y="718"/><di:waypoint x="2905" y="718"/><di:waypoint x="2905" y="128"/><di:waypoint x="2930" y="128"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F22_di" bpmnElement="Flow_22"><di:waypoint x="3120" y="128"/><di:waypoint x="3170" y="128"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F23_di" bpmnElement="Flow_23"><di:waypoint x="3195" y="153"/><di:waypoint x="3195" y="198"/><di:waypoint x="3270" y="198"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F24_di" bpmnElement="Flow_24"><di:waypoint x="3455" y="198"/><di:waypoint x="3480" y="198"/><di:waypoint x="3480" y="55"/><di:waypoint x="2292" y="55"/><di:waypoint x="2292" y="165"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F25_di" bpmnElement="Flow_25"><di:waypoint x="3220" y="128"/><di:waypoint x="3270" y="122"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F26_di" bpmnElement="Flow_26"><di:waypoint x="3455" y="122"/><di:waypoint x="3480" y="122"/><di:waypoint x="3480" y="867"/><di:waypoint x="3505" y="867"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F27_di" bpmnElement="Flow_27"><di:waypoint x="3695" y="867"/><di:waypoint x="3745" y="867"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F28_di" bpmnElement="Flow_28"><di:waypoint x="3935" y="867"/><di:waypoint x="3960" y="867"/><di:waypoint x="3960" y="530"/><di:waypoint x="3985" y="530"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F29_di" bpmnElement="Flow_29"><di:waypoint x="4175" y="530"/><di:waypoint x="4200" y="530"/><di:waypoint x="4200" y="867"/><di:waypoint x="4225" y="867"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F30_di" bpmnElement="Flow_30"><di:waypoint x="4415" y="867"/><di:waypoint x="4465" y="868"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="Assoc_di" bpmnElement="Association_Coordinacion"><di:waypoint x="755" y="166"/><di:waypoint x="755" y="175"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

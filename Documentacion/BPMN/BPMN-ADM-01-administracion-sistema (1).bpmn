@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_AdministracionSistema" targetNamespace="https://barriosolidario.org/bpmn">
+ <bpmn:collaboration id="Collaboration_AdministracionSistema"><bpmn:participant id="Participant_AdministracionSistema" name="Barrio Solidario - Administración del sistema" processRef="Process_AdministracionSistema" /></bpmn:collaboration>
+ <bpmn:process id="Process_AdministracionSistema" name="Administración general del sistema" isExecutable="false">
+  <bpmn:laneSet id="LaneSet_AdministracionSistema">
+   <bpmn:lane id="Lane_Administrador" name="Administrador"><bpmn:flowNodeRef>Start_Administracion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_AbrirPanel</bpmn:flowNodeRef><bpmn:flowNodeRef>Gateway_TipoGestion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_GestionarUsuariosRoles</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_GestionarCatalogosInstituciones</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_GestionarConfiguracion</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ConfirmarCambios</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Plataforma" name="Plataforma Barrio Solidario"><bpmn:flowNodeRef>Task_MostrarOpciones</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_GuardarCambios</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_ActualizarSistema</bpmn:flowNodeRef><bpmn:flowNodeRef>End_CambioAplicado</bpmn:flowNodeRef></bpmn:lane>
+   <bpmn:lane id="Lane_Registro" name="Notificaciones y auditoría"><bpmn:flowNodeRef>Task_RegistrarAuditoria</bpmn:flowNodeRef><bpmn:flowNodeRef>Task_NotificarResultado</bpmn:flowNodeRef></bpmn:lane>
+  </bpmn:laneSet>
+
+  <bpmn:startEvent id="Start_Administracion" name="Se requiere administrar el sistema" />
+  <bpmn:userTask id="Task_AbrirPanel" name="Ingresar al panel administrativo" />
+  <bpmn:serviceTask id="Task_MostrarOpciones" name="Mostrar opciones de administración" />
+  <bpmn:exclusiveGateway id="Gateway_TipoGestion" name="¿Qué se desea gestionar?" />
+  <bpmn:userTask id="Task_GestionarUsuariosRoles" name="Gestionar usuarios, roles y permisos" />
+  <bpmn:userTask id="Task_GestionarCatalogosInstituciones" name="Gestionar catálogos e instituciones aliadas" />
+  <bpmn:userTask id="Task_GestionarConfiguracion" name="Gestionar configuración y notificaciones" />
+  <bpmn:userTask id="Task_ConfirmarCambios" name="Revisar y confirmar cambios" />
+  <bpmn:serviceTask id="Task_GuardarCambios" name="Guardar cambios" />
+  <bpmn:serviceTask id="Task_ActualizarSistema" name="Actualizar información del sistema" />
+  <bpmn:serviceTask id="Task_RegistrarAuditoria" name="Registrar acción administrativa" />
+  <bpmn:sendTask id="Task_NotificarResultado" name="Mostrar confirmación del resultado" />
+  <bpmn:endEvent id="End_CambioAplicado" name="Administración completada" />
+
+  <bpmn:sequenceFlow id="Flow_01" sourceRef="Start_Administracion" targetRef="Task_AbrirPanel" />
+  <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_AbrirPanel" targetRef="Task_MostrarOpciones" />
+  <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_MostrarOpciones" targetRef="Gateway_TipoGestion" />
+  <bpmn:sequenceFlow id="Flow_04" name="Usuarios y roles" sourceRef="Gateway_TipoGestion" targetRef="Task_GestionarUsuariosRoles" />
+  <bpmn:sequenceFlow id="Flow_05" name="Catálogos e instituciones" sourceRef="Gateway_TipoGestion" targetRef="Task_GestionarCatalogosInstituciones" />
+  <bpmn:sequenceFlow id="Flow_06" name="Configuración" sourceRef="Gateway_TipoGestion" targetRef="Task_GestionarConfiguracion" />
+  <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_GestionarUsuariosRoles" targetRef="Task_ConfirmarCambios" />
+  <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_GestionarCatalogosInstituciones" targetRef="Task_ConfirmarCambios" />
+  <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_GestionarConfiguracion" targetRef="Task_ConfirmarCambios" />
+  <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_ConfirmarCambios" targetRef="Task_GuardarCambios" />
+  <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_GuardarCambios" targetRef="Task_ActualizarSistema" />
+  <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_ActualizarSistema" targetRef="Task_RegistrarAuditoria" />
+  <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_RegistrarAuditoria" targetRef="Task_NotificarResultado" />
+  <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_NotificarResultado" targetRef="End_CambioAplicado" />
+ </bpmn:process>
+
+ <bpmndi:BPMNDiagram id="Diagram_AdministracionSistema"><bpmndi:BPMNPlane id="Plane_AdministracionSistema" bpmnElement="Collaboration_AdministracionSistema">
+  <bpmndi:BPMNShape id="Participant_di" bpmnElement="Participant_AdministracionSistema" isHorizontal="true"><dc:Bounds x="30" y="30" width="2900" height="690"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneAdmin_di" bpmnElement="Lane_Administrador" isHorizontal="true"><dc:Bounds x="60" y="30" width="2870" height="220"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LanePlat_di" bpmnElement="Lane_Plataforma" isHorizontal="true"><dc:Bounds x="60" y="250" width="2870" height="220"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="LaneReg_di" bpmnElement="Lane_Registro" isHorizontal="true"><dc:Bounds x="60" y="470" width="2870" height="250"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Start_di" bpmnElement="Start_Administracion"><dc:Bounds x="105" y="112" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Panel_di" bpmnElement="Task_AbrirPanel"><dc:Bounds x="180" y="90" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Opciones_di" bpmnElement="Task_MostrarOpciones"><dc:Bounds x="415" y="310" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="GwTipo_di" bpmnElement="Gateway_TipoGestion" isMarkerVisible="true"><dc:Bounds x="650" y="320" width="50" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Usuarios_di" bpmnElement="Task_GestionarUsuariosRoles"><dc:Bounds x="750" y="55" width="190" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Catalogos_di" bpmnElement="Task_GestionarCatalogosInstituciones"><dc:Bounds x="750" y="125" width="205" height="65"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Config_di" bpmnElement="Task_GestionarConfiguracion"><dc:Bounds x="750" y="195" width="195" height="50"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Confirmar_di" bpmnElement="Task_ConfirmarCambios"><dc:Bounds x="1010" y="90" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Guardar_di" bpmnElement="Task_GuardarCambios"><dc:Bounds x="1245" y="310" width="180" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Actualizar_di" bpmnElement="Task_ActualizarSistema"><dc:Bounds x="1475" y="310" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Auditoria_di" bpmnElement="Task_RegistrarAuditoria"><dc:Bounds x="1710" y="535" width="190" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="Notificar_di" bpmnElement="Task_NotificarResultado"><dc:Bounds x="1950" y="535" width="185" height="70"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="End_di" bpmnElement="End_CambioAplicado"><dc:Bounds x="2185" y="552" width="36" height="36"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F01_di" bpmnElement="Flow_01"><di:waypoint x="141" y="130"/><di:waypoint x="180" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F02_di" bpmnElement="Flow_02"><di:waypoint x="365" y="125"/><di:waypoint x="390" y="125"/><di:waypoint x="390" y="345"/><di:waypoint x="415" y="345"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F03_di" bpmnElement="Flow_03"><di:waypoint x="600" y="345"/><di:waypoint x="650" y="345"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F04_di" bpmnElement="Flow_04"><di:waypoint x="675" y="320"/><di:waypoint x="675" y="87"/><di:waypoint x="750" y="87"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F05_di" bpmnElement="Flow_05"><di:waypoint x="650" y="345"/><di:waypoint x="625" y="345"/><di:waypoint x="625" y="157"/><di:waypoint x="750" y="157"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F06_di" bpmnElement="Flow_06"><di:waypoint x="675" y="370"/><di:waypoint x="675" y="220"/><di:waypoint x="750" y="220"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F07_di" bpmnElement="Flow_07"><di:waypoint x="940" y="87"/><di:waypoint x="985" y="87"/><di:waypoint x="985" y="125"/><di:waypoint x="1010" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F08_di" bpmnElement="Flow_08"><di:waypoint x="955" y="157"/><di:waypoint x="985" y="157"/><di:waypoint x="985" y="125"/><di:waypoint x="1010" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F09_di" bpmnElement="Flow_09"><di:waypoint x="945" y="220"/><di:waypoint x="985" y="220"/><di:waypoint x="985" y="125"/><di:waypoint x="1010" y="125"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="Flow_10"><di:waypoint x="1195" y="125"/><di:waypoint x="1220" y="125"/><di:waypoint x="1220" y="345"/><di:waypoint x="1245" y="345"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="Flow_11"><di:waypoint x="1425" y="345"/><di:waypoint x="1475" y="345"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="Flow_12"><di:waypoint x="1660" y="345"/><di:waypoint x="1685" y="345"/><di:waypoint x="1685" y="570"/><di:waypoint x="1710" y="570"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="Flow_13"><di:waypoint x="1900" y="570"/><di:waypoint x="1950" y="570"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="Flow_14"><di:waypoint x="2135" y="570"/><di:waypoint x="2185" y="570"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

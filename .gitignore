@@ -1,0 +1,6 @@
+# Entornos virtuales
+Fuentes Barrio Solidario/venv/
+Fuentes Barrio Solidario/venv/**
+venv/
+env/
+.venv/

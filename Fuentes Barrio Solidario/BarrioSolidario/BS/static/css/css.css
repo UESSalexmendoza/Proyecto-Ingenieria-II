@@ -2133,3 +2133,16 @@ body > main > .bs-account-screen { flex: 1 0 auto; }
 #mainNav .navbar-nav #menuLegal:hover,
 #mainNav .navbar-nav #menuLegal.active,
 #mainNav .navbar-nav #menuLegal.show { color: #e02a56 !important; }
+
+/* Accesibilidad compartida: teclado, controles y lectura. */
+.bs-skip-link { position:fixed; left:1rem; top:-5rem; z-index:1100; padding:.65rem 1rem; background:#fff; color:#111; border:2px solid #111; }
+.bs-skip-link:focus { top:1rem; }
+:where(a, button, input, select, textarea, [tabindex]):focus-visible { outline:3px solid #172f60 !important; outline-offset:3px; }
+:where(button, .btn, .top-icon, .nav-link, .dropdown-item) { min-height:44px; }
+:where(input[type="checkbox"], input[type="radio"]) { min-width:20px; min-height:20px; }
+html.bs-large-text { font-size:125%; }
+body.bs-simple-reading main { max-width:80rem; margin-inline:auto; }
+body.bs-simple-reading main .carousel, body.bs-simple-reading main .hero-float-carousel { animation:none !important; }
+body.bs-simple-reading main p, body.bs-simple-reading main li { line-height:1.8; }
+body.bs-simple-reading main a { text-decoration:underline; text-underline-offset:.18em; }
+@media (max-width:767.98px) { body.bs-simple-reading main { padding-inline:1rem; } }

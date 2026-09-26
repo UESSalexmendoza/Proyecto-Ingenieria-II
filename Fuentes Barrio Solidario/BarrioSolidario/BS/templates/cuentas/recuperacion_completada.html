@@ -1,0 +1,8 @@
+{% extends "cuentas/estado_base.html" %}
+{% block title %}Contraseña actualizada | Barrio Solidario{% endblock %}
+{% block account_context %}Recuperación de contraseña{% endblock %}
+{% block account_intro %}Mantén el acceso a tu cuenta con una contraseña segura y personal.{% endblock %}
+{% block account_icon %}bi-shield-check{% endblock %}
+{% block account_heading %}Contraseña actualizada{% endblock %}
+{% block account_message %}<p>Ya puedes iniciar sesión con tu nueva contraseña.</p>{% endblock %}
+{% block account_actions %}<a class="btn btn-login" href="{% url 'acceso' %}">Iniciar sesión</a>{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "cuentas/estado_base.html" %}
+{% block title %}Enlace inválido | Barrio Solidario{% endblock %}
+{% block account_context %}Activación de cuenta{% endblock %}
+{% block account_intro %}La activación protege el acceso a tu cuenta y confirma tu correo electrónico.{% endblock %}
+{% block account_icon %}bi-exclamation-circle{% endblock %}
+{% block account_heading %}El enlace no está disponible{% endblock %}
+{% block account_message %}<p>Puede haber vencido o haberse utilizado. Puedes solicitar otro enlace de activación.</p>{% endblock %}
+{% block account_actions %}<a class="btn btn-login" href="{% url 'reenviar_activacion' %}">Solicitar otro enlace</a><a class="btn btn-outline-secondary" href="{% url 'inicio' %}">Volver al inicio</a>{% endblock %}

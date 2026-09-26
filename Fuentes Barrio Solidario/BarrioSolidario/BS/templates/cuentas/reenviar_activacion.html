@@ -1,0 +1,16 @@
+{% extends "cuentas/form_base.html" %}
+{% block title %}Reenviar activación | Barrio Solidario{% endblock %}
+{% block account_context %}Activación de cuenta{% endblock %}
+{% block account_intro %}Si el enlace anterior venció, puedes pedir uno nuevo con el correo usado al registrarte.{% endblock %}
+{% block account_heading %}Solicitar enlace de activación{% endblock %}
+{% block account_content %}
+<p>Si tu cuenta sigue pendiente o el enlace anterior venció, ingresa el correo utilizado en el registro. Te enviaremos un enlace nuevo.</p>
+<form method="post">
+  {% csrf_token %}
+  <label class="bs-label" for="email">Correo electrónico</label>
+  <input class="bs-input" id="email" name="email" type="email" maxlength="150" required autocomplete="email">
+  <div class="text-danger" role="alert">{{ form.email.errors }}</div>
+  <button type="submit" class="btn btn-login w-100 mt-3">Enviar enlace</button>
+</form>
+<p class="bs-footnote mt-3">Por seguridad, la respuesta será la misma aunque el correo no esté registrado.</p>
+{% endblock %}

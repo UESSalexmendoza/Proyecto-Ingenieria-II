@@ -1,0 +1,69 @@
+{% extends "cuentas/form_base.html" %}
+{% block title %}Nueva contraseña | Barrio Solidario{% endblock %}
+{% block account_context %}Recuperación de contraseña{% endblock %}
+{% block account_intro %}Define una contraseña segura para volver a utilizar tu cuenta.{% endblock %}
+{% block account_heading %}Define tu nueva contraseña{% endblock %}
+{% block account_content %}
+<p id="clave-ayuda">Usa entre 12 y 15 caracteres y combina al menos tres grupos: minúsculas, mayúsculas, números y símbolos.</p>
+<form method="post">
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="mb-3">
+    <label for="id_password1" class="form-label">Nueva contraseña</label>
+    <div class="position-relative">
+      <input id="id_password1" type="password" name="password1" class="form-control pe-5" minlength="12" maxlength="15" autocomplete="new-password" required aria-describedby="clave-ayuda clave-indicador password1-error">
+      <button class="password-toggle border-0 bg-transparent p-0" type="button" data-password-target="id_password1" aria-label="Mostrar nueva contraseña" aria-pressed="false"><i class="bi bi-eye-slash" aria-hidden="true"></i></button>
+    </div>
+    <div class="mt-2" id="clave-indicador" role="status" aria-live="polite">Complejidad: sin evaluar · <span id="clave-contador">0</span>/15 caracteres</div>
+    <progress id="clave-progreso" value="0" max="4" aria-label="Nivel de complejidad de la contraseña" style="width:100%;height:10px;accent-color:#b7365d;"></progress>
+    <div id="password1-error" class="text-danger" role="alert">{{ form.password1.errors }}</div>
+  </div>
+  <div class="mb-3">
+    <label for="id_password2" class="form-label">Confirma tu contraseña</label>
+    <div class="position-relative">
+      <input id="id_password2" type="password" name="password2" class="form-control pe-5" minlength="12" maxlength="15" autocomplete="new-password" required aria-describedby="password2-error">
+      <button class="password-toggle border-0 bg-transparent p-0" type="button" data-password-target="id_password2" aria-label="Mostrar confirmación de contraseña" aria-pressed="false"><i class="bi bi-eye-slash" aria-hidden="true"></i></button>
+    </div>
+    <div id="password2-error" class="text-danger" role="alert">{{ form.password2.errors }}</div>
+  </div>
+  <button type="submit" class="btn btn-login w-100">Guardar nueva contraseña</button>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-password-target]').forEach(function (boton) {
+    const campoClave = document.getElementById(boton.dataset.passwordTarget);
+    if (!campoClave) return;
+    boton.addEventListener('click', function () {
+      const visible = campoClave.type === 'password';
+      campoClave.type = visible ? 'text' : 'password';
+      boton.setAttribute('aria-pressed', String(visible));
+      boton.setAttribute('aria-label', (visible ? 'Ocultar ' : 'Mostrar ') + boton.getAttribute('aria-label').replace(/^(Mostrar|Ocultar) /, ''));
+      boton.querySelector('i').classList.toggle('bi-eye', visible);
+      boton.querySelector('i').classList.toggle('bi-eye-slash', !visible);
+    });
+  });
+
+  const campo = document.getElementById('id_password1');
+  const progreso = document.getElementById('clave-progreso');
+  const indicador = document.getElementById('clave-indicador');
+  const contador = document.getElementById('clave-contador');
+  if (!campo || !progreso || !indicador || !contador) return;
+
+  campo.addEventListener('input', function () {
+    const clave = campo.value;
+    const grupos = [/[a-z]/, /[A-Z]/, /[0-9]/, /[^A-Za-z0-9\s]/]
+      .filter(expresion => expresion.test(clave)).length;
+    const suficiente = clave.length >= 12 && clave.length <= 15;
+    const nivel = !clave ? 0 : !suficiente ? 1 : grupos < 3 ? 2 : grupos === 3 ? 3 : 4;
+    const etiqueta = nivel < 3 ? 'Baja' : nivel === 3 ? 'Media' : 'Alta';
+    progreso.value = nivel;
+    progreso.style.accentColor = nivel < 3 ? '#b7365d' : nivel === 3 ? '#ba7b16' : '#22804e';
+    indicador.firstChild.textContent = clave ? 'Complejidad: ' + etiqueta + ' · ' : 'Complejidad: sin evaluar · ';
+    contador.textContent = clave.length;
+  });
+});
+</script>
+{% endblock %}

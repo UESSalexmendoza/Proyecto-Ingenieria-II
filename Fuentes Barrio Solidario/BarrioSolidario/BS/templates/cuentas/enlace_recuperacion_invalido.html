@@ -1,0 +1,8 @@
+{% extends "cuentas/estado_base.html" %}
+{% block title %}Enlace no disponible | Barrio Solidario{% endblock %}
+{% block account_context %}Recuperación de contraseña{% endblock %}
+{% block account_intro %}Por seguridad, los enlaces de recuperación tienen una vigencia limitada.{% endblock %}
+{% block account_icon %}bi-exclamation-circle{% endblock %}
+{% block account_heading %}El enlace no está disponible{% endblock %}
+{% block account_message %}<p>Puede haber vencido o ya haberse utilizado.</p>{% endblock %}
+{% block account_actions %}<a class="btn btn-login" href="{% url 'recuperar_clave' %}">Solicitar otro enlace</a><a class="btn btn-outline-secondary" href="{% url 'inicio' %}">Volver al inicio</a>{% endblock %}

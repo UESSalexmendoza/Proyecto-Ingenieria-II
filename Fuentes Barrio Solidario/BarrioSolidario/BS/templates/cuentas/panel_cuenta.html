@@ -1,0 +1,6 @@
+{% extends "cuentas/form_base.html" %}
+{% block title %}Mi panel | Barrio Solidario{% endblock %}
+{% block account_context %}Opciones de trabajo{% endblock %}
+{% block account_intro %}Accede a las funciones que estarán disponibles para tu rol en la plataforma.{% endblock %}
+{% block account_heading %}Mi panel{% endblock %}
+{% block account_content %}<p>Bienvenido, {{ user.get_full_name|default:user.username }}.</p><p>Desde aquí podrás acceder a las opciones de trabajo que se incorporen al MVP.</p>{% endblock %}

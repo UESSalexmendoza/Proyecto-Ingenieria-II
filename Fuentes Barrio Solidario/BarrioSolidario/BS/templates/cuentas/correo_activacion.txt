@@ -1,0 +1,15 @@
+Universidad Espíritu Santo (UEES) | Barrio Solidario
+Activación de cuenta
+
+Estimado/a {{ nombre }}:
+
+Reciba un cordial saludo. Hemos recibido su solicitud de registro en Barrio Solidario. Su cuenta de acceso es: {{ correo }}.
+
+Para activar su cuenta y definir su contraseña, visite el siguiente enlace:
+{{ enlace }}
+
+Por seguridad, el enlace tiene una vigencia de 24 horas y solo puede utilizarse una vez. Si usted no solicitó el registro, ignore este mensaje.
+
+Atentamente,
+Equipo Barrio Solidario
+Universidad Espíritu Santo (UEES)

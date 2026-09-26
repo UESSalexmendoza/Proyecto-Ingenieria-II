@@ -1,0 +1,11 @@
+{% extends "cuentas/correo_base.html" %}
+{% block correo_titulo %}Recuperación de contraseña | Barrio Solidario{% endblock %}
+{% block correo_previa %}Restablezca su contraseña de Barrio Solidario mediante un enlace seguro.{% endblock %}
+{% block correo_encabezado %}Restablezca su contraseña{% endblock %}
+{% block correo_contenido %}
+<p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Reciba un cordial saludo. Hemos recibido una solicitud para recuperar el acceso a su cuenta en Barrio Solidario. Utilice el siguiente enlace para definir una nueva contraseña.</p>
+{% endblock %}
+{% block correo_boton %}Haz clic aquí para restablecer tu contraseña{% endblock %}
+{% block correo_indicaciones %}<p style="margin:0 0 15px;font-size:14px;line-height:1.6;">Por seguridad, el enlace tiene una vigencia limitada y dejará de funcionar después de cambiar la contraseña.</p>{% endblock %}
+{% block correo_aviso %}Si usted no solicitó el cambio, ignore este mensaje. Su contraseña actual seguirá vigente.{% endblock %}
+{% block correo_pie %}Este es un mensaje relacionado con la recuperación de su cuenta. Por favor, no comparta el enlace con otras personas.{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "cuentas/correo_base.html" %}
+{% block correo_titulo %}Activación de cuenta | Barrio Solidario{% endblock %}
+{% block correo_previa %}Active su cuenta de Barrio Solidario y defina su contraseña.{% endblock %}
+{% block correo_encabezado %}Active su cuenta{% endblock %}
+{% block correo_contenido %}
+<p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Reciba un cordial saludo. Hemos recibido su solicitud de registro en Barrio Solidario. Para completar el proceso, active su cuenta y defina su contraseña personal.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:21px 0;background:#f5f8fc;border:1px solid #e4ebf3;border-radius:8px;">
+  <tr><td style="padding:14px 18px;font-size:14px;line-height:1.6;">Usuario de acceso: <strong>{{ correo }}</strong></td></tr>
+</table>
+{% endblock %}
+{% block correo_boton %}Haz clic aquí para activar tu cuenta{% endblock %}
+{% block correo_indicaciones %}<p style="margin:0 0 15px;font-size:14px;line-height:1.6;">Por seguridad, el enlace tiene una vigencia de <strong>24 horas</strong> y solo puede utilizarse una vez.</p>{% endblock %}
+{% block correo_aviso %}Si usted no solicitó el registro, ignore este mensaje.{% endblock %}
+{% block correo_pie %}Este es un mensaje relacionado con la activación de su cuenta. Por favor, no comparta el enlace con otras personas.{% endblock %}

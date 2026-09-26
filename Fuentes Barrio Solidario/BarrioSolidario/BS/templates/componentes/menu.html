@@ -1,6 +1,6 @@
 {% load static %}
 
-<nav class="navbar navbar-expand-lg bg-white sticky-top border-bottom">
+<nav class="navbar navbar-expand-xxl bg-white sticky-top border-bottom">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center gap-0 m-0"
            href="{% url 'inicio' %}">
@@ -8,7 +8,6 @@
                  alt="Barrio Solidario"
                  height="55"
                  class="logo-img">
-            <span class="brand-text">Barrio Solidario</span>
         </a>
 
         <button class="navbar-toggler"
@@ -20,29 +19,39 @@
                 aria-label="Abrir menú">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="mainNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2">
-                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#inicio">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#que-es">¿Qué es?</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#como-funciona">Cómo funciona</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#usuarios">Usuarios</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#beneficios">Beneficios</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#metricas">Métricas</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#aliados">Aliados</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#contacto">Contacto</a></li>
+            <ul class="navbar-nav me-auto mb-2 mb-xxl-0 gap-xxl-2">
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#inicio" data-menu-section="inicio">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#que-es" data-menu-section="que-es">¿Qué es?</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#como-funciona" data-menu-section="como-funciona">Cómo funciona</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#usuarios" data-menu-section="usuarios">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#beneficios" data-menu-section="beneficios">Beneficios</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#metricas" data-menu-section="metricas">Métricas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#aliados" data-menu-section="aliados">Aliados</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#contacto" data-menu-section="contacto">Contacto</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle{% if request.resolver_match.url_name == 'terminos' or request.resolver_match.url_name == 'privacidad' or request.resolver_match.url_name == 'politica_uso' or request.resolver_match.url_name == 'politica_voluntariado' or request.resolver_match.url_name == 'datos_personales' %} active{% endif %}" href="#" id="menuLegal" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">Legal</a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuLegal">
+                        <li><a class="dropdown-item{% if request.resolver_match.url_name == 'terminos' %} active{% endif %}" href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                        <li><a class="dropdown-item{% if request.resolver_match.url_name == 'privacidad' %} active{% endif %}" href="{% url 'privacidad' %}">Política de privacidad</a></li>
+                        <li><a class="dropdown-item{% if request.resolver_match.url_name == 'politica_uso' %} active{% endif %}" href="{% url 'politica_uso' %}">Política de uso</a></li>
+                        <li><a class="dropdown-item{% if request.resolver_match.url_name == 'politica_voluntariado' %} active{% endif %}" href="{% url 'politica_voluntariado' %}">Política de voluntariado</a></li>
+                        <li><a class="dropdown-item{% if request.resolver_match.url_name == 'datos_personales' %} active{% endif %}" href="{% url 'datos_personales' %}">Protección de datos personales</a></li>
+                    </ul>
+                </li>
             </ul>
 
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 ms-xxl-auto flex-wrap">
                 {% if request.resolver_match.url_name != "acceso" %}
-                    <a href="{% url 'acceso' %}" class="btn btn-login">
-                        Iniciar sesión
-                    </a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'acceso' %}" class="btn btn-login">Iniciar sesión</a>
+                    {% endif %}                
                 {% endif %}
 
                 {% if request.resolver_match.url_name != "registro" %}
                     <a href="{% url 'registro' %}" class="btn btn-register">
-                        Registrarse
+                        Registrar Usuario
                     </a>
                 {% endif %}
             </div>
@@ -50,3 +59,39 @@
         </div>
     </div>
 </nav>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const links = Array.from(document.querySelectorAll('#mainNav [data-menu-section]'));
+  const sections = links.map(link => ({link, section: document.getElementById(link.dataset.menuSection)}))
+                        .filter(item => item.section);
+  function select(sectionId) {
+    links.forEach(link => {
+      const active = link.dataset.menuSection === sectionId;
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }
+  if (!sections.length) return;
+  function updateFromScroll() {
+    const position = window.scrollY + 170;
+    let current = sections[0].link.dataset.menuSection;
+    for (const item of sections) {
+      if (item.section.offsetTop <= position) current = item.link.dataset.menuSection;
+    }
+    select(current);
+  }
+  let scheduled = false;
+  window.addEventListener('scroll', () => {
+    if (!scheduled) requestAnimationFrame(() => { updateFromScroll(); scheduled = false; });
+    scheduled = true;
+  }, {passive: true});
+  window.addEventListener('hashchange', () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (sections.some(item => item.link.dataset.menuSection === id)) select(id);
+    else updateFromScroll();
+  });
+  links.forEach(link => link.addEventListener('click', () => select(link.dataset.menuSection)));
+  updateFromScroll();
+});
+</script>

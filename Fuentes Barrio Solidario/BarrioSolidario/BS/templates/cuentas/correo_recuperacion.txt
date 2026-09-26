@@ -1,0 +1,15 @@
+Universidad Espíritu Santo (UEES) | Barrio Solidario
+Recuperación de contraseña
+
+Estimado/a{% if nombre %} {{ nombre }}{% else %} usuario/a{% endif %}:
+
+Reciba un cordial saludo. Hemos recibido una solicitud para restablecer la contraseña de su cuenta en Barrio Solidario.
+
+Para definir una nueva contraseña, visite el siguiente enlace:
+{{ enlace }}
+
+Si usted no solicitó el cambio, ignore este mensaje. Su contraseña actual seguirá vigente.
+
+Atentamente,
+Equipo Barrio Solidario
+Universidad Espíritu Santo (UEES)

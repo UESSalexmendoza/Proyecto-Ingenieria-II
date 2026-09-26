@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Revisa tu correo | Barrio Solidario{% endblock %}
+
+{% block content %}
+<section class="bs-auth-wrap bs-account-screen" aria-labelledby="confirmacion-recuperacion">
+  <div class="bs-auth-grid bs-account-grid">
+    <aside class="bs-card bs-auth-info bs-account-body">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <img src="{% static 'img/Logo.png' %}" alt="" height="55" class="logo-img">
+        <span class="brand-text">Barrio Solidario</span>
+      </div>
+      <p class="bs-brand__subtitle">Recuperación de cuenta</p>
+      <p class="bs-text">Restablece el acceso a tu cuenta mediante el enlace enviado a tu correo electrónico.</p>
+      <div class="bs-divider"></div>
+      <p class="bs-small mb-0">Si el mensaje tarda, revisa también la carpeta de correo no deseado.</p>
+    </aside>
+
+    <div class="bs-card bs-auth-form bs-account-body">
+      <div class="bs-account-status-icon" aria-hidden="true"><i class="bi bi-envelope-check"></i></div>
+      <h1 id="confirmacion-recuperacion" class="bs-h1">Revisa tu correo</h1>
+      <p class="bs-text bs-account-email-note">Si existe una cuenta activa con ese correo, recibirás un enlace para restablecer la contraseña. Revisa también la carpeta de correo no deseado.</p>
+      <div class="bs-account-actions">
+        <a class="btn btn-login" href="{% url 'acceso' %}">Volver al inicio de sesión</a>
+        <a class="btn btn-outline-secondary" href="{% url 'inicio' %}">Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

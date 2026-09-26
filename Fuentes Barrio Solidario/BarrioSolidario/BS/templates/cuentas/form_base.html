@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<section class="bs-auth-wrap bs-account-screen">
+  <div class="bs-auth-grid bs-account-grid">
+    <aside class="bs-card bs-auth-info">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
+        <span class="brand-text">Barrio Solidario</span>
+      </div>
+      <p class="bs-brand__subtitle">{% block account_context %}Mi cuenta{% endblock %}</p>
+      <p class="bs-text">{% block account_intro %}Gestiona tu cuenta de Barrio Solidario de forma segura.{% endblock %}</p>
+      <div class="bs-divider"></div>
+      <p class="bs-small text-muted">{% block account_hint %}Tus datos y opciones de acceso se administran desde aquí.{% endblock %}</p>
+    </aside>
+    <div class="bs-card bs-auth-form bs-account-body">
+      <h1 class="bs-h1">{% block account_heading %}{% endblock %}</h1>
+      <div class="mt-3">{% block account_content %}{% endblock %}</div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,18 +1,11 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from BS import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("", views.inicio, name="inicio"),
-    path("acceso/", views.acceso, name="acceso"),
-    path("registro/", views.registro, name="registro"),
-    path(
-        "recuperar-clave/",
-        views.recuperar_clave,
-        name="recuperar_clave",
-    ),
     path("terminos/", views.terminos, name="terminos"),
     path("privacidad/", views.privacidad, name="privacidad"),
     path("politica-uso/", views.politica_uso, name="politica_uso"),
@@ -26,4 +19,5 @@ urlpatterns = [
         views.datos_personales,
         name="datos_personales",
     ),    
+    path("", include("BS.urls_cuentas")),    
 ]

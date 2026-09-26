@@ -1,0 +1,13 @@
+{% extends "cuentas/form_base.html" %}
+{% block title %}Mi perfil | Barrio Solidario{% endblock %}
+{% block account_context %}Personalización{% endblock %}
+{% block account_intro %}Consulta y actualiza la información básica de tu perfil.{% endblock %}
+{% block account_heading %}Mi perfil{% endblock %}
+{% block account_content %}
+<p>Correo de acceso: {{ user.email }}</p>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Guardar cambios</button>
+</form>
+{% endblock %}

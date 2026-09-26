@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Términos y condiciones | Barrio Solidario{% endblock %}
+
+{% block content %}
+<section id="terminos" class="py-5 bs-section-light">
+  <div class="container">
+    <div class="row g-4 align-items-stretch">
+
+      <!-- LEFT CARD (Info) -->
+      <div class="col-lg-5">
+        <div class="bs-card p-4">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="bs-brand">
+              <div class="d-flex align-items-center gap-3 mb-4">
+              <img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
+              <span class="brand-text">
+                Barrio Solidario
+              </span>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-muted mb-3">
+            Queremos que tu experiencia sea segura y transparente. Estos términos explican cómo usar la plataforma,
+            qué responsabilidades tiene cada rol y cómo protegemos tu información durante el registro, la solicitud
+            de ayuda y el seguimiento.
+          </p>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge rounded-pill text-bg-light border">Adulto Mayor</span>
+            <span class="badge rounded-pill text-bg-light border">Familiar / Cuidador</span>
+            <span class="badge rounded-pill text-bg-light border">Voluntario</span>
+            <span class="badge rounded-pill text-bg-light border">ONG / GAD / Fundación</span>
+            <span class="badge rounded-pill text-bg-light border">Moderación</span>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="bs-callout">
+            <div class="fw-semibold mb-1">Aceptación</div>
+            <div class="text-muted">
+              Al registrarte o iniciar sesión confirmas que leíste y aceptas estas condiciones.
+              Si no estás de acuerdo, puedes abstenerte de usar la plataforma.
+            </div>
+          </div>
+		  
+          <div class="mt-4">
+            <a href="{% url 'inicio' %}#contacto" class="btn btn-social btn-google w-100">
+					¿Dudas? Contáctanos
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT CARD (Terms content) -->
+      <div class="col-lg-7">
+        <div class="bs-card h-100 p-4">
+          <h2 class="fw-bold mb-1">Términos y Condiciones</h2>
+          <p class="text-muted mb-4">
+            Consulta los puntos principales. El contenido está estructurado para lectura rápida y claridad.
+          </p>
+
+          <div class="accordion bs-accordion" id="accordionTerms">
+
+            <!-- 1 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="t1h">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#t1" aria-expanded="true" aria-controls="t1">
+                  1) Objeto de la plataforma
+                </button>
+              </h2>
+              <div id="t1" class="accordion-collapse collapse show" aria-labelledby="t1h" data-bs-parent="#accordionTerms">
+                <div class="accordion-body text-muted">
+                  Barrio Solidario es una plataforma comunitaria para <strong>gestionar solicitudes de ayuda</strong>,
+                  <strong>conectar voluntarios</strong> y dar <strong>seguimiento</strong> a cada caso hasta su cierre,
+                  permitiendo medir el impacto social.
+                </div>
+              </div>
+            </div>
+
+            <!-- 2 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="t2h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t2" aria-expanded="false" aria-controls="t2">
+                  2) Registro, roles y estados de cuenta
+                </button>
+              </h2>
+              <div id="t2" class="accordion-collapse collapse" aria-labelledby="t2h" data-bs-parent="#accordionTerms">
+                <div class="accordion-body text-muted">
+                  El usuario se registra con datos reales. La plataforma asigna permisos por rol.
+                  Algunas cuentas pueden quedar en estado <strong>Pendiente</strong> hasta la revisión de moderación,
+                  según las reglas del servicio.
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="t3h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t3" aria-expanded="false" aria-controls="t3">
+                  3) Uso adecuado y convivencia
+                </button>
+              </h2>
+              <div id="t3" class="accordion-collapse collapse" aria-labelledby="t3h" data-bs-parent="#accordionTerms">
+                <div class="accordion-body text-muted">
+                  Se prohíbe suplantar identidad, publicar información falsa, acosar, discriminar o realizar
+                  actividades que afecten la seguridad de otros usuarios. El incumplimiento puede generar
+                  <strong>suspensión</strong> o <strong>bloqueo</strong> de la cuenta.
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="t4h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t4" aria-expanded="false" aria-controls="t4">
+                  4) Privacidad, trazabilidad y seguridad
+                </button>
+              </h2>
+              <div id="t4" class="accordion-collapse collapse" aria-labelledby="t4h" data-bs-parent="#accordionTerms">
+                <div class="accordion-body text-muted">
+                  La información se utiliza para coordinación y seguimiento de casos.
+                  El acceso se controla por roles y se mantiene trazabilidad de acciones
+                  para auditoría y mejora del servicio.
+                </div>
+              </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="t5h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t5" aria-expanded="false" aria-controls="t5">
+                  5) Ubicación y georreferenciación
+                </button>
+              </h2>
+              <div id="t5" class="accordion-collapse collapse" aria-labelledby="t5h" data-bs-parent="#accordionTerms">
+                <div class="accordion-body text-muted">
+                  La ubicación se solicita para mejorar la asignación de ayuda cercana.
+                  El usuario puede confirmar su ubicación durante el registro o solicitud.
+                  No se publica información sensible sin controles del sistema.
+                </div>
+              </div>
+            </div>
+
+            <!-- 6 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="t6h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t6" aria-expanded="false" aria-controls="t6">
+                  6) Limitación de responsabilidad
+                </button>
+              </h2>
+              <div id="t6" class="accordion-collapse collapse" aria-labelledby="t6h" data-bs-parent="#accordionTerms">
+                <div class="accordion-body text-muted">
+                  Barrio Solidario facilita la coordinación. La atención depende de disponibilidad,
+                  confirmación y alcance de los participantes (voluntarios/organizaciones).
+                  Se promueve el uso responsable y seguro en todo momento.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

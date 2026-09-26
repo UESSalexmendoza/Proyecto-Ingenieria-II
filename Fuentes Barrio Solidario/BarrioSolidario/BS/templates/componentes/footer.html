@@ -1,0 +1,73 @@
+{% load static %}
+
+<footer class="footer-main">
+    <div class="container py-5">
+        <div class="row gy-4">
+
+            <!-- Identidad -->
+            <div class="col-md-4">
+                <div class="footer-brand">
+                    <a class="navbar-brand d-flex align-items-center gap-0 m-0"
+                       href="{% url 'inicio' %}">
+                        <img src="{% static 'img/Logo.png' %}"
+                             alt="Barrio Solidario"
+                             height="55"
+                             class="logo-img">
+                        <span class="footer-logo">
+                            Barrio <span>Solidario</span>
+                        </span>
+                    </a>
+
+                    <p>
+                        Plataforma comunitaria que conecta adultos mayores,
+                        voluntarios e instituciones para coordinar ayuda real,
+                        segura y con seguimiento.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Plataforma -->
+            <div class="col-md-3">
+                <h6 class="footer-title">Plataforma</h6>
+                <ul class="footer-links">
+                    <li><a href="{% url 'inicio' %}#que-es">¿Qué es?</a></li>
+                    <li><a href="{% url 'inicio' %}#como-funciona">Cómo funciona</a></li>
+                    <li><a href="{% url 'inicio' %}#usuarios">Tipos de usuarios</a></li>
+                    <li><a href="{% url 'inicio' %}#beneficios">Beneficios</a></li>
+                    <li><a href="{% url 'inicio' %}#metricas">Métricas</a></li>
+                </ul>
+            </div>
+
+            <!-- Legal -->
+            <div class="col-md-3">
+                <h6 class="footer-title">Legal</h6>
+                <ul class="footer-links">
+                    <li><a href="{% url 'terminos' %}">Términos y condiciones</a></li>
+                    <li><a href="{% url 'privacidad' %}">Política de privacidad</a></li>
+                    <li><a href="{% url 'politica_uso' %}">Política de uso</a></li>
+                    <li><a href="{% url 'politica_voluntariado' %}">Política de voluntariado</a></li>
+                    <li><a href="{% url 'datos_personales' %}">Protección de datos personales</a></li>
+                </ul>
+            </div>
+
+            <!-- Contacto -->
+      <div class="col-md-2">
+        <h6 class="footer-title">Contacto</h6>
+        <ul class="footer-contact">
+          <li>Email: info@barriosolidario.ec</li>
+          <li>Tel: (+593) 000 000 000</li>
+        </ul>
+
+        <div class="footer-social mt-3">
+          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 Barrio Solidario. Todos los derechos reservados.
+    </div>
+</footer>

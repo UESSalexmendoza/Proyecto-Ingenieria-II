@@ -1,22 +1,29 @@
-"""
-URL configuration for BarrioSolidario project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
+from BS import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+
+    path("", views.inicio, name="inicio"),
+    path("acceso/", views.acceso, name="acceso"),
+    path("registro/", views.registro, name="registro"),
+    path(
+        "recuperar-clave/",
+        views.recuperar_clave,
+        name="recuperar_clave",
+    ),
+    path("terminos/", views.terminos, name="terminos"),
+    path("privacidad/", views.privacidad, name="privacidad"),
+    path("politica-uso/", views.politica_uso, name="politica_uso"),
+    path(
+        "politica-voluntariado/",
+        views.politica_voluntariado,
+        name="politica_voluntariado",
+    ),
+    path(
+        "datos-personales/",
+        views.datos_personales,
+        name="datos_personales",
+    ),    
 ]

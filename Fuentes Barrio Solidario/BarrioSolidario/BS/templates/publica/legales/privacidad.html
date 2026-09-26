@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Política de privacidad | Barrio Solidario{% endblock %}
+
+{% block content %}
+<section id="privacidad" class="py-5 bs-section-light">
+  <div class="container">
+    <div class="row g-4 align-items-stretch">
+
+      <!-- LEFT CARD (Info) -->
+      <div class="col-lg-5">
+        <div class="bs-card h-100 p-4">
+            <div class="bs-brand">
+              <div class="d-flex align-items-center gap-3 mb-4">
+              <img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
+              <span class="brand-text">
+                Barrio Solidario
+              </span>
+              </div>
+            </div>
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div>
+              <small class="text-muted">Políticas de privacidad y protección de datos</small>
+            </div>
+          </div>
+
+          <p class="text-muted mb-3">
+            Tu información es importante. Estas políticas explican qué datos se recopilan, para qué se usan,
+            cómo se protegen y qué controles tienes sobre tu información dentro de la plataforma.
+          </p>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge rounded-pill text-bg-light border">Datos personales</span>
+            <span class="badge rounded-pill text-bg-light border">Ubicación</span>
+            <span class="badge rounded-pill text-bg-light border">Trazabilidad</span>
+            <span class="badge rounded-pill text-bg-light border">Roles y permisos</span>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="bs-callout">
+            <div class="fw-semibold mb-1">Principio clave</div>
+            <div class="text-muted">
+              Recopilamos lo necesario para coordinar ayuda y asegurar seguimiento, manteniendo controles de acceso
+              y prácticas de seguridad acordes al prototipo.
+            </div>
+          </div>
+          <div class="mt-4">
+            <a href="{% url 'inicio' %}#contacto" class="btn btn-social btn-google w-100">
+					¿Dudas? Contáctanos
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT CARD (Privacy content) -->
+      <div class="col-lg-7">
+        <div class="bs-card h-100 p-4">
+          <h2 class="fw-bold mb-1">Políticas de privacidad</h2>
+          <p class="text-muted mb-4">
+            Resumen estructurado para lectura rápida. Puedes ampliar cada apartado cuando lo necesites.
+          </p>
+
+          <div class="accordion bs-accordion" id="accordionPrivacy">
+
+            <!-- 1 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="p1h">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#p1" aria-expanded="true" aria-controls="p1">
+                  1) Qué información recopilamos
+                </button>
+              </h2>
+              <div id="p1" class="accordion-collapse collapse show" aria-labelledby="p1h" data-bs-parent="#accordionPrivacy">
+                <div class="accordion-body text-muted">
+                  Se pueden registrar datos como: nombres, correo, teléfono, rol de usuario, información básica del perfil
+                  y detalles relacionados con solicitudes de ayuda. En casos específicos, se puede usar ubicación para coordinar atención cercana.
+                </div>
+              </div>
+            </div>
+
+            <!-- 2 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="p2h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p2" aria-expanded="false" aria-controls="p2">
+                  2) Para qué usamos tus datos
+                </button>
+              </h2>
+              <div id="p2" class="accordion-collapse collapse" aria-labelledby="p2h" data-bs-parent="#accordionPrivacy">
+                <div class="accordion-body text-muted">
+                  Usamos la información para: crear y administrar cuentas, gestionar solicitudes, coordinar voluntarios o instituciones,
+                  notificar avances, mantener seguimiento y generar métricas agregadas de impacto. No se usan datos para fines ajenos al objetivo social del proyecto.
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="p3h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p3" aria-expanded="false" aria-controls="p3">
+                  3) Ubicación y datos sensibles
+                </button>
+              </h2>
+              <div id="p3" class="accordion-collapse collapse" aria-labelledby="p3h" data-bs-parent="#accordionPrivacy">
+                <div class="accordion-body text-muted">
+                  La ubicación se utiliza para mejorar la asignación de ayuda (cercanía y cobertura). En el prototipo,
+                  se considera que la plataforma evita exponer información sensible de forma pública y aplica controles por roles.
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="p4h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p4" aria-expanded="false" aria-controls="p4">
+                  4) Quién puede ver tu información
+                </button>
+              </h2>
+              <div id="p4" class="accordion-collapse collapse" aria-labelledby="p4h" data-bs-parent="#accordionPrivacy">
+                <div class="accordion-body text-muted">
+                  El acceso depende del rol: solicitantes ven sus solicitudes, voluntarios ven casos asignados o disponibles según reglas,
+                  instituciones ven casos bajo coordinación autorizada y moderación revisa cumplimiento y trazabilidad. El sistema limita el acceso según permisos.
+                </div>
+              </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="p5h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p5" aria-expanded="false" aria-controls="p5">
+                  5) Conservación de datos y trazabilidad
+                </button>
+              </h2>
+              <div id="p5" class="accordion-collapse collapse" aria-labelledby="p5h" data-bs-parent="#accordionPrivacy">
+                <div class="accordion-body text-muted">
+                  Se conserva información necesaria para seguimiento, auditoría y métricas. La trazabilidad permite conocer estados,
+                  acciones y cierres. En un despliegue real, se definirían plazos y procedimientos formales de retención y eliminación.
+                </div>
+              </div>
+            </div>
+
+            <!-- 6 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="p6h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p6" aria-expanded="false" aria-controls="p6">
+                  6) Tus derechos y control de tu información
+                </button>
+              </h2>
+              <div id="p6" class="accordion-collapse collapse" aria-labelledby="p6h" data-bs-parent="#accordionPrivacy">
+                <div class="accordion-body text-muted">
+                  Puedes solicitar actualización/corrección de datos de perfil, revisar términos antes de usar la plataforma
+                  y comunicarte por el canal de contacto para consultas sobre tratamiento de datos. En una fase productiva,
+                  se formalizarían mecanismos de acceso, rectificación y eliminación según normativa aplicable.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

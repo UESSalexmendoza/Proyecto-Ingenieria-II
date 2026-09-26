@@ -1,0 +1,1014 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Barrio Solidario | Conectamos ayuda con voluntariado{% endblock %}
+
+{% block content %}
+<header id="inicio" class="hero">
+			<div class="container">
+				<div class="row align-items-center g-4">
+					<div class="col-lg-7 text-white">
+						<p class="text-uppercase fw-semibold mb-2" style="letter-spacing:.08em; opacity:.9;">
+							Plataforma comunitaria de apoyo
+						</p>
+						<h1 class="display-5 fw-bold lh-1">
+							Conectamos <span style="color:#ffd1dc;">adultos mayores</span> con <span style="color:#ffd1dc;">voluntarios</span> para brindar ayuda real en el barrio
+						</h1>
+						<p class="lead mt-3 mb-4" style="max-width: 52ch; opacity:.95;">
+							Barrio Solidario permite solicitar asistencia, asignar voluntarios y dar seguimiento a la ayuda,
+							fortaleciendo la solidaridad y midiendo el impacto social.
+						</p>
+						<div class="d-flex gap-3 mt-4 flex-wrap">
+							<a href="{% url 'registro' %}" class="btn btn-hero-primary">
+								Quiero registrarme
+							</a>
+							<a href="#como-funciona" class="btn btn-hero-secondary">
+								Ver cómo funciona
+							</a>
+						</div>
+					</div>
+					<div class="col-lg-5">
+						<div class="hero-float-carousel">
+							<div id="heroActionsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4500" data-bs-pause="hover" data-bs-touch="true">
+								<div class="carousel-inner">
+									<div class="carousel-item active">
+										<div class="hero-slide">
+											<div class="hero-slide-icon hero-slide-icon--accent">
+												<i class="bi bi-person-plus-fill"></i>
+											</div>
+											<div class="hero-slide-title">
+												Registrarme
+											</div>
+											<div class="hero-slide-text">
+												Crea tu cuenta y forma parte de una red solidaria que transforma la voluntad en acciones reales, fortaleciendo el apoyo y la confianza en tu comunidad.
+											</div>
+											<div class="hero-slide-footer">
+												<a href="{% url 'registro' %}" class="btn btn-hero-primary">Crear cuenta</a>
+												<a href="#usuarios" class="btn btn-hero-secondary">Ver roles</a>
+											</div>
+										</div>
+									</div>
+									<div class="carousel-item">
+										<div class="hero-slide">
+											<div class="hero-slide-icon hero-slide-icon--navy">
+												<i class="bi bi-box-arrow-in-right"></i>
+											</div>
+											<div class="hero-slide-title">
+												Iniciar sesión
+											</div>
+											<div class="hero-slide-text">
+												Inicia sesión y continúa generando impacto en tu comunidad, gestionando solicitudes y fortaleciendo redes de apoyo solidario.
+											</div>
+											<div class="hero-slide-footer">
+												<a href="{% url 'acceso' %}" class="btn btn-hero-secondary">Entrar</a>
+												<a href="{% url 'recuperar_clave' %}" class="btn btn-hero-secondary">¿Olvidaste tu contraseña?</a>
+											</div>
+										</div>
+									</div>
+									<div class="carousel-item">
+										<div class="hero-slide">
+											<div class="hero-slide-icon hero-slide-icon--accent">
+												<i class="bi bi-buildings-fill"></i>
+											</div>
+											<div class="hero-slide-title">
+												Coordinación institucional solidaria
+											</div>
+											<div class="hero-slide-text">
+												Coordina acciones solidarias, fortalece redes de apoyo y mide el impacto social de tus iniciativas con una plataforma diseñada para conectar comunidades.
+											</div>
+											<div class="hero-slide-footer">
+												<a href="#contacto" class="btn btn-hero-primary">Coordinar</a>
+												<a href="#metricas" class="btn btn-hero-secondary">Ver impacto</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="hero-carousel-nav">
+									<button class="hero-carousel-arrow" type="button" data-bs-target="#heroActionsCarousel" data-bs-slide="prev" aria-label="Anterior">
+										<i class="bi bi-chevron-left"></i>
+									</button>
+									<div class="carousel-indicators hero-carousel-dots">
+										<button type="button" data-bs-target="#heroActionsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+										<button type="button" data-bs-target="#heroActionsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+										<button type="button" data-bs-target="#heroActionsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+									</div>
+									<button class="hero-carousel-arrow" type="button" data-bs-target="#heroActionsCarousel" data-bs-slide="next" aria-label="Siguiente">
+										<i class="bi bi-chevron-right"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+		<section class="floating-cards">
+			<div class="container">
+				<div class="row g-3 g-lg-4">
+					<div class="col-md-4">
+						<div class="value-card h-100">
+							<div class="value-icon value-icon--navy">
+								<i class="bi bi-clipboard-check"></i>
+							</div>
+							<div class="value-title">
+								Solicita ayuda
+							</div>
+							<div class="value-desc">
+								Registra una solicitud de asistencia de forma guiada y segura.
+							</div>
+							<a href="#como-funciona" class="value-link">
+								Ver pasos <i class="bi bi-arrow-right"></i>
+							</a>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="value-card h-100">
+							<div class="value-icon value-icon--accent">
+								<i class="bi bi-heart-pulse"></i>
+							</div>
+							<div class="value-title">
+								Apoya como voluntario
+							</div>
+							<div class="value-desc">
+								Postúlate a solicitudes cercanas y ayuda a quienes más lo necesitan.
+							</div>
+							<a href="#usuarios" class="value-link">
+								Conocer roles <i class="bi bi-arrow-right"></i>
+							</a>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="value-card h-100">
+							<div class="value-icon value-icon--navy">
+								<i class="bi bi-graph-up-arrow"></i>
+							</div>
+							<div class="value-title">
+								Impacto medible
+							</div>
+							<div class="value-desc">
+								Seguimiento y métricas para visualizar el impacto social generado.
+							</div>
+							<a href="#metricas" class="value-link">
+								Ver métricas <i class="bi bi-arrow-right"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+			<section id="que-es" class="section-what py-5">
+				<div class="container py-2 py-lg-4">
+					<div class="row align-items-start g-4 g-lg-5">
+						<div class="col-lg-6">
+							<p class="section-eyebrow mb-2">
+								Conoce la plataforma
+							</p>
+							<h2 class="section-title mb-3">
+								¿Qué es Barrio Solidario?
+							</h2>
+							<p class="section-lead mb-3">
+								Barrio Solidario es una plataforma comunitaria que conecta a adultos mayores con voluntarios y cuidadores, facilitando la solicitud, asignación y seguimiento de ayuda en el barrio.
+							</p>
+							<p class="section-text mb-4">
+								Su objetivo es organizar el apoyo de forma segura, transparente y medible, fortaleciendo redes de solidaridad con participación de la comunidad e instituciones aliadas.
+							</p>
+							<ul class="what-list">
+								<li><i class="bi bi-check-circle-fill"></i> Solicitar asistencia de forma guiada y segura.</li>
+								<li><i class="bi bi-check-circle-fill"></i> Postularse como voluntario y apoyar en tu zona.</li>
+								<li><i class="bi bi-check-circle-fill"></i> Coordinar acciones con ONG, GAD y fundaciones.</li>
+								<li><i class="bi bi-check-circle-fill"></i> Dar seguimiento a las solicitudes y medir el impacto social.</li>
+							</ul>
+						</div>
+						<div class="col-lg-6">
+							<div class="what-card mb-3">
+								<div class="what-card-title">
+									Propósito y problemática
+								</div>
+								<p class="what-card-text mb-0">
+									Enfocado en el apoyo a adultos mayores mediante voluntariado, acompañamiento y coordinación comunitaria,
+									reduciendo barreras de acceso y mejorando la respuesta en situaciones de necesidad.
+								</p>
+							</div>
+							<div class="what-card">
+								<div class="what-card-title">Actores principales</div>
+								<div class="actor-grid mt-3">
+									<span class="actor-pill"><i class="bi bi-person-hearts"></i> Adulto mayor</span>
+									<span class="actor-pill"><i class="bi bi-people-fill"></i> Cuidador / Familiar</span>
+									<span class="actor-pill"><i class="bi bi-hand-heart-fill"></i> Voluntario</span>
+									<span class="actor-pill"><i class="bi bi-buildings-fill"></i> ONG / GAD / Fundación</span>
+									<span class="actor-pill"><i class="bi bi-shield-lock-fill"></i> Administración</span>
+								</div>
+								<div class="mt-3 small text-muted">
+									Cada actor participa con permisos y responsabilidades específicas, asegurando control, trazabilidad y protección de datos.
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section id="como-funciona" class="section-how py-5">
+				<div class="container py-2 py-lg-4">
+					<p class="how-eyebrow mb-2">
+						Flujo de atención
+					</p>
+					<h2 class="how-title mb-3">
+						Cómo funciona
+					</h2>
+					<p class="how-lead mb-0">
+						Barrio Solidario organiza la ayuda comunitaria mediante un proceso estructurado y transparente. Una solicitud es registrada por el adulto mayor o su cuidador, posteriormente voluntarios cercanos pueden postularse para brindar apoyo, y se realiza un seguimiento continuo hasta su cierre. Cada etapa queda registrada, lo que permite mantener control, trazabilidad y medir el impacto social generado.
+					</p>
+					<div class="how-divider"></div>
+					<div class="row g-3 g-lg-4">
+						<div class="col-lg-4">
+							<div class="how-card">
+								<div class="how-step">
+									<div class="how-badge">1</div>
+									<h5>Crear solicitud</h5>
+								</div>
+
+								<p>
+									El adulto mayor o su cuidador registra la necesidad mediante un formulario guiado. La solicitud queda identificada y lista para ser atendida.
+								</p>
+								<ul>
+									<li>Descripción de la necesidad y prioridad.</li>
+									<li>Ubicación/zona para apoyo cercano.</li>
+									<li>Datos de contacto y observaciones.</li>
+								</ul>
+								<div class="how-actors">
+									<span class="how-pill"><i class="bi bi-person-hearts"></i> Adulto mayor</span>
+									<span class="how-pill"><i class="bi bi-people-fill"></i> Cuidador/Familiar</span>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="how-card">
+								<div class="how-step">
+									<div class="how-badge">2</div>
+									<h5>Asignación y coordinación</h5>
+								</div>
+								<p>
+									Voluntarios cercanos se postulan y se confirma la asignación. En caso de requerir apoyo institucional, se canaliza con ONG, GAD o fundaciones.
+								</p>
+								<ul>
+									<li>Postulación por cercanía y disponibilidad.</li>
+									<li>Confirmación y coordinación de la atención.</li>
+									<li>Canalización a instituciones cuando aplica.</li>
+								</ul>
+								<div class="how-actors">
+									<span class="how-pill"><i class="bi bi-hand-heart-fill"></i> Voluntario</span>
+									<span class="how-pill"><i class="bi bi-buildings-fill"></i> ONG/GAD/Fundación</span>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="how-card">
+								<div class="how-step">
+									<div class="how-badge">3</div>
+									<h5>Seguimiento y cierre</h5>
+								</div>
+								<p>
+									Se registra el estado de la atención, evidencias y el cierre de la solicitud. Esto permite trazabilidad, control y métricas de impacto.
+								</p>
+								<ul>
+									<li>Estados: abierta, en proceso, atendida/cerrada.</li>
+									<li>Comentarios y registro de avances.</li>
+									<li>Métricas para evaluar impacto social.</li>
+								</ul>
+								<div class="how-actors">
+									<span class="how-pill"><i class="bi bi-clipboard-check"></i> Seguimiento</span>
+									<span class="how-pill"><i class="bi bi-graph-up-arrow"></i> Métricas</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section id="usuarios" class="section-users py-5">
+				<div class="container py-2 py-lg-4">
+					<p class="users-eyebrow mb-2">
+						Actores de la plataforma
+					</p>
+					<h2 class="users-title mb-3">
+						Tipos de usuarios
+					</h2>
+					<p class="users-lead mb-4">
+						Esta plataforma está dirigida a personas que necesitan apoyo y a quienes desean brindarlo de forma organizada. Barrio Solidario prioriza la atención a adultos mayores y sus cuidadores, conectándolos con voluntarios e instituciones aliadas para coordinar ayuda real, segura y con seguimiento.
+					</p>
+					<div class="how-divider"></div>
+					<div class="users-carousel-3">
+						<input type="radio" name="users" id="u1" checked style = "display:none">
+						<input type="radio" name="users" id="u2" style = "display:none">
+						<input type="radio" name="users" id="u3" style = "display:none">
+						<input type="radio" name="users" id="u4" style = "display:none">
+						<input type="radio" name="users" id="u5" style = "display:none">				 	
+						<div class="users-viewport">
+							<div class="users-track">
+								<article class="user-card">
+									<div class="user-icon user-icon--accent"><i class="bi bi-person-hearts"></i></div>
+									<h5>Adulto mayor</h5>
+									<p class="mb-3">
+										Registra solicitudes de apoyo y recibe acompañamiento en un proceso guiado, claro y seguro.
+									</p>
+									<div class="user-scope">
+										<div class="user-scope-title">Alcance</div>
+										<ul class="user-scope-list">
+										  <li>Crear y consultar solicitudes.</li>
+										  <li>Recibir notificaciones y seguimiento.</li>
+										  <li>Confirmar atención y cierre del caso.</li>
+										</ul>
+									</div>
+									<div class="hero-slide-footer">
+										<button class="btn btn-hero-primary"
+											  data-bs-toggle="modal"
+											  data-bs-target="#modalRequisitos"
+											  data-title="Adulto mayor"
+											  data-body="• Ser adulto mayor o beneficiario registrado.\n• Proporcionar datos de contacto válidos.\n• Registrar solicitudes reales y verificables.\n• Aceptar políticas de privacidad y uso responsable.\n• Permitir seguimiento del caso hasta su cierre.">
+										Ver requisitos
+										</button>
+										<a href="{% url 'acceso' %}" class="btn btn-login">Acceder</a>
+									</div>
+								</article>
+								<article class="user-card">
+									<div class="user-icon user-icon--navy"><i class="bi bi-people-fill"></i></div>
+									<h5>Cuidador / Familiar</h5>
+									<p class="mb-3">
+										Apoya al adulto mayor en el registro, comunicación y seguimiento de la solicitud, actuando como representante.
+									</p>
+									<div class="user-scope">
+										<div class="user-scope-title">Alcance</div>
+										<ul class="user-scope-list">
+											<li>Crear solicitudes en nombre del adulto mayor.</li>
+											<li>Actualizar información y comentarios.</li>
+											<li>Dar seguimiento hasta el cierre.</li>
+										</ul>
+									</div>	
+									<div class="hero-slide-footer">
+										<button class="btn btn-hero-primary"
+											  data-bs-toggle="modal"
+											  data-bs-target="#modalRequisitos"
+											  data-title="Adulto mayor"
+											  data-body="• Ser adulto mayor o beneficiario registrado.\n• Proporcionar datos de contacto válidos.\n• Registrar solicitudes reales y verificables.\n• Aceptar políticas de privacidad y uso responsable.\n• Permitir seguimiento del caso hasta su cierre.">
+										Ver requisitos
+										</button>
+										<a href="{% url 'acceso' %}" class="btn btn-login">Acceder</a>
+									</div>
+								</article>
+								<article class="user-card">
+									<div class="user-icon user-icon--navy"><i class="bi bi-people-fill"></i></div>
+									<h5>Voluntario</h5>
+									<p class="mb-3">
+										Se postula a solicitudes cercanas según disponibilidad, coordina la atención y reporta avances.
+									</p>
+									<div class="user-scope">
+										<div class="user-scope-title">Alcance</div>
+										<ul class="user-scope-list">
+											<li>Ver solicitudes disponibles en su zona.</li>
+											<li>Postularse y coordinar la atención.</li>
+											<li>Registrar avances y cierre.</li>
+										</ul>
+									</div>		
+									<div class="hero-slide-footer">
+										<button class="btn btn-hero-primary"
+											  data-bs-toggle="modal"
+											  data-bs-target="#modalRequisitos"
+											  data-title="Adulto mayor"
+											  data-body="• Ser adulto mayor o beneficiario registrado.\n• Proporcionar datos de contacto válidos.\n• Registrar solicitudes reales y verificables.\n• Aceptar políticas de privacidad y uso responsable.\n• Permitir seguimiento del caso hasta su cierre.">
+										Ver requisitos
+										</button>
+										<a href="{% url 'acceso' %}" class="btn btn-login">Acceder</a>
+									</div>
+								</article>
+								<article class="user-card">
+									<div class="user-icon user-icon--navy"><i class="bi bi-buildings-fill"></i></div>
+									<h5>ONG / GAD / Fundación</h5>
+									<p class="mb-3">
+										Coordina acciones solidarias, canaliza casos y gestiona iniciativas de apoyo con enfoque comunitario.
+									</p>
+									<div class="user-scope">
+										<div class="user-scope-title">Alcance</div>
+										<ul class="user-scope-list">
+											<li>Recibir o canalizar solicitudes cuando aplique.</li>
+											<li>Coordinar jornadas e iniciativas de apoyo.</li>
+											<li>Consultar métricas e impacto (según permisos).</li>
+										</ul>
+									</div>
+									<div class="hero-slide-footer">
+										<button class="btn btn-hero-primary"
+											  data-bs-toggle="modal"
+											  data-bs-target="#modalRequisitos"
+											  data-title="Adulto mayor"
+											  data-body="• Ser adulto mayor o beneficiario registrado.\n• Proporcionar datos de contacto válidos.\n• Registrar solicitudes reales y verificables.\n• Aceptar políticas de privacidad y uso responsable.\n• Permitir seguimiento del caso hasta su cierre.">
+										Ver requisitos
+										</button>
+										<a href="{% url 'acceso' %}" class="btn btn-login">Acceder</a>
+									</div>
+								</article>
+								<article class="user-card">
+									<div class="user-icon user-icon--accent"><i class="bi bi-shield-check"></i></div>
+									<h5>Administración / Moderación</h5>
+									<p class="mb-3">
+										Garantiza control, trazabilidad y reglas de operación, asegurando calidad de datos y seguridad.
+									</p>
+									<div class="user-scope">
+									<div class="user-scope-title">Alcance</div>
+										<ul class="user-scope-list">
+										  <li>Gestionar usuarios, roles y permisos.</li>
+										  <li>Moderación y control de solicitudes.</li>
+										  <li>Dashboards, reportes y auditoría.</li>
+										</ul>
+									</div>
+									<div class="hero-slide-footer">
+										<button class="btn btn-hero-primary"
+											  data-bs-toggle="modal"
+											  data-bs-target="#modalRequisitos"
+											  data-title="Adulto mayor"
+											  data-body="• Ser adulto mayor o beneficiario registrado.\n• Proporcionar datos de contacto válidos.\n• Registrar solicitudes reales y verificables.\n• Aceptar políticas de privacidad y uso responsable.\n• Permitir seguimiento del caso hasta su cierre.">
+										Ver requisitos
+										</button>
+										<a href="{% url 'acceso' %}" class="btn btn-login">Acceder</a>
+									</div>
+								</article>
+							</div>
+						</div>
+						<div class="nav">
+							<label for="u5" class="prev p1"><i class="bi bi-chevron-left"></i></label>
+							<label for="u2" class="next p1"><i class="bi bi-chevron-right"></i></label>
+							<label for="u1" class="prev p2"></label>
+							<label for="u3" class="next p2"></label>
+							<label for="u2" class="prev p3"></label>
+							<label for="u4" class="next p3"></label>
+							<label for="u3" class="prev p4"></label>
+							<label for="u5" class="next p4"></label>
+							<label for="u4" class="prev p5"></label>
+							<label for="u1" class="next p5"></label>
+						</div>	
+						<div class="dots">
+							<label for="u1"></label>
+							<label for="u2"></label>
+							<label for="u3"></label>
+							<label for="u4"></label>
+							<label for="u5"></label>
+						</div>  
+					</div>					
+				</div>
+			</section>
+<section id="beneficios" class="section-benefits py-5">
+  <div class="container">
+
+    <!-- Encabezado -->
+    <div class="benefits-header mb-5">
+					<p class="users-eyebrow mb-2">
+						Valor de la plataforma
+					</p>
+					<h2 class="users-title mb-3">
+						Beneficios
+					</h2>
+	
+	
+      <p class="section-description">
+        Barrio Solidario no es solo una herramienta digital; es una plataforma diseñada para transformar la manera en que las comunidades organizan, coordinan y ejecutan acciones solidarias. Su propósito es generar un ecosistema estructurado donde cada solicitud de ayuda tenga seguimiento, cada acción quede registrada y cada resultado pueda medirse.
+
+A través de un modelo colaborativo y trazable, se espera fortalecer la cohesión social, facilitar la coordinación entre ciudadanos, voluntarios e instituciones, y optimizar el uso de recursos disponibles en el entorno comunitario. La plataforma busca reducir la improvisación en la gestión de ayuda, promoviendo procesos claros, responsables y verificables.
+
+Además, Barrio Solidario permitirá consolidar información relevante para la toma de decisiones, ofreciendo métricas e indicadores que evidencien el impacto real de las intervenciones. Esto no solo mejora la eficiencia operativa, sino que también fortalece la transparencia, la confianza y la sostenibilidad de las iniciativas sociales.
+
+En el mediano y largo plazo, se espera que la plataforma se convierta en un punto de referencia para la articulación comunitaria, impulsando redes de apoyo más organizadas, solidarias y resilientes.
+      </p>
+    </div>
+
+    <!-- Cards -->
+    <div class="row g-4">
+
+		<div class="col-md-6">
+		  <div class="benefit-card-clean">
+			<div class="benefit-image"
+				 style="background-image:url('{% static 'img/Cohesion-social.jpg' %}');">
+			</div>
+			<div class="benefit-content">
+			  <h4>Cohesión social</h4>
+			  <p>
+				Conecta personas que necesitan apoyo con quienes desean brindarlo, fortaleciendo la solidaridad, el tejido comunitario y la participación activa.
+			  </p>
+			</div>
+		  </div>
+		</div>
+		<div class="col-md-6">
+		  <div class="benefit-card-clean">
+			<div class="benefit-image"
+				 style="background-image:url('{% static 'img/Coordinacion.png' %}');">
+			</div>
+			<div class="benefit-content">
+			  <h4>Atención coordinada</h4>
+			  <p>
+				  Permite gestionar solicitudes de forma organizada, asignando voluntarios cercanos y garantizando seguimiento.
+			  </p>
+			</div>
+		  </div>
+		</div>
+		<div class="col-md-6">
+		  <div class="benefit-card-clean">
+			<div class="benefit-image"
+				 style="background-image:url('{% static 'img/Trazabilidad.jpg' %}');">
+			</div>
+			<div class="benefit-content">
+			  <h4>Trazabilidad</h4>
+			  <p>
+              Cada solicitud queda registrada, permitiendo control,
+              auditoría y visibilidad del proceso hasta su cierre.
+
+			  </p>
+			</div>
+		  </div>
+		</div>		
+		<div class="col-md-6">
+		  <div class="benefit-card-clean">
+			<div class="benefit-image"
+				 style="background-image:url('{% static 'img/medible.jpg' %}');">
+			</div>
+			<div class="benefit-content">
+			  <h4>Impacto medible</h4>
+			  <p>
+              Métricas e indicadores que permiten evaluar resultados
+              y mejorar continuamente las iniciativas comunitarias.
+			  </p>
+			</div>
+		  </div>
+		</div>		
+    </div>
+  </div>
+</section>		
+<section id="metricas" class="section-metrics d-flex align-items-center">
+  <div class="container py-5">
+
+    <div class="metrics-header mb-4">
+					<p class="users-eyebrow mb-2" style="color:#ffffff">
+						Impacto en números
+					</p>
+					<h2 class="users-title mb-3" style="color:#ffffff">
+						Métricas de ayudas brindadas
+					</h2>	
+      <p class="metrics-subtitle">
+        Estos indicadores reflejan el avance de la plataforma, su adopción y la capacidad de respuesta en la comunidad.
+        Los valores se actualizan y permiten medir crecimiento e impacto real.
+      </p>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- 1 -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-accent"><i class="bi bi-check2-circle"></i></div>
+            <div>
+              <div class="metric-label">Atenciones realizadas</div>
+              <div class="metric-value" data-count="1280">0</div>
+            </div>
+          </div>
+          <div class="metric-foot">Solicitudes atendidas y cerradas con seguimiento.</div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-navy"><i class="bi bi-people"></i></div>
+            <div>
+              <div class="metric-label">Voluntarios registrados</div>
+              <div class="metric-value" data-count="420">0</div>
+            </div>
+          </div>
+          <div class="metric-foot">Personas activas disponibles para apoyar por zona.</div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-accent"><i class="bi bi-person-heart"></i></div>
+            <div>
+              <div class="metric-label">Adultos mayores registrados</div>
+              <div class="metric-value" data-count="610">0</div>
+            </div>
+          </div>
+          <div class="metric-foot">Beneficiarios priorizados y acompañados por la comunidad.</div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-navy"><i class="bi bi-stopwatch"></i></div>
+            <div>
+              <div class="metric-label">Tiempo promedio de atención</div>
+              <div class="metric-value" data-count="42" data-suffix=" min">0</div>
+            </div>
+          </div>
+          <div class="metric-foot">Promedio desde asignación hasta primera atención efectiva.</div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-accent"><i class="bi bi-hand-thumbs-up"></i></div>
+            <div>
+              <div class="metric-label">Aceptación de la plataforma</div>
+              <div class="metric-value" data-count="92" data-suffix="%">0</div>
+            </div>
+          </div>
+          <div class="metric-foot">Satisfacción/aceptación reportada por usuarios e instituciones.</div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon bg-navy"><i class="bi bi-shield-check"></i></div>
+            <div>
+              <div class="metric-label">Casos con seguimiento</div>
+              <div class="metric-value" data-count="860">0</div>
+            </div>
+          </div>
+          <div class="metric-foot">Solicitudes que mantuvieron trazabilidad hasta el cierre.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<section id="aliados" class="section-allies py-5">
+  <div class="container">
+
+    <div class="mb-4">
+					<p class="users-eyebrow mb-2">
+						Confianza y colaboración
+					</p>
+					<h2 class="users-title mb-3">
+						Instituciones que nos avalan
+					</h2>	
+	
+      <p class="allies-subtitle">
+        Barrio Solidario se construye en alianza con instituciones públicas, academia, organizaciones sociales y
+        actores del sector privado. Este respaldo impulsa la coordinación, la transparencia y el impacto medible.
+      </p>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- 1 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Vicepresidencia del Ecuador</div>
+          <div class="ally-type">Sector público</div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Municipio de Guayaquil</div>
+          <div class="ally-type">Gobierno local</div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Universidad Espíritu Santo</div>
+          <div class="ally-type">Academia</div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">ONU (Naciones Unidas)</div>
+          <div class="ally-type">Organización internacional</div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Cruz Roja</div>
+          <div class="ally-type">Ayuda humanitaria</div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Ministerio de Salud Pública</div>
+          <div class="ally-type">Salud</div>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">MIES</div>
+          <div class="ally-type">Inclusión social</div>
+        </div>
+      </div>
+
+      <!-- 8 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Iglesia (red comunitaria)</div>
+          <div class="ally-type">Organización comunitaria</div>
+        </div>
+      </div>
+
+      <!-- 9 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Fundación Techo</div>
+          <div class="ally-type">ONG</div>
+        </div>
+      </div>
+
+      <!-- 10 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Universidad de Guayaquil</div>
+          <div class="ally-type">Academia</div>
+        </div>
+      </div>
+
+      <!-- 11 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">ESPOL</div>
+          <div class="ally-type">Academia</div>
+        </div>
+      </div>
+
+      <!-- 12 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Programa Mundial de Alimentos</div>
+          <div class="ally-type">Cooperación</div>
+        </div>
+      </div>
+
+      <!-- 13 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Banco de Alimentos</div>
+          <div class="ally-type">Apoyo social</div>
+        </div>
+      </div>
+
+      <!-- 14 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Empresas aliadas</div>
+          <div class="ally-type">Sector privado</div>
+        </div>
+      </div>
+
+      <!-- 15 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">Cáritas</div>
+          <div class="ally-type">Organización social</div>
+        </div>
+      </div>
+
+      <!-- 16 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="ally-card">
+          <div class="ally-name">UNICEF</div>
+          <div class="ally-type">Organización internacional</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+<section id="contacto" class="section-contact d-flex align-items-center">
+  <div class="container py-5">
+
+    <div class="mb-4">
+		<p class="users-eyebrow mb-2">
+			Canales oficiales
+		</p>
+		<h2 class="users-title mb-3">
+			Contacto
+		</h2>	
+      <p class="contact-subtitle">
+        Información institucional y formulario para comunidad, ONG, fundaciones, empresas y entidades públicas.
+      </p>
+    </div>
+
+    <div class="row g-4 align-items-stretch">
+
+      <!-- IZQUIERDA: info -->
+      <div class="col-12 col-lg-5">
+        <div class="contact-card h-100">
+          <h5 class="contact-card-title">Información institucional</h5>
+          <p class="contact-card-text">
+            Proyecto académico desarrollado en el marco de la asignatura <b>Ingeniería de Software I</b> de la
+            <b>Universidad Espíritu Santo (UEES)</b>.
+          </p>
+
+          <div class="contact-block">
+            <div class="contact-block-title">Equipo de proyecto</div>
+
+            <div class="contact-item">
+              <i class="bi bi-person-badge"></i>
+              <div>
+                <div class="contact-item-label">Grupo No. IV</div>
+                <a class="contact-link" href="mailto:alex.mendoza@uees.edu.ec">GrupoIV@uees.edu.ec</a>
+              </div>
+            </div>
+          </div>
+
+          <hr class="contact-divider" />
+
+          <div class="contact-block">
+            <div class="contact-block-title">Universidad y asignatura</div>
+
+            <div class="contact-item">
+              <i class="bi bi-mortarboard"></i>
+              <div>
+                <div class="contact-item-label">Universidad Espíritu Santo (UEES)</div>
+                <div class="contact-item-value">Guayaquil, Ecuador</div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <i class="bi bi-journal-text"></i>
+              <div>
+                <div class="contact-item-label">Asignatura</div>
+                <div class="contact-item-value">Ingeniería de Software II</div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <i class="bi bi-person-workspace"></i>
+              <div>
+                <div class="contact-item-label">Docente</div>
+                <div class="contact-item-value">Ing. Victoria Garcia Velasquez</div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="contact-divider" />
+
+          <div class="contact-block">
+            <div class="contact-block-title">Canales</div>
+
+            <div class="contact-item">
+              <i class="bi bi-envelope"></i>
+              <div>
+                <div class="contact-item-label">Correo del proyecto</div>
+                <div class="contact-item-value">contacto@barriosolidario.org</div>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <i class="bi bi-geo-alt"></i>
+              <div>
+                <div class="contact-item-label">Ubicación</div>
+                <div class="contact-item-value">Ecuador</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- DERECHA: formulario -->
+      <div class="col-12 col-lg-7">
+        <div class="contact-card h-100">
+          <h5 class="contact-card-title">Escríbenos</h5>
+          <p class="contact-card-text mb-4">
+            Cuéntanos tu necesidad, iniciativa o propuesta de colaboración. Te responderemos por correo.
+          </p>
+
+          <form class="row g-3" action="{% url 'inicio' %}#contacto" method="post">
+            {% csrf_token %}
+            <div class="col-12">
+              <label class="form-label">Nombres</label>
+              <input type="text" name="nombre" class="form-control" placeholder="Tu nombre completo" required>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" placeholder="tu@email.com" required>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label">Teléfono</label>
+              <input type="tel" name="telefono" class="form-control" placeholder="+593 9 0000 0000">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Empresa / Institución (opcional)</label>
+              <input type="text" name="institucion" class="form-control" placeholder="ONG, GAD, empresa, universidad, etc.">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Mensaje</label>
+              <textarea name="mensaje" class="form-control" rows="5" placeholder="Cuéntanos tu idea o necesidad" required></textarea>
+            </div>
+
+            <div class="col-12 d-flex gap-2 align-items-center">
+              <button type="submit" class="btn btn-login w-100 py-2">
+                Enviar
+              </button>
+            </div>
+              <small class="text-muted">Al enviar aceptas el uso responsable de tus datos.</small>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+  
+<div class="modal fade" id="modalRequisitos" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalRequisitosTitle">Requisitos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <pre id="modalRequisitosBody" class="mb-0" style="white-space: pre-wrap; font-family: inherit;"></pre>
+      </div>
+      <div class="modal-footer">
+        <a href="#contacto" class="btn btn-login" data-bs-dismiss="modal">Ir a contacto</a>
+        <button type="button" class="btn btn-hero-primary" data-bs-dismiss="modal">Entendido</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("modalRequisitos");
+  modal.addEventListener("show.bs.modal", (event) => {
+    const btn = event.relatedTarget;
+    document.getElementById("modalRequisitosTitle").textContent =
+      `Requisitos — ${btn.getAttribute("data-title")}`;
+    document.getElementById("modalRequisitosBody").textContent =
+      btn.getAttribute("data-body");
+  });
+});
+</script>  
+<script>
+(() => {
+  const section = document.querySelector("#metricas");
+  if (!section) return;
+
+  const counters = section.querySelectorAll("[data-count]");
+  let played = false;
+
+  const animate = (el, to, suffix = "", duration = 1000) => {
+    const start = 0;
+    const t0 = performance.now();
+
+    const step = (t) => {
+      const p = Math.min((t - t0) / duration, 1);
+      const val = Math.floor(start + (to - start) * (p < 1 ? (1 - Math.pow(1 - p, 3)) : 1));
+      el.textContent = val.toLocaleString("es-EC") + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    if (played) return;
+    if (entries.some(e => e.isIntersecting)) {
+      played = true;
+      counters.forEach((el) => {
+        const to = Number(el.getAttribute("data-count") || "0");
+        const suffix = el.getAttribute("data-suffix") || "";
+        animate(el, to, suffix, 1200);
+      });
+      observer.disconnect();
+    }
+  }, { threshold: 0.35 });
+
+  observer.observe(section);
+})();
+</script>
+{% endblock %}

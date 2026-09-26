@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Política de voluntariado | Barrio Solidario{% endblock %}
+
+{% block content %}
+<section id="politica-voluntariado" class="py-5 bs-section-light">
+  <div class="container">
+    <div class="row g-4 align-items-stretch">
+
+      <!-- LEFT CARD -->
+      <div class="col-lg-5">
+        <div class="bs-card h-100 p-4">
+            <div class="bs-brand">
+              <div class="d-flex align-items-center gap-3 mb-4">
+              <img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
+              <span class="brand-text">
+                Barrio Solidario
+              </span>
+              </div>
+            </div>          
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div>
+              <small class="text-muted">Política de voluntariado</small>
+            </div>
+          </div>
+
+
+
+
+          <p class="text-muted mb-3">
+            La participación como voluntario implica un compromiso ético,
+            responsabilidad social y respeto hacia los adultos mayores,
+            familiares y comunidad en general.
+          </p>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge rounded-pill text-bg-light border">Compromiso</span>
+            <span class="badge rounded-pill text-bg-light border">Respeto</span>
+            <span class="badge rounded-pill text-bg-light border">Transparencia</span>
+            <span class="badge rounded-pill text-bg-light border">Seguridad</span>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="bs-callout">
+            <div class="fw-semibold mb-1">Principio fundamental</div>
+            <div class="text-muted">
+              El voluntariado es un acto solidario, no comercial.
+              No se permite obtener beneficios económicos o personales
+              derivados de la ayuda brindada.
+            </div>
+          </div>
+          <div class="mt-4">
+            <a href="{% url 'inicio' %}#contacto" class="btn btn-social btn-google w-100">
+					¿Dudas? Contáctanos
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT CARD -->
+      <div class="col-lg-7">
+        <div class="bs-card h-100 p-4">
+          <h2 class="fw-bold mb-1">Política de Voluntariado</h2>
+          <p class="text-muted mb-4">
+            Lineamientos específicos que regulan la participación como voluntario dentro de la plataforma.
+          </p>
+
+          <div class="accordion bs-accordion" id="accordionVoluntariado">
+
+            <!-- 1 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="v1h">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#v1" aria-expanded="true" aria-controls="v1">
+                  1) Compromiso y responsabilidad
+                </button>
+              </h2>
+              <div id="v1" class="accordion-collapse collapse show" aria-labelledby="v1h" data-bs-parent="#accordionVoluntariado">
+                <div class="accordion-body text-muted">
+                  El voluntario debe confirmar disponibilidad antes de aceptar un caso,
+                  cumplir con los compromisos asumidos y comunicar oportunamente
+                  cualquier imposibilidad de asistencia.
+                </div>
+              </div>
+            </div>
+
+            <!-- 2 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="v2h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v2" aria-expanded="false" aria-controls="v2">
+                  2) Conducta ética
+                </button>
+              </h2>
+              <div id="v2" class="accordion-collapse collapse" aria-labelledby="v2h" data-bs-parent="#accordionVoluntariado">
+                <div class="accordion-body text-muted">
+                  Se exige trato digno, respetuoso y empático.
+                  Está prohibido solicitar dinero, favores personales,
+                  datos financieros o cualquier beneficio indebido.
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="v3h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v3" aria-expanded="false" aria-controls="v3">
+                  3) Protección del adulto mayor
+                </button>
+              </h2>
+              <div id="v3" class="accordion-collapse collapse" aria-labelledby="v3h" data-bs-parent="#accordionVoluntariado">
+                <div class="accordion-body text-muted">
+                  El voluntario debe priorizar la seguridad física y emocional del adulto mayor.
+                  Cualquier situación irregular o de riesgo debe ser reportada inmediatamente
+                  a moderación o autoridades competentes según corresponda.
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="v4h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v4" aria-expanded="false" aria-controls="v4">
+                  4) Confidencialidad
+                </button>
+              </h2>
+              <div id="v4" class="accordion-collapse collapse" aria-labelledby="v4h" data-bs-parent="#accordionVoluntariado">
+                <div class="accordion-body text-muted">
+                  La información a la que tenga acceso el voluntario
+                  (datos personales, dirección aproximada, situación social)
+                  debe tratarse con confidencialidad y no divulgarse fuera del sistema.
+                </div>
+              </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="v5h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v5" aria-expanded="false" aria-controls="v5">
+                  5) Coordinación y trazabilidad
+                </button>
+              </h2>
+              <div id="v5" class="accordion-collapse collapse" aria-labelledby="v5h" data-bs-parent="#accordionVoluntariado">
+                <div class="accordion-body text-muted">
+                  Toda acción debe registrarse en la plataforma para mantener
+                  seguimiento y evidencia del apoyo brindado.
+                  La trazabilidad protege tanto al voluntario como al beneficiario.
+                </div>
+              </div>
+            </div>
+
+            <!-- 6 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="v6h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v6" aria-expanded="false" aria-controls="v6">
+                  6) Incumplimiento y sanciones
+                </button>
+              </h2>
+              <div id="v6" class="accordion-collapse collapse" aria-labelledby="v6h" data-bs-parent="#accordionVoluntariado">
+                <div class="accordion-body text-muted">
+                  El incumplimiento de estas políticas podrá resultar en
+                  suspensión temporal o definitiva de la cuenta.
+                  Moderación evaluará cada caso conforme a las reglas del servicio.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Protección de datos personales | Barrio Solidario{% endblock %}
+
+{% block content %}
+<section id="ley-proteccion-datos" class="py-5 bs-section-light">
+  <div class="container">
+    <div class="row g-4 align-items-stretch">
+
+      <!-- LEFT CARD -->
+      <div class="col-lg-5">
+        <div class="bs-card h-100 p-4">
+            <div class="bs-brand">
+              <div class="d-flex align-items-center gap-3 mb-4">
+              <img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
+              <span class="brand-text">
+                Barrio Solidario
+              </span>
+              </div>
+            </div>          
+
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div>
+              <small class="text-muted">Ley de Protección de Datos Personales</small>
+            </div>
+          </div>
+
+          <p class="text-muted mb-3">
+            Esta sección explica cómo la plataforma se alinea con los principios
+            establecidos en la Ley Orgánica de Protección de Datos Personales del Ecuador,
+            garantizando tratamiento responsable y seguro de la información.
+          </p>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge rounded-pill text-bg-light border">Consentimiento</span>
+            <span class="badge rounded-pill text-bg-light border">Confidencialidad</span>
+            <span class="badge rounded-pill text-bg-light border">Acceso</span>
+            <span class="badge rounded-pill text-bg-light border">Rectificación</span>
+            <span class="badge rounded-pill text-bg-light border">Seguridad</span>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="bs-callout">
+            <div class="fw-semibold mb-1">Marco normativo</div>
+            <div class="text-muted">
+              La plataforma adopta principios de legalidad, lealtad,
+              minimización de datos y responsabilidad proactiva en el
+              tratamiento de información personal.
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <a href="{% url 'inicio' %}#contacto" class="btn btn-social btn-google w-100">
+					¿Dudas? Contáctanos
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT CARD -->
+      <div class="col-lg-7">
+        <div class="bs-card h-100 p-4">
+          <h2 class="fw-bold mb-1">Ley de Protección de Datos Personales</h2>
+          <p class="text-muted mb-4">
+            Compromiso con el tratamiento adecuado de datos personales conforme
+            a la normativa vigente en Ecuador.
+          </p>
+
+          <div class="accordion bs-accordion" id="accordionLeyDatos">
+
+            <!-- 1 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="l1h">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#l1" aria-expanded="true" aria-controls="l1">
+                  1) Principios del tratamiento de datos
+                </button>
+              </h2>
+              <div id="l1" class="accordion-collapse collapse show" aria-labelledby="l1h" data-bs-parent="#accordionLeyDatos">
+                <div class="accordion-body text-muted">
+                  La plataforma aplica principios de legalidad, transparencia,
+                  finalidad específica, minimización de datos, exactitud,
+                  integridad y confidencialidad.
+                </div>
+              </div>
+            </div>
+
+            <!-- 2 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="l2h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#l2" aria-expanded="false" aria-controls="l2">
+                  2) Consentimiento del titular
+                </button>
+              </h2>
+              <div id="l2" class="accordion-collapse collapse" aria-labelledby="l2h" data-bs-parent="#accordionLeyDatos">
+                <div class="accordion-body text-muted">
+                  El registro en la plataforma implica consentimiento explícito
+                  para el tratamiento de datos necesarios para la gestión de solicitudes,
+                  coordinación de voluntariado y generación de métricas sociales.
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="l3h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#l3" aria-expanded="false" aria-controls="l3">
+                  3) Derechos del titular de datos
+                </button>
+              </h2>
+              <div id="l3" class="accordion-collapse collapse" aria-labelledby="l3h" data-bs-parent="#accordionLeyDatos">
+                <div class="accordion-body text-muted">
+                  Los usuarios pueden solicitar acceso, rectificación,
+                  actualización o eliminación de sus datos personales,
+                  conforme a los mecanismos establecidos por la normativa.
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="l4h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#l4" aria-expanded="false" aria-controls="l4">
+                  4) Medidas de seguridad
+                </button>
+              </h2>
+              <div id="l4" class="accordion-collapse collapse" aria-labelledby="l4h" data-bs-parent="#accordionLeyDatos">
+                <div class="accordion-body text-muted">
+                  Se implementan controles de acceso por roles, trazabilidad
+                  de acciones, protección de credenciales y limitación de acceso
+                  a información sensible según el perfil autorizado.
+                </div>
+              </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="l5h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#l5" aria-expanded="false" aria-controls="l5">
+                  5) Transferencia y uso de datos
+                </button>
+              </h2>
+              <div id="l5" class="accordion-collapse collapse" aria-labelledby="l5h" data-bs-parent="#accordionLeyDatos">
+                <div class="accordion-body text-muted">
+                  Los datos no serán compartidos con terceros fuera del
+                  contexto de coordinación social y sin justificación legal.
+                  La plataforma prioriza la confidencialidad y el uso limitado.
+                </div>
+              </div>
+            </div>
+
+            <!-- 6 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="l6h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#l6" aria-expanded="false" aria-controls="l6">
+                  6) Responsabilidad y cumplimiento
+                </button>
+              </h2>
+              <div id="l6" class="accordion-collapse collapse" aria-labelledby="l6h" data-bs-parent="#accordionLeyDatos">
+                <div class="accordion-body text-muted">
+                  La plataforma mantiene un enfoque de cumplimiento normativo,
+                  promoviendo buenas prácticas y revisión continua de procesos
+                  para garantizar protección adecuada de datos personales.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

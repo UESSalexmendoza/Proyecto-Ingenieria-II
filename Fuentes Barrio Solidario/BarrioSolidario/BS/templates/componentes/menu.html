@@ -1,0 +1,52 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg bg-white sticky-top border-bottom">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-0 m-0"
+           href="{% url 'inicio' %}">
+            <img src="{% static 'img/Logo.png' %}"
+                 alt="Barrio Solidario"
+                 height="55"
+                 class="logo-img">
+            <span class="brand-text">Barrio Solidario</span>
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNav"
+                aria-controls="mainNav"
+                aria-expanded="false"
+                aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#inicio">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#que-es">¿Qué es?</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#como-funciona">Cómo funciona</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#usuarios">Usuarios</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#beneficios">Beneficios</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#metricas">Métricas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#aliados">Aliados</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}#contacto">Contacto</a></li>
+            </ul>
+
+            <div class="d-flex gap-2">
+                {% if request.resolver_match.url_name != "acceso" %}
+                    <a href="{% url 'acceso' %}" class="btn btn-login">
+                        Iniciar sesión
+                    </a>
+                {% endif %}
+
+                {% if request.resolver_match.url_name != "registro" %}
+                    <a href="{% url 'registro' %}" class="btn btn-register">
+                        Registrarse
+                    </a>
+                {% endif %}
+            </div>
+            
+        </div>
+    </div>
+</nav>

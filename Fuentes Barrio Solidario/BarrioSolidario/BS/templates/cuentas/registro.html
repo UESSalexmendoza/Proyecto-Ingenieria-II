@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Registro | Barrio Solidario{% endblock %}
+
+{% block content %}
+<section class="bs-auth-wrap">
+  <div class="bs-auth-grid">
+    <aside class="bs-card bs-auth-info">
+      <div class="bs-brand">
+          <div class="d-flex align-items-center gap-3 mb-4">
+			<img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
+			<span class="brand-text">
+				Barrio Solidario
+			</span>
+          </div>
+      </div>
+          <p class="bs-brand__subtitle">Registro de usuario</p>
+
+      <p class="bs-text">
+        Crea tu cuenta para gestionar solicitudes, coordinar atenciones y participar de forma segura en la plataforma.
+        Tu cuenta quedará en estado <strong>Pendiente</strong> hasta ser aprobada según el rol seleccionado.
+      </p>
+
+      <div class="bs-badges">
+        <span class="bs-badge">Adulto Mayor</span>
+        <span class="bs-badge">Familiar / Cuidador</span>
+        <span class="bs-badge">Voluntario</span>
+        <span class="bs-badge">Moderador</span>
+      </div>
+
+      <div class="bs-divider"></div>
+
+          <p class="bs-small mb-2">
+            Antes de ingresar, revisa las políticas y requisitos de uso:
+          </p>
+				<button class="btn btn-social btn-google w-100" data-bs-toggle="modal" data-bs-target="#modalPoliticas">
+					Ver términos, condiciones y privacidad
+				</button>
+
+      <p class="bs-help">
+        Nota: La georreferenciación es <strong>aproximada</strong> y se utiliza para cercanía y coordinación.
+      </p>
+    </aside>
+
+
+    <!-- Columna derecha (formulario) -->
+    <div class="bs-card bs-auth-form">
+      <header class="bs-auth-header">
+        <h1 class="bs-h1">Crear cuenta</h1>
+        <p class="bs-subtitle">
+          Completa tu información. Este es un prototipo: no incluye validaciones ni envío real.
+        </p>
+      </header>
+
+      <form class="bs-form" action="#" method="post">
+
+        <!-- Tipo de usuario -->
+        <div class="bs-field">
+          <label class="bs-label" for="tipoUsuario">Tipo de usuario</label>
+          <select class="bs-input" id="tipoUsuario" name="tipoUsuario">
+            <option value="" selected>Selecciona una opción</option>
+            <option value="ADULTO_MAYOR">Adulto Mayor</option>
+            <option value="FAMILIAR_CUIDADOR">Familiar / Cuidador</option>
+            <option value="VOLUNTARIO">Voluntario</option>
+            <option value="MODERADOR">Moderador</option>
+          </select>
+        </div>
+
+        <!-- Nombres -->
+        <div class="bs-field">
+          <label class="bs-label" for="nombres">Nombres</label>
+          <input class="bs-input" id="nombres" name="nombres" type="text" placeholder="Tus nombres completos" />
+        </div>
+
+        <!-- Email -->
+        <div class="bs-field">
+          <label class="bs-label" for="email">Email</label>
+          <input class="bs-input" id="email" name="email" type="email" placeholder="tu@correo.com" />
+        </div>
+
+        <!-- Teléfono (aplica a perfiles en el DAS: adulto/familiar/voluntario) -->
+        <div class="bs-field">
+          <label class="bs-label" for="telefono">Teléfono</label>
+          <input class="bs-input" id="telefono" name="telefono" type="tel" placeholder="+593 9XXXXXXXX" />
+        </div>
+
+        <!-- Password + Confirm -->
+        <div class="bs-grid-2">
+          <div class="bs-field">
+            <label class="bs-label" for="password">Contraseña</label>
+            <div class="bs-input-wrap position-relative">
+				<input class="bs-input bs-input--with-icon" id="password" name="password" type="password" placeholder="********" />
+				<i class="bi bi-eye-slash password-toggle" id="togglePassword"></i>
+            </div>
+          </div>
+
+          <div class="bs-field">
+            <label class="bs-label" for="password2">Confirmar contraseña</label>
+            <div class="bs-input-wrap position-relative">
+				<input class="bs-input bs-input--with-icon" id="password2" name="password2" type="password" placeholder="********" />
+				<i class="bi bi-eye-slash password-toggle" id="togglePassword"></i>
+            </div>
+			
+          </div>
+        </div>
+        <div class="bs-divider" style="display:none" id="div0"></div>
+        <details class="bs-details" style="display:none" open id="div1">
+          <summary class="bs-details__summary">Adulto Mayor</summary>
+          <div class="bs-details__content">
+            <div class="bs-grid-2">
+              <div class="bs-field">
+                <label class="bs-label" for="fechaNacimiento">Fecha de nacimiento</label>
+                <input class="bs-input" id="fechaNacimiento" name="fechaNacimiento" type="date" />
+              </div>
+              <div class="bs-field">
+                <label class="bs-label" for="contactoEmergencia">Contacto de emergencia</label>
+                <input class="bs-input" id="contactoEmergencia" name="contactoEmergencia" type="text" placeholder="Nombre / teléfono / referencia" />
+              </div>
+            </div>
+            <div class="bs-field">
+              <label class="bs-label" for="obsAdulto">Observaciones</label>
+              <textarea class="bs-input bs-textarea" id="obsAdulto" name="obsAdulto" rows="3" placeholder="Notas opcionales"></textarea>
+            </div>
+          </div>
+        </details>
+
+        <!-- Familiar / Cuidador -->
+        <details class="bs-details"style="display:none" open id="div2">
+          <summary class="bs-details__summary">Familiar / Cuidador</summary>
+          <div class="bs-details__content">
+            <div class="bs-field">
+              <label class="bs-label" for="relacion">Relación con el adulto mayor</label>
+              <input class="bs-input" id="relacion" name="relacion" type="text" placeholder="Ej: hijo/a, nieto/a, cuidador/a" />
+            </div>
+          </div>
+        </details>
+
+        <!-- Voluntario -->
+        <details class="bs-details" open style="display:none" id="div3">
+          <summary class="bs-details__summary">Voluntario</summary>
+          <div class="bs-details__content">
+            <div class="bs-field">
+              <label class="bs-label" for="biografia">Biografía (breve)</label>
+              <textarea class="bs-input bs-textarea" id="biografia" name="biografia" rows="3" placeholder="Cuéntanos cómo te gustaría ayudar"></textarea>
+            </div>
+            <div class="bs-field">
+              <label class="bs-label" for="disponibilidad">Disponibilidad</label>
+              <input class="bs-input" id="disponibilidad" name="disponibilidad" type="text" placeholder="Ej: L-V 18:00–20:00 / Sábados mañana" />
+            </div>
+          </div>
+        </details>
+
+
+        <!-- Georreferenciación -->
+        <div class="bs-divider"></div>
+        <div class="bs-field">
+          <label class="bs-label">Georreferenciación (aproximada)</label>
+
+          <div class="bs-grid-2 bs-grid-2--tight">
+            <div class="bs-field">
+              <input class="bs-input" name="ubicacionTexto" type="text" placeholder="Ciudad / sector / referencia (aprox.)" />
+            </div>
+
+            <div class="bs-field">
+              <!-- Botón para abrir modal (sin JS aquí) -->
+<button 
+  id="btnOpenMap"
+  class="btn btn-social btn-google w-100" 
+  type="button">
+  Capturar ubicación
+</button>			  
+            </div>
+          </div>
+
+          <!-- Coordenadas (opcionales en el prototipo) -->
+          <div class="bs-grid-2 bs-grid-2--tight">
+            <div class="bs-field">
+              <input class="bs-input" name="lat" type="text" placeholder="Latitud (aprox.)" />
+            </div>
+            <div class="bs-field">
+              <input class="bs-input" name="lng" type="text" placeholder="Longitud (aprox.)" />
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Aceptación de políticas -->
+        <div class="bs-row bs-row--between bs-row--wrap">
+          <label class="bs-check">
+            <input type="checkbox" name="aceptaPoliticas" />
+            <span>Acepto políticas de uso y privacidad</span>
+          </label>
+
+          <a class="bs-link" href="{% url 'terminos' %}">Ver políticas</a>
+        </div>
+			<a href="{% url 'acceso' %}" class="btn btn-login w-100 py-2">Registrarme</a>
+
+          
+
+        <div class="bs-divider bs-divider--soft"></div>
+
+        <p class="bs-footnote">
+          ¿Ya tienes cuenta? <a class="bs-link" href="{% url 'acceso' %}">Inicia sesión</a>
+        </p>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="bs-modal" id="mapModal" aria-hidden="true">
+  <div class="bs-modal__backdrop" data-close="1"></div>
+
+  <div class="bs-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="bs-modal__header">
+      <h3 class="bs-h3" id="modalTitle">Selecciona tu ubicación (aproximada)</h3>
+
+      <button id="btnCloseMap" class="bs-modal__close" type="button" aria-label="Cerrar" data-close="1">
+        <!-- X -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="bs-modal__body">
+      <div class="bs-map-placeholder">
+        <div class="bs-map-placeholder__pin">📍</div>
+        <p class="bs-text bs-text--muted">
+          Mapa aquí (Google Maps / OpenStreetMap). En este prototipo no se integra API.
+        </p>
+      </div>
+
+      <div class="bs-grid-2">
+        <div class="bs-field">
+          <label class="bs-label" for="modalLat">Latitud</label>
+          <input class="bs-input" id="modalLat" type="text" placeholder="-2.170998" />
+        </div>
+        <div class="bs-field">
+          <label class="bs-label" for="modalLng">Longitud</label>
+          <input class="bs-input" id="modalLng" type="text" placeholder="-79.922359" />
+        </div>
+      </div>
+
+      <div class="bs-modal__actions">
+        <button class="bs-btn bs-btn--outline" type="button" id="btnCancelMap" data-close="1">Cancelar</button>
+        <button class="bs-btn bs-btn--primary" type="button" id="btnUseMap">Usar esta ubicación</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+	const selector = document.getElementById('tipoUsuario');
+	selector.addEventListener('change', function() {
+	document.querySelectorAll('[id^="div"]').forEach(div => {
+	  div.style.display = 'none';
+	});  
+    const indice = this.selectedIndex;
+	if(indice>0 && indice<4)
+	{
+		const idABuscar = 'div' + indice;
+		const elementoAMostrar = document.getElementById(idABuscar);
+		if (elementoAMostrar) {
+		  elementoAMostrar.style.display = '';
+		}
+	
+	}
+  });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const openBtn = document.getElementById('btnOpenMap');
+  const modal   = document.getElementById('mapModal');
+
+  const btnCancel = document.getElementById('btnCancelMap');
+  const btnUse    = document.getElementById('btnUseMap');
+
+  // Campos del modal
+  const modalLat = document.getElementById('modalLat');
+  const modalLng = document.getElementById('modalLng');
+
+  // Campos del formulario (si existen)
+  const formLat = document.querySelector('input[name="lat"]');
+  const formLng = document.querySelector('input[name="lng"]');
+
+  function openModal(){
+    modal.classList.add('is-active');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    modal.classList.remove('is-active');
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  // Abrir
+  openBtn?.addEventListener('click', openModal);
+
+  // Cerrar por elementos con data-close="1" (X, backdrop, cancelar)
+  modal.addEventListener('click', function(e){
+    const target = e.target.closest('[data-close="1"]');
+    if (target) closeModal();
+  });
+
+  // Botón "Usar esta ubicación": copia valores y cierra
+  btnUse?.addEventListener('click', function(){
+    if (formLat) formLat.value = modalLat.value || '';
+    if (formLng) formLng.value = modalLng.value || '';
+    closeModal();
+  });
+
+  // Escape para cerrar
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && modal.classList.contains('is-active')) {
+      closeModal();
+    }
+  });
+
+});
+</script>
+{% endblock %}

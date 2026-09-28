@@ -20,4 +20,10 @@ urlpatterns = [
         name="datos_personales",
     ),    
     path("", include("BS.urls_cuentas")),    
+    path(
+        "declaracion-accesibilidad/",
+        views.declaracion_accesibilidad,
+        name="declaracion_accesibilidad",
+    ),    
+    path("accounts/", include("allauth.urls")),    
 ]

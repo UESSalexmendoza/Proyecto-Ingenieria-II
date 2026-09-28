@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static socialaccount %}
+{% load static %}
 
 {% block title %}Iniciar sesión | Barrio Solidario{% endblock %}
 
@@ -80,40 +80,35 @@
             </div>
 
             <button type="submit" class="btn btn-login w-100 py-2">Iniciar sesión</button>
-          </form>
+            <div class="bs-divider my-4">
+              <span>o</span>
+            </div>
 
-          <div class="bs-divider my-4"><span>o continúa con</span></div>
-          <div class="row g-3">
-            <div class="col-sm-6">
-              <form method="post" action="{% provider_login_url 'google' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-social btn-google w-100"><i class="bi bi-google me-2" aria-hidden="true"></i>Google</button>
-              </form>
-            </div>
-            <div class="col-sm-6">
-              <form method="post" action="{% provider_login_url 'microsoft' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-social btn-google w-100"><i class="bi bi-microsoft me-2" aria-hidden="true"></i>Microsoft</button>
-              </form>
-            </div>
-            <div class="col-sm-6">
-              <form method="post" action="{% provider_login_url 'facebook' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-social btn-google w-100"><i class="bi bi-facebook me-2" aria-hidden="true"></i>Facebook</button>
-              </form>
-            </div>
-            <div class="col-sm-6">
-              <button type="button" class="btn btn-social btn-google w-100" disabled aria-describedby="instagram-ayuda"><i class="bi bi-instagram me-2" aria-hidden="true"></i>Instagram</button>
-            </div>
-          </div>
-          <p id="instagram-ayuda" class="small text-muted mt-2 mb-0">El acceso con Instagram no está disponible para cuentas personales.</p>
-          <p class="small text-muted mt-2">Primero vincula Google, Microsoft o Facebook desde Mi perfil con tu sesión habitual. Solo las cuentas habilitadas pueden acceder.</p>
+		
+			<div class="row g-3 mt-3">
+			  <div class="col-md-6">
+            <a class="btn btn-social btn-google w-100">
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18">
+              Continuar con Google
+            </a>
+			  </div>
+
+			  <div class="col-md-6">
+            <a class="btn btn-social btn-google w-100">
+				  <img src="{% static 'img/micro.svg' %}" width="18">
+				  Continuar con Microsoft
+            </a>
+
+			  </div>
+			</div>	            
+
 
             <div class="text-center mt-4">
               <span class="text-muted">¿No tienes cuenta?</span>
               <a class="bs-link ms-1" href="{% url 'registro' %}">Regístrate</a>
             </div>
 
+          </form>
 
         </div>
       </div>

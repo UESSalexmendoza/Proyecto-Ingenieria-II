@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Declaración de accesibilidad | Barrio Solidario{% endblock %}
+
+{% block content %}
+<section id="declaracion-accesibilidad" class="py-5 bs-section-light" aria-labelledby="titulo-accesibilidad">
+  <div class="container">
+    <div class="row g-4 align-items-stretch">
+      <div class="col-lg-5">
+        <div class="bs-card h-100 p-4">
+          <div class="bs-brand">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
+              <span class="brand-text">Barrio Solidario</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <small class="text-muted">Declaración de accesibilidad</small>
+          </div>
+          <p class="text-muted mb-3">
+            Queremos que adultos mayores, voluntarios, cuidadores e instituciones puedan consultar información y realizar sus gestiones con autonomía. Esta página explica las opciones disponibles y cómo informar una dificultad de acceso.
+          </p>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge rounded-pill text-bg-light border">Lectura</span>
+            <span class="badge rounded-pill text-bg-light border">Teclado</span>
+            <span class="badge rounded-pill text-bg-light border">Contraste</span>
+            <span class="badge rounded-pill text-bg-light border">Apoyo</span>
+          </div>
+          <hr class="my-4">
+          <div class="bs-callout">
+            <div class="fw-semibold mb-1">Nuestro enfoque</div>
+            <div class="text-muted">Tomamos las pautas WCAG 2.2 como referencia para mejorar la experiencia de acceso y revisamos las barreras identificadas durante el desarrollo de la plataforma.</div>
+          </div>
+          <div class="mt-4">
+            <a href="{% url 'inicio' %}#contacto" class="btn btn-social btn-google w-100">Comunicar una barrera de accesibilidad</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="bs-card h-100 p-4">
+          <h1 class="fw-bold mb-1" id="titulo-accesibilidad">Declaración de accesibilidad</h1>
+          <p class="text-muted mb-4">Información sobre las opciones de acceso y el proceso de mejora de Barrio Solidario.</p>
+          <div class="accordion bs-accordion" id="accordionAccesibilidad">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="a1h"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#a1" aria-expanded="true" aria-controls="a1">1) Alcance de esta declaración</button></h2>
+              <div id="a1" class="accordion-collapse collapse show" aria-labelledby="a1h" data-bs-parent="#accordionAccesibilidad"><div class="accordion-body text-muted">Esta declaración se refiere a las páginas públicas y a los formularios de cuenta de Barrio Solidario disponibles en esta aplicación. Las funciones nuevas se incorporarán al proceso de revisión a medida que se publiquen.</div></div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="a2h"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a2" aria-expanded="false" aria-controls="a2">2) Opciones disponibles</button></h2>
+              <div id="a2" class="accordion-collapse collapse" aria-labelledby="a2h" data-bs-parent="#accordionAccesibilidad"><div class="accordion-body text-muted">El icono de accesibilidad en la barra superior abre opciones para ampliar texto, ajustar contraste y espaciado, destacar enlaces y foco del teclado, reducir animaciones y activar una lectura más sencilla. También permite iniciar y detener la lectura en voz alta del contenido principal o del texto seleccionado, cuando el navegador admite esta función. Los ajustes visuales se guardan en el navegador utilizado.</div></div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="a3h"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a3" aria-expanded="false" aria-controls="a3">3) Navegación y formularios</button></h2>
+              <div id="a3" class="accordion-collapse collapse" aria-labelledby="a3h" data-bs-parent="#accordionAccesibilidad"><div class="accordion-body text-muted">Se han incorporado controles operables con teclado, una indicación visual del foco y un enlace para saltar al contenido principal. Los formularios de contraseña muestran indicaciones y errores asociados a sus campos. Seguimos revisando las demás páginas y formularios.</div></div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="a4h"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a4" aria-expanded="false" aria-controls="a4">4) Limitaciones y estado de evaluación</button></h2>
+              <div id="a4" class="accordion-collapse collapse" aria-labelledby="a4h" data-bs-parent="#accordionAccesibilidad"><div class="accordion-body text-muted">La revisión integral de accesibilidad aún está en curso. Pueden existir barreras en contenido visual, componentes interactivos o páginas no evaluadas; algunas funciones, como la voz, dependen del navegador y de las voces instaladas. Por ello, esta declaración no afirma un nivel de conformidad WCAG para todo el sitio.</div></div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="a5h"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a5" aria-expanded="false" aria-controls="a5">5) Cómo comunicar una dificultad</button></h2>
+              <div id="a5" class="accordion-collapse collapse" aria-labelledby="a5h" data-bs-parent="#accordionAccesibilidad"><div class="accordion-body text-muted">Si una sección no puede utilizarse, escribe a <a href="mailto:contacto@barriosolidario.org">contacto@barriosolidario.org</a> o utiliza el <a href="{% url 'inicio' %}#contacto">apartado de contacto</a>. Indica la página, la acción que intentabas realizar y, si puedes, el dispositivo o navegador. No incluyas contraseñas ni datos sensibles en el reporte.</div></div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="a6h"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a6" aria-expanded="false" aria-controls="a6">6) Revisión y actualización</button></h2>
+              <div id="a6" class="accordion-collapse collapse" aria-labelledby="a6h" data-bs-parent="#accordionAccesibilidad"><div class="accordion-body text-muted">Esta declaración fue preparada el 27 de septiembre de 2026 y se actualizará cuando cambien las funciones disponibles o se complete una evaluación de accesibilidad.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

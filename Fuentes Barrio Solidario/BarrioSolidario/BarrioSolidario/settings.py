@@ -38,9 +38,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'BS',  # ← Agregar esta línea
+    'BS',
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.microsoft",
+    "allauth.socialaccount.providers.facebook",    
 ]
+SITE_ID = 1
 
+ 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -49,6 +58,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
+]
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 ROOT_URLCONF = 'BarrioSolidario.urls'
@@ -70,6 +85,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'BarrioSolidario.wsgi.application'
 
+SOCIALACCOUNT_ADAPTER = "BS.social_adapter.BarrioSocialAccountAdapter"
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = False
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_LOGIN_ON_GET = False
+LOGIN_REDIRECT_URL = "inicio"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

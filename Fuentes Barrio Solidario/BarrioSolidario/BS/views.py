@@ -34,3 +34,6 @@ def politica_voluntariado(request):
 
 def datos_personales(request):
     return render(request, "publica/legales/datos_personales.html")
+
+def declaracion_accesibilidad(request):
+    return render(request, "publica/legales/declaracion_accesibilidad.html")

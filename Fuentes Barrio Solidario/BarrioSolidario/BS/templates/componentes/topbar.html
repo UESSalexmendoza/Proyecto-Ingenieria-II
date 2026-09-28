@@ -12,7 +12,23 @@
   .topbar .account-menu .dropdown-header { color: #64748b; }
   .topbar .account-menu .dropdown-item:active { color: #fff; background: #233a66; }
   .topbar .account-menu .account-email { overflow-wrap: anywhere; }
-  .topbar .accessibility-trigger { display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; color: #fff !important; }
+  .topbar .top-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    line-height: 1;
+    font-size: 1.35rem;
+    color: #fff !important;
+    text-decoration: none;
+    vertical-align: middle;
+  }
+  .topbar .top-icon i { display: block; line-height: 1; }
+  .topbar .accessibility-trigger { cursor: pointer; color: #fff !important; }
   .topbar .accessibility-trigger:hover, .topbar .accessibility-trigger:focus-visible { color: #fff !important; }
   .topbar .accessibility-trigger:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
   html.bs-large-text { font-size: 125%; }
@@ -26,6 +42,12 @@
   body.bs-mark-links a:focus-visible, body.bs-mark-links button:focus-visible { outline: 3px solid currentColor !important; outline-offset: 3px; }
   body.bs-reduce-motion *, body.bs-reduce-motion *::before, body.bs-reduce-motion *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .accessibility-panel { color: #233a66; }
+  .accessibility-panel .access-profile { min-height: 56px; text-align: left; font-weight: 600; }
+  .accessibility-panel .access-profile i { margin-right: .5rem; font-size: 1.2rem; }
+  body.bs-highlight-headings main :is(h1,h2,h3,h4,h5,h6) { border-inline-start: 4px solid #233a66; padding-inline-start: .5rem; }
+  body.bs-focus-guide :is(a,button,input,select,textarea):focus-visible { outline: 4px solid #e02a56 !important; outline-offset: 4px !important; }
+  body.bs-simple-reading main p, body.bs-simple-reading main li { line-height: 1.8; }
+  body.bs-simple-reading main a { text-decoration: underline; text-underline-offset: .2em; }
 </style>
 <div class="topbar py-2">
   <div class="container topbar-inner d-flex flex-column flex-md-row gap-2 justify-content-between align-items-md-center">
@@ -73,6 +95,16 @@
   </div>
   <div class="offcanvas-body">
     <p>Personaliza la lectura y la navegación según tus necesidades.</p>
+    <h3 class="h6 mt-4">Ajustes rápidos</h3>
+    <div class="row g-2 mb-3" aria-label="Perfiles de accesibilidad">
+      <div class="col-6"><button type="button" class="btn btn-outline-primary w-100 access-profile" data-access-profile="vision"><i class="bi bi-eye" aria-hidden="true"></i>Baja visión</button></div>
+      <div class="col-6"><button type="button" class="btn btn-outline-primary w-100 access-profile" data-access-profile="colors"><i class="bi bi-palette" aria-hidden="true"></i>Distinguir enlaces</button></div>
+      <div class="col-6"><button type="button" class="btn btn-outline-primary w-100 access-profile" data-access-profile="reading"><i class="bi bi-book" aria-hidden="true"></i>Lectura clara</button></div>
+      <div class="col-6"><button type="button" class="btn btn-outline-primary w-100 access-profile" data-access-profile="keyboard"><i class="bi bi-keyboard" aria-hidden="true"></i>Navegación por teclado</button></div>
+    </div>
+    <p id="estadoPerfilAccesibilidad" class="small" role="status" aria-live="polite"></p>
+    <hr>
+    <h3 class="h6">Ajustes individuales</h3>
     <div class="form-check form-switch mb-3">
       <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadTexto">
       <label class="form-check-label" for="accesibilidadTexto">Texto más grande</label>
@@ -96,6 +128,14 @@
     <div class="form-check form-switch mb-3">
       <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadSimplificada">
       <label class="form-check-label" for="accesibilidadSimplificada">Lectura simplificada</label>
+    </div>
+    <div class="form-check form-switch mb-3">
+      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadTitulos">
+      <label class="form-check-label" for="accesibilidadTitulos">Destacar títulos</label>
+    </div>
+    <div class="form-check form-switch mb-3">
+      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadFoco">
+      <label class="form-check-label" for="accesibilidadFoco">Foco del teclado reforzado</label>
     </div>
     <hr>
     <h3 class="h6">Lectura en voz alta</h3>
@@ -123,7 +163,9 @@
     ['accesibilidadEspaciado', document.body, 'bs-wide-spacing'],
     ['accesibilidadMovimiento', document.body, 'bs-reduce-motion'],
     ['accesibilidadEnlaces', document.body, 'bs-mark-links'],
-    ['accesibilidadSimplificada', document.body, 'bs-simple-reading']
+    ['accesibilidadSimplificada', document.body, 'bs-simple-reading'],
+    ['accesibilidadTitulos', document.body, 'bs-highlight-headings'],
+    ['accesibilidadFoco', document.body, 'bs-focus-guide']
   ];
   for (const [id, elemento, clase] of opciones) {
     const control = document.getElementById(id);
@@ -136,6 +178,24 @@
       try { localStorage.setItem('bs:' + id, String(control.checked)); } catch (e) { /* Se aplica solo en esta página. */ }
     });
   }
+  const perfiles = {
+    vision: { nombre: 'Baja visión', opciones: ['accesibilidadTexto', 'accesibilidadContraste', 'accesibilidadEnlaces', 'accesibilidadFoco'] },
+    colors: { nombre: 'Distinguir enlaces', opciones: ['accesibilidadContraste', 'accesibilidadEnlaces', 'accesibilidadTitulos'] },
+    reading: { nombre: 'Lectura clara', opciones: ['accesibilidadEspaciado', 'accesibilidadMovimiento', 'accesibilidadSimplificada', 'accesibilidadTitulos'] },
+    keyboard: { nombre: 'Navegación por teclado', opciones: ['accesibilidadEnlaces', 'accesibilidadFoco'] }
+  };
+  document.querySelectorAll('[data-access-profile]').forEach(function (boton) {
+    boton.addEventListener('click', function () {
+      const perfil = perfiles[boton.dataset.accessProfile];
+      if (!perfil) return;
+      for (const [id] of opciones) {
+        const control = document.getElementById(id);
+        control.checked = perfil.opciones.includes(id);
+        control.dispatchEvent(new Event('change'));
+      }
+      document.getElementById('estadoPerfilAccesibilidad').textContent = 'Ajustes de ' + perfil.nombre + ' aplicados. Puedes modificarlos individualmente.';
+    });
+  });
   const leer = document.getElementById('leerContenido');
   const detener = document.getElementById('detenerLectura');
   const estado = document.getElementById('estadoLectura');

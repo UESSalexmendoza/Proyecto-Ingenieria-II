@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.urls import path, include
 from BS import views
 from django.views.generic import RedirectView
+from django.urls import re_path
+from BS.views_errors import pagina_no_encontrada
+
 urlpatterns = [
     path("admin/", admin.site.urls),
 
@@ -34,4 +37,5 @@ urlpatterns = [
         RedirectView.as_view(pattern_name="registro", permanent=False),
     ),
     path("accounts/", include("allauth.urls")),    
+    re_path(r"^.*$", pagina_no_encontrada),
 ]

@@ -25,7 +25,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods, require_POST
 
-from .forms_cuentas import ActivarCuentaForm, ReenviarActivacionForm, RegistroForm, PerfilCuentaForm, CambiarClaveCuentaForm, SolicitarRecuperacionForm
+from .forms_cuentas import ActivarCuentaForm, ReenviarActivacionForm, RegistroForm, CambiarClaveCuentaForm, SolicitarRecuperacionForm
 from .models import EventoAcceso, PerfilUsuario, Rol, UsuarioRol, RecuperacionClave, SolicitudAccesoSocial
 
 logger = logging.getLogger(__name__)
@@ -228,11 +228,6 @@ def reenviar_activacion(request):
 
 
 @login_required(login_url="acceso")
-def panel_cuenta(request):
-    return render(request, "cuentas/panel_cuenta.html")
-
-
-@login_required(login_url="acceso")
 @require_http_methods(["GET", "POST"])
 @csrf_protect
 @never_cache
@@ -259,24 +254,6 @@ def aceptar_datos_personales(request):
 @login_required(login_url="acceso")
 @require_http_methods(["GET", "POST"])
 @csrf_protect
-def perfil_cuenta(request):
-    perfil = PerfilUsuario.objects.filter(usuario=request.user).first()
-    form = PerfilCuentaForm(request.POST or None, usuario=request.user, perfil=perfil)
-    if request.method == "POST" and form.is_valid():
-        with transaction.atomic():
-            request.user.first_name = form.cleaned_data["nombres"]
-            request.user.last_name = form.cleaned_data["apellidos"]
-            request.user.save(update_fields=["first_name", "last_name"])
-            if perfil:
-                perfil.telefono = form.cleaned_data["telefono"]
-                perfil.save(update_fields=["telefono", "actualizado_en"])
-        return redirect("perfil_cuenta")
-    return render(request, "cuentas/perfil_cuenta.html", {"form": form})
-
-
-@login_required(login_url="acceso")
-@require_http_methods(["GET", "POST"])
-@csrf_protect
 def cambiar_clave_cuenta(request):
     if not request.user.has_usable_password():
         messages.error(request, "Esta cuenta no tiene una contraseña local para modificar.")
@@ -287,12 +264,12 @@ def cambiar_clave_cuenta(request):
         usuario = form.save()
         update_session_auth_hash(request, usuario)
 
-        return render(request, "cuentas/cambiar_clave_cuenta.html", {
+        return render(request, "perfil/cambiar_clave.html", {
             "form": CambiarClaveCuentaForm(request.user),
             "clave_actualizada": True,
         })
 
-    return render(request, "cuentas/cambiar_clave_cuenta.html", {"form": form})
+    return render(request, "perfil/cambiar_clave.html", {"form": form})
 
 
 @login_required(login_url="acceso")

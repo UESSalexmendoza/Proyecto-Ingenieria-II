@@ -1,4 +1,6 @@
 from django.shortcuts import redirect
+from django.shortcuts import render
+from django.conf import settings
 
 from .models import PerfilUsuario
 
@@ -23,3 +25,24 @@ class ConsentimientoDatosMiddleware:
         ).exists():
             return redirect("aceptar_datos_personales")
         return None
+
+
+class PaginaNoEncontradaMiddleware:
+    """Presenta la misma página 404 incluso con DEBUG activado."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if response.status_code != 404 or request.method not in {"GET", "HEAD"}:
+            return response
+        path = request.path_info
+        exclusions = ("/admin/", "/" + settings.STATIC_URL.lstrip("/"))
+        if settings.MEDIA_URL:
+            exclusions += ("/" + settings.MEDIA_URL.lstrip("/"),)
+        if any(prefix and path.startswith(prefix) for prefix in exclusions):
+            return response
+        if "text/html" not in request.headers.get("Accept", "text/html"):
+            return response
+        return render(request, "errores/404.html", status=404)

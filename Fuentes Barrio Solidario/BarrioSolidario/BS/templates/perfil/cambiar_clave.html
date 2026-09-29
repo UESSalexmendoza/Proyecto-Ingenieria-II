@@ -1,0 +1,23 @@
+{% extends "panel/base.html" %}
+{% block title %}Cambiar contraseña | Barrio Solidario{% endblock %}
+{% block content %}
+<main class="container py-4 py-lg-5" style="max-width:850px">
+  <nav aria-label="Ruta de navegación"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{% url 'panel_cuenta' %}">Panel</a></li><li class="breadcrumb-item"><a href="{% url 'perfil_cuenta' %}">Mi perfil</a></li><li class="breadcrumb-item active" aria-current="page">Contraseña</li></ol></nav>
+  <div class="panel-card h-auto"><h1 class="h3">Cambiar contraseña</h1>
+    {% if clave_actualizada %}<div class="alert alert-success" role="status">La contraseña se actualizó correctamente. Los campos están limpios.</div>{% endif %}
+    <p>Usa entre 12 y 15 caracteres con al menos tres grupos: minúsculas, mayúsculas, números o símbolos.</p>
+    <form method="post" id="claveForm">{% csrf_token %}
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+      {% for campo in form %}<div class="mb-3"><label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label><div class="input-group">{{ campo }}<button class="btn btn-outline-secondary ver-clave" type="button" data-objetivo="{{ campo.id_for_label }}" aria-label="Mostrar {{ campo.label|lower }}"><i class="bi bi-eye" aria-hidden="true"></i></button></div>{{ campo.errors }}</div>{% endfor %}
+      <label for="fuerzaClave" class="form-label">Complejidad de la nueva contraseña</label><div class="progress mb-2" id="fuerzaClave" role="progressbar" aria-label="Complejidad de la contraseña" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width:0"></div></div><p id="fuerzaTexto" class="small text-muted">Escribe una contraseña nueva.</p>
+      <button class="btn btn-panel" type="submit">Actualizar contraseña</button><a class="btn btn-outline-secondary" href="{% url 'perfil_cuenta' %}#seguridad">Volver al perfil</a>
+    </form>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}<script>
+document.querySelectorAll('#claveForm input[type=password]').forEach(el => el.classList.add('form-control'));
+document.querySelectorAll('.ver-clave').forEach(btn => btn.addEventListener('click', () => {const input=document.getElementById(btn.dataset.objetivo);if(input){input.type=input.type==='password'?'text':'password';btn.setAttribute('aria-label',(input.type==='password'?'Mostrar ':'Ocultar ')+btn.dataset.objetivo);}}));
+const input=document.getElementById('id_new_password1'), bar=document.querySelector('#fuerzaClave .progress-bar'), meter=document.getElementById('fuerzaClave'), output=document.getElementById('fuerzaTexto');
+if(input)input.addEventListener('input',()=>{let value=input.value;let groups=[/[a-z]/,/[A-Z]/,/[0-9]/,/[^A-Za-z0-9\s]/].filter(re=>re.test(value)).length;let score=value.length>=12?Math.min(100,groups*25):Math.min(50,groups*12);bar.style.width=score+'%';meter.setAttribute('aria-valuenow',score);bar.className='progress-bar '+(score>=75?'bg-success':score>=50?'bg-warning':'bg-danger');output.textContent=value?(score>=75?'Fuerte':score>=50?'Media':'Débil'):'Escribe una contraseña nueva.';});
+</script>{% endblock %}

@@ -3,7 +3,8 @@
   .topbar { position: relative; z-index: 1031; }
   .topbar .topbar-inner { min-height: 46px; }
   .topbar .account-trigger { display: inline-flex; align-items: center; gap: .5rem; min-height: 38px; padding: 2px 6px; border: 0; border-radius: .5rem; background: transparent; color: inherit; }
-  .topbar .account-avatar { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: #17365d; font-size: 1.15rem; }
+  .topbar .account-avatar { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 36px; width: 36px; height: 36px; overflow: hidden; border-radius: 50%; background: #fff; color: #17365d; font-size: 1.15rem; }
+  .topbar .account-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .topbar .account-name { display: inline-block; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .topbar .account-menu { min-width: 245px; max-width: min(92vw, 320px); background: #fff; color: #233a66; border: 1px solid #dbe2ec; }
   .topbar .account-menu .dropdown-item { color: #233a66; text-decoration: none; white-space: normal; }
@@ -12,23 +13,12 @@
   .topbar .account-menu .dropdown-header { color: #64748b; }
   .topbar .account-menu .dropdown-item:active { color: #fff; background: #233a66; }
   .topbar .account-menu .account-email { overflow-wrap: anywhere; }
-  .topbar .top-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 44px;
-    width: 44px;
-    height: 44px;
-    min-height: 44px;
-    padding: 0;
-    line-height: 1;
-    font-size: 1.35rem;
-    color: #fff !important;
-    text-decoration: none;
-    vertical-align: middle;
-  }
+  .topbar .topbar-actions { display: flex; align-items: center; gap: .75rem; }
+  .topbar .top-icon { display: inline-flex; flex: 0 0 36px; align-items: center; justify-content: center; width: 36px; height: 36px; min-height: 36px; padding: 0; border: 0; line-height: 1; font-size: 1.25rem; color: #fff !important; text-decoration: none; vertical-align: middle; }
   .topbar .top-icon i { display: block; line-height: 1; }
-  .topbar .accessibility-trigger { cursor: pointer; color: #fff !important; }
+  .topbar .top-icon:hover, .topbar .top-icon:focus-visible { color: #fff !important; text-decoration: none; }
+  .topbar .topbar-actions > .dropdown { display: flex; align-items: center; }
+  .topbar .accessibility-trigger { display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; color: #fff !important; }
   .topbar .accessibility-trigger:hover, .topbar .accessibility-trigger:focus-visible { color: #fff !important; }
   .topbar .accessibility-trigger:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
   html.bs-large-text { font-size: 125%; }
@@ -48,20 +38,29 @@
   body.bs-focus-guide :is(a,button,input,select,textarea):focus-visible { outline: 4px solid #e02a56 !important; outline-offset: 4px !important; }
   body.bs-simple-reading main p, body.bs-simple-reading main li { line-height: 1.8; }
   body.bs-simple-reading main a { text-decoration: underline; text-underline-offset: .2em; }
+  .bs-skip-link { position:fixed; top:0; left:1rem; z-index:2000; transform:translateY(-150%); padding:.65rem 1rem; background:#fff; color:#102d52; border:2px solid #102d52; border-radius:.3rem; }
+  .bs-skip-link:focus { transform:translateY(.5rem); }
 </style>
+<a href="#contenidoPrincipal" class="bs-skip-link">Saltar al contenido principal</a>
 <div class="topbar py-2">
   <div class="container topbar-inner d-flex flex-column flex-md-row gap-2 justify-content-between align-items-md-center">
     <div class="d-flex flex-wrap gap-3 align-items-center">
       <a href="mailto:contacto@barriosolidario.org"><i class="bi bi-envelope-fill me-1" aria-hidden="true"></i> contacto@barriosolidario.org</a>
     </div>
-    <div class="d-flex align-items-center gap-3">
+    <div class="topbar-actions">
       <a href="{% url 'inicio' %}#contacto" class="top-icon" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Contacto" aria-label="Ir a contacto"><i class="bi bi-person-lines-fill" aria-hidden="true"></i></a>
       <a href="{% url 'inicio' %}#metricas" class="top-icon" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver métricas" aria-label="Ver métricas"><i class="bi bi-bar-chart-fill" aria-hidden="true"></i></a>
       <button type="button" class="top-icon accessibility-trigger border-0 bg-transparent" data-bs-toggle="offcanvas" data-bs-target="#panelAccesibilidad" aria-controls="panelAccesibilidad" aria-label="Abrir opciones de accesibilidad" title="Accesibilidad"><i class="bi bi-universal-access" aria-hidden="true"></i></button>
       {% if user.is_authenticated %}
       <div class="dropdown">
         <button type="button" class="account-trigger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Opciones de cuenta de {{ user.get_full_name|default:user.username }}">
-          <span class="account-avatar" aria-hidden="true"><i class="bi bi-person-fill"></i></span>
+          <span class="account-avatar" aria-hidden="true">
+            {% if user.perfil_barrio.avatar %}
+              <img src="{% url 'avatar_cuenta' %}" width="36" height="36" alt="">
+            {% else %}
+              <i class="bi bi-person-fill"></i>
+            {% endif %}
+          </span>
           <span class="account-name">{{ user.get_full_name|default:user.username }}</span>
         </button>
         <div class="dropdown-menu dropdown-menu-end account-menu shadow">
@@ -74,8 +73,8 @@
           <h6 class="dropdown-header">Personalización</h6>
           <a class="dropdown-item" href="{% url 'perfil_cuenta' %}"><i class="bi bi-person-gear me-2" aria-hidden="true"></i>Mi perfil</a>
           {% if user.has_usable_password %}
-            <a class="dropdown-item" href="{% url 'cambiar_clave_cuenta' %}"><i class="bi bi-key me-2" aria-hidden="true"></i>Cambiar contraseña</a>
-          {% endif %}          
+          <a class="dropdown-item" href="{% url 'cambiar_clave_cuenta' %}"><i class="bi bi-key me-2" aria-hidden="true"></i>Cambiar contraseña</a>
+          {% endif %}
           <h6 class="dropdown-header">Trabajo</h6>
           <a class="dropdown-item" href="{% url 'panel_cuenta' %}"><i class="bi bi-grid-1x2 me-2" aria-hidden="true"></i>Mi panel</a>
           <hr class="dropdown-divider">
@@ -90,159 +89,4 @@
   </div>
 </div>
 
-<div class="offcanvas offcanvas-end accessibility-panel" tabindex="-1" id="panelAccesibilidad" aria-labelledby="tituloAccesibilidad">
-  <div class="offcanvas-header">
-    <h2 class="offcanvas-title h5" id="tituloAccesibilidad">Opciones de accesibilidad</h2>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
-  </div>
-  <div class="offcanvas-body">
-    <p>Personaliza la lectura y la navegación según tus necesidades.</p>
-    <h3 class="h6 mt-4">Ajustes rápidos</h3>
-    <div class="row g-2 mb-3" aria-label="Perfiles de accesibilidad">
-      <div class="col-6"><button type="button" class="btn btn-outline-primary w-100 access-profile" data-access-profile="vision"><i class="bi bi-eye" aria-hidden="true"></i>Baja visión</button></div>
-      <div class="col-6"><button type="button" class="btn btn-outline-primary w-100 access-profile" data-access-profile="colors"><i class="bi bi-palette" aria-hidden="true"></i>Distinguir enlaces</button></div>
-      <div class="col-6"><button type="button" class="btn btn-outline-primary w-100 access-profile" data-access-profile="reading"><i class="bi bi-book" aria-hidden="true"></i>Lectura clara</button></div>
-      <div class="col-6"><button type="button" class="btn btn-outline-primary w-100 access-profile" data-access-profile="keyboard"><i class="bi bi-keyboard" aria-hidden="true"></i>Navegación por teclado</button></div>
-    </div>
-    <p id="estadoPerfilAccesibilidad" class="small" role="status" aria-live="polite"></p>
-    <hr>
-    <h3 class="h6">Ajustes individuales</h3>
-    <div class="form-check form-switch mb-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadTexto">
-      <label class="form-check-label" for="accesibilidadTexto">Texto más grande</label>
-    </div>
-    <div class="form-check form-switch mb-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadContraste">
-      <label class="form-check-label" for="accesibilidadContraste">Contraste alto</label>
-    </div>
-    <div class="form-check form-switch mb-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadEspaciado">
-      <label class="form-check-label" for="accesibilidadEspaciado">Mayor espaciado</label>
-    </div>
-    <div class="form-check form-switch mb-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadMovimiento">
-      <label class="form-check-label" for="accesibilidadMovimiento">Reducir animaciones</label>
-    </div>
-    <div class="form-check form-switch mb-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadEnlaces">
-      <label class="form-check-label" for="accesibilidadEnlaces">Subrayar enlaces y destacar el foco</label>
-    </div>
-    <div class="form-check form-switch mb-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadSimplificada">
-      <label class="form-check-label" for="accesibilidadSimplificada">Lectura simplificada</label>
-    </div>
-    <div class="form-check form-switch mb-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadTitulos">
-      <label class="form-check-label" for="accesibilidadTitulos">Destacar títulos</label>
-    </div>
-    <div class="form-check form-switch mb-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="accesibilidadFoco">
-      <label class="form-check-label" for="accesibilidadFoco">Foco del teclado reforzado</label>
-    </div>
-    <hr>
-    <h3 class="h6">Lectura en voz alta</h3>
-    <p class="small">Selecciona un fragmento para escucharlo. Si no seleccionas texto, se leerá el contenido principal de la página.</p>
-    <label for="velocidadLectura" class="form-label">Velocidad</label>
-    <select id="velocidadLectura" class="form-select mb-3">
-      <option value="0.8">Lenta</option>
-      <option value="1" selected>Normal</option>
-      <option value="1.2">Rápida</option>
-    </select>
-    <div class="d-flex flex-wrap gap-2 mb-3">
-      <button type="button" class="btn btn-primary" id="leerContenido"><i class="bi bi-volume-up" aria-hidden="true"></i> Leer contenido</button>
-      <button type="button" class="btn btn-outline-secondary" id="detenerLectura" disabled>Detener lectura</button>
-    </div>
-    <p id="estadoLectura" class="small" role="status" aria-live="polite"></p>
-    <hr>
-    <button type="button" class="btn btn-outline-secondary" id="restablecerAccesibilidad">Restablecer ajustes</button>
-  </div>
-</div>
-<script>
-(function () {
-  const opciones = [
-    ['accesibilidadTexto', document.documentElement, 'bs-large-text'],
-    ['accesibilidadContraste', document.body, 'bs-high-contrast'],
-    ['accesibilidadEspaciado', document.body, 'bs-wide-spacing'],
-    ['accesibilidadMovimiento', document.body, 'bs-reduce-motion'],
-    ['accesibilidadEnlaces', document.body, 'bs-mark-links'],
-    ['accesibilidadSimplificada', document.body, 'bs-simple-reading'],
-    ['accesibilidadTitulos', document.body, 'bs-highlight-headings'],
-    ['accesibilidadFoco', document.body, 'bs-focus-guide']
-  ];
-  for (const [id, elemento, clase] of opciones) {
-    const control = document.getElementById(id);
-    let activo = false;
-    try { activo = localStorage.getItem('bs:' + id) === 'true'; } catch (e) { /* Navegación sin almacenamiento. */ }
-    control.checked = activo;
-    elemento.classList.toggle(clase, activo);
-    control.addEventListener('change', function () {
-      elemento.classList.toggle(clase, control.checked);
-      try { localStorage.setItem('bs:' + id, String(control.checked)); } catch (e) { /* Se aplica solo en esta página. */ }
-    });
-  }
-  const perfiles = {
-    vision: { nombre: 'Baja visión', opciones: ['accesibilidadTexto', 'accesibilidadContraste', 'accesibilidadEnlaces', 'accesibilidadFoco'] },
-    colors: { nombre: 'Distinguir enlaces', opciones: ['accesibilidadContraste', 'accesibilidadEnlaces', 'accesibilidadTitulos'] },
-    reading: { nombre: 'Lectura clara', opciones: ['accesibilidadEspaciado', 'accesibilidadMovimiento', 'accesibilidadSimplificada', 'accesibilidadTitulos'] },
-    keyboard: { nombre: 'Navegación por teclado', opciones: ['accesibilidadEnlaces', 'accesibilidadFoco'] }
-  };
-  document.querySelectorAll('[data-access-profile]').forEach(function (boton) {
-    boton.addEventListener('click', function () {
-      const perfil = perfiles[boton.dataset.accessProfile];
-      if (!perfil) return;
-      for (const [id] of opciones) {
-        const control = document.getElementById(id);
-        control.checked = perfil.opciones.includes(id);
-        control.dispatchEvent(new Event('change'));
-      }
-      document.getElementById('estadoPerfilAccesibilidad').textContent = 'Ajustes de ' + perfil.nombre + ' aplicados. Puedes modificarlos individualmente.';
-    });
-  });
-  const leer = document.getElementById('leerContenido');
-  const detener = document.getElementById('detenerLectura');
-  const estado = document.getElementById('estadoLectura');
-  if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
-    leer.disabled = true;
-    estado.textContent = 'La lectura en voz alta no está disponible en este navegador.';
-  } else {
-    function finalizarLectura() {
-      detener.disabled = true;
-      estado.textContent = 'Lectura detenida.';
-    }
-    leer.addEventListener('click', function () {
-      const seleccion = window.getSelection();
-      const textoSeleccionado = seleccion && seleccion.toString().trim();
-      const contenido = document.querySelector('main');
-      const texto = textoSeleccionado || (contenido ? contenido.innerText.trim() : '');
-      if (!texto) {
-        estado.textContent = 'No hay contenido para leer.';
-        return;
-      }
-      window.speechSynthesis.cancel();
-      const mensaje = new SpeechSynthesisUtterance(texto);
-      mensaje.lang = 'es-EC';
-      mensaje.rate = Number(document.getElementById('velocidadLectura').value);
-      mensaje.onend = finalizarLectura;
-      mensaje.onerror = function () {
-        detener.disabled = true;
-        estado.textContent = 'No se pudo completar la lectura.';
-      };
-      detener.disabled = false;
-      estado.textContent = 'Leyendo contenido...';
-      window.speechSynthesis.speak(mensaje);
-    });
-    detener.addEventListener('click', function () {
-      window.speechSynthesis.cancel();
-      finalizarLectura();
-    });
-    window.addEventListener('pagehide', function () { window.speechSynthesis.cancel(); });
-  }
-  document.getElementById('restablecerAccesibilidad').addEventListener('click', function () {
-    for (const [id, elemento, clase] of opciones) {
-      document.getElementById(id).checked = false;
-      elemento.classList.remove(clase);
-      try { localStorage.removeItem('bs:' + id); } catch (e) { /* Se restablece solo en esta página. */ }
-    }
-  });
-})();
-</script>
+{% include "componentes/accesibilidad_panel.html" %}

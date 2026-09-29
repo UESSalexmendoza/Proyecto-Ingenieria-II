@@ -1,0 +1,208 @@
+{% extends "panel/base.html" %}
+{% block title %}Mi perfil | Barrio Solidario{% endblock %}
+{% block content %}
+<main class="container-fluid px-3 px-xl-4 py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+    <div><nav aria-label="Ruta de navegación"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a href="{% url 'panel_cuenta' %}">Funciones comunes</a></li><li class="breadcrumb-item active" aria-current="page">Mi perfil</li></ol></nav>
+      <h1 class="h2 mb-1">Mi perfil</h1><p class="text-muted mb-0">Información, preferencias, privacidad y seguridad de tu cuenta.</p></div>
+    <a href="{% url 'panel_cuenta' %}" class="btn btn-outline-secondary">Volver al panel</a>
+  </div>
+  <div class="panel-card mb-3 py-2"><div class="d-flex flex-wrap gap-3 gap-xl-5 align-items-center">
+    <span><span class="panel-label">Código</span><br><strong>USR-{{ user.pk|stringformat:"05d" }}</strong></span>
+    <span><span class="panel-label">Cuenta</span><br><strong>{{ perfil.get_estado_display|default:"Sin perfil" }}</strong></span>
+    <span><span class="panel-label">Rol solicitado</span><br><strong>{% for asignacion in roles %}{{ asignacion.rol.nombre }}{% if not forloop.last %}, {% endif %}{% empty %}Sin asignar{% endfor %}</strong></span>
+    <span><span class="panel-label">Aprobación para operar</span><br>{% for asignacion in roles %}<strong class="{% if asignacion.puede_operar %}text-success{% elif asignacion.estado_aprobacion == 'RECHAZADO' %}text-danger{% else %}text-warning-emphasis{% endif %}">{{ asignacion.rol.nombre }}: {% if asignacion.activo %}{{ asignacion.get_estado_aprobacion_display }}{% else %}Asignación inactiva{% endif %}</strong>{% if not forloop.last %}<br>{% endif %}{% empty %}Pendiente{% endfor %}</span>
+    <span class="ms-xl-auto" style="min-width:160px"><span class="panel-label">Perfil: {{ completitud }} % completo</span><span class="progress" role="progressbar" aria-valuenow="{{ completitud }}" aria-valuemin="0" aria-valuemax="100" aria-label="Completitud"><span class="progress-bar" style="width:{{ completitud }}%"></span></span></span>
+  </div></div>
+  <div class="row g-3">
+    <aside class="col-xl-2 col-lg-3">
+      <section class="panel-card mb-3 h-auto"><h2 class="h6">Resumen del usuario</h2>
+        <div class="d-flex gap-2 align-items-center mt-3">
+          {% if perfil.avatar %}<img id="avatarVista" src="{% url 'avatar_cuenta' %}" alt="Foto de perfil" width="68" height="68" style="object-fit:cover;border-radius:50%">{% else %}<div id="avatarInicial" class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width:68px;height:68px"><i class="bi bi-person-circle fs-2" aria-hidden="true"></i></div><img id="avatarVista" alt="Vista previa de la foto" width="68" height="68" class="d-none" style="object-fit:cover;border-radius:50%">{% endif %}
+          <div class="small"><strong>{{ user.get_full_name|default:user.username }}</strong><br>USR-{{ user.pk|stringformat:"05d" }}<br>{{ perfil.get_estado_display }}</div>
+        </div>
+        {% if perfil.avatar %}<form action="{% url 'eliminar_avatar_cuenta' %}" method="post" class="mt-2">{% csrf_token %}<button class="btn btn-link btn-sm p-0" type="submit">Eliminar foto</button></form>{% endif %}
+        <small class="text-muted d-block mt-2">Registro: {{ user.date_joined|date:"d/m/Y" }}<br>Última actualización: {{ perfil.actualizado_en|date:"d/m/Y H:i" }}</small>
+      </section>
+      <section class="panel-card h-auto"><h2 class="h6">Roles asociados</h2>
+        {% for asignacion in roles %}<div class="border-top py-2 small"><strong>{{ asignacion.rol.nombre }}</strong><br><span class="badge {% if asignacion.puede_operar %}bg-success{% elif asignacion.estado_aprobacion == 'RECHAZADO' %}bg-danger{% else %}bg-warning text-dark{% endif %}">{% if asignacion.activo %}{{ asignacion.get_estado_aprobacion_display }}{% else %}Inactivo{% endif %}</span>{% if asignacion.fecha_revision %}<br>Revisión: {{ asignacion.fecha_revision|date:"d/m/Y H:i" }}{% endif %}{% if asignacion.observacion_revision %}<br>Observación: {{ asignacion.observacion_revision }}{% endif %}</div>{% empty %}<p class="small">Sin solicitudes de rol.</p>{% endfor %}
+        <form method="post" action="{% url 'solicitar_rol_cuenta' %}" class="mt-2">{% csrf_token %}<label class="form-label small" for="nuevoRol">Solicitar otro rol</label><select class="form-select form-select-sm" name="rol" id="nuevoRol" required><option value="">Selecciona</option>{% for codigo,nombre in roles_disponibles %}<option value="{{ codigo }}">{{ nombre }}</option>{% endfor %}</select><button type="submit" class="btn btn-outline-primary btn-sm mt-2">Solicitar aprobación</button></form>
+        <small class="d-block text-muted mt-2">Solicitar un rol no lo habilita para operar. Un administrador debe aprobarlo.</small>
+      </section>
+    </aside>
+    <div class="col-xl-7 col-lg-6">
+      <div class="panel-card">
+        <ul class="nav nav-tabs panel-tabs mb-3" id="perfilTabs" role="tablist">
+          <li class="nav-item" role="presentation"><button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab" aria-controls="personal" aria-selected="true">Información personal</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="contacto-tab" data-bs-toggle="tab" data-bs-target="#contacto" type="button" role="tab" aria-controls="contacto" aria-selected="false">Contacto</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="preferencias-tab" data-bs-toggle="tab" data-bs-target="#preferencias" type="button" role="tab" aria-controls="preferencias" aria-selected="false">Preferencias</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="accesibilidad-tab" data-bs-toggle="tab" data-bs-target="#accesibilidad" type="button" role="tab" aria-controls="accesibilidad" aria-selected="false">Accesibilidad</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="seguridad-tab" data-bs-toggle="tab" data-bs-target="#seguridad" type="button" role="tab" aria-controls="seguridad" aria-selected="false">Seguridad</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" id="actividad-tab" data-bs-toggle="tab" data-bs-target="#actividad" type="button" role="tab" aria-controls="actividad" aria-selected="false">Actividad</button></li>
+        </ul>
+        {% if form.errors %}<div class="alert alert-danger" role="alert">Revisa los campos señalados antes de guardar. {{ form.non_field_errors }}</div>{% endif %}
+        <form id="perfilForm" method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+          <div class="tab-content" id="perfilTabsContenido">
+            <section class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab" tabindex="0"><h2 class="h5">Información personal</h2><div class="row g-3">
+              <div class="col-md-6"><label class="form-label" for="{{ form.nombres.id_for_label }}">Nombres</label>{{ form.nombres }}{{ form.nombres.errors }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.apellidos.id_for_label }}">Apellidos</label>{{ form.apellidos }}{{ form.apellidos.errors }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.fecha_nacimiento.id_for_label }}">Fecha de nacimiento</label>{{ form.fecha_nacimiento }}{{ form.fecha_nacimiento.errors }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.idioma.id_for_label }}">Idioma</label>{{ form.idioma }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.zona_horaria.id_for_label }}">Zona horaria</label>{{ form.zona_horaria }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.avatar.id_for_label }}">Foto opcional (JPG o PNG)</label>{{ form.avatar }}{{ form.avatar.errors }}<small class="text-muted d-block">Selecciona una imagen para centrarla y ajustar el zoom antes de guardar. El recorte final admite hasta 2 MB.</small><span id="avatarError" class="text-danger small d-block" role="alert"></span></div>
+              <div class="col-12"><label class="form-label" for="{{ form.informacion_adicional.id_for_label }}">Información adicional</label>{{ form.informacion_adicional }}{{ form.informacion_adicional.errors }}</div>
+              <div class="col-12 form-check ms-2">{{ form.ocultar_informacion_adicional }}<label class="form-check-label" for="{{ form.ocultar_informacion_adicional.id_for_label }}">No mostrar esta información públicamente</label></div>
+            </div></section>
+            <section class="tab-pane fade" id="contacto" role="tabpanel" aria-labelledby="contacto-tab" tabindex="0"><h2 class="h5">Contacto y ubicación</h2><div class="row g-3">
+              <div class="col-md-6"><label class="form-label" for="correoLectura">Correo de acceso</label><input id="correoLectura" class="form-control" value="{{ user.email }}" readonly></div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.telefono.id_for_label }}">Teléfono</label>{{ form.telefono }}{{ form.telefono.errors }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.contacto_alternativo.id_for_label }}">Contacto alternativo</label>{{ form.contacto_alternativo }}{{ form.contacto_alternativo.errors }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.canal_preferido.id_for_label }}">Canal preferido</label>{{ form.canal_preferido }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.sector_aproximado.id_for_label }}">Sector aproximado</label>{{ form.sector_aproximado }}{{ form.sector_aproximado.errors }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.disponibilidad.id_for_label }}">Disponibilidad</label>{{ form.disponibilidad }}{{ form.disponibilidad.errors }}</div>
+              <div class="col-12"><small class="text-muted">No escribas tu dirección exacta. La ubicación aproximada solo ayuda a coordinar apoyos.</small></div>
+              <div class="col-12 form-check ms-2">{{ form.permitir_ubicacion_aproximada }}<label class="form-check-label" for="{{ form.permitir_ubicacion_aproximada.id_for_label }}">Permitir usar mi sector aproximado en la coordinación</label></div>
+              <div class="col-12 form-check ms-2">{{ form.compartir_ubicacion_atencion }}<label class="form-check-label" for="{{ form.compartir_ubicacion_atencion.id_for_label }}">Permitir compartir la ubicación durante una atención autorizada</label></div>
+            </div></section>
+            <section class="tab-pane fade" id="preferencias" role="tabpanel" aria-labelledby="preferencias-tab" tabindex="0"><h2 class="h5">Preferencias de comunicación</h2><div class="row g-3">
+              <div class="col-12 form-check ms-2">{{ form.recibir_notificaciones }}<label class="form-check-label" for="{{ form.recibir_notificaciones.id_for_label }}">Recibir notificaciones</label></div>
+              <div class="col-12 form-check ms-2">{{ form.recibir_recordatorios }}<label class="form-check-label" for="{{ form.recibir_recordatorios.id_for_label }}">Recibir recordatorios de atención</label></div>
+              <div class="col-12 form-check ms-2">{{ form.recibir_mensajes }}<label class="form-check-label" for="{{ form.recibir_mensajes.id_for_label }}">Recibir mensajes de coordinación</label></div>
+              <div class="col-12 form-check ms-2">{{ form.recibir_resumen_semanal }}<label class="form-check-label" for="{{ form.recibir_resumen_semanal.id_for_label }}">Recibir resumen semanal</label></div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.distancia_maxima_km.id_for_label }}">Distancia máxima de avisos</label>{{ form.distancia_maxima_km }}</div>
+              <div class="col-md-3"><label class="form-label" for="{{ form.notificaciones_desde.id_for_label }}">Desde</label>{{ form.notificaciones_desde }}{{ form.notificaciones_desde.errors }}</div>
+              <div class="col-md-3"><label class="form-label" for="{{ form.notificaciones_hasta.id_for_label }}">Hasta</label>{{ form.notificaciones_hasta }}{{ form.notificaciones_hasta.errors }}</div>
+              <div class="col-12 form-check ms-2">{{ form.modo_silencioso }}<label class="form-check-label" for="{{ form.modo_silencioso.id_for_label }}">Modo silencioso fuera de ese horario</label></div>
+              <div class="col-12"><small class="text-muted">Estas preferencias se guardan para las futuras funciones de coordinación y avisos.</small></div>
+            </div></section>
+            <section class="tab-pane fade" id="accesibilidad" role="tabpanel" aria-labelledby="accesibilidad-tab" tabindex="0"><h2 class="h5">Accesibilidad</h2><div class="row g-3">
+              <div class="col-md-6"><label class="form-label" for="{{ form.tamano_texto.id_for_label }}">Tamaño de texto</label>{{ form.tamano_texto }}</div>
+              <div class="col-md-6"><label class="form-label" for="{{ form.lectura_idioma.id_for_label }}">Idioma de lectura</label>{{ form.lectura_idioma }}</div>
+              <div class="col-12 form-check ms-2">{{ form.alto_contraste }}<label class="form-check-label" for="{{ form.alto_contraste.id_for_label }}">Contraste alto</label></div>
+              <div class="col-12 form-check ms-2">{{ form.subrayar_enlaces }}<label class="form-check-label" for="{{ form.subrayar_enlaces.id_for_label }}">Subrayar enlaces</label></div>
+              <div class="col-12 form-check ms-2">{{ form.reducir_animaciones }}<label class="form-check-label" for="{{ form.reducir_animaciones.id_for_label }}">Reducir animaciones</label></div>
+              <div class="col-12 form-check ms-2">{{ form.lectura_simplificada }}<label class="form-check-label" for="{{ form.lectura_simplificada.id_for_label }}">Lectura simplificada</label></div>
+            </div></section>
+            <section class="tab-pane fade" id="seguridad" role="tabpanel" aria-labelledby="seguridad-tab" tabindex="0"><h2 class="h5">Seguridad de la cuenta</h2>
+              <p>Contraseña: <strong>{% if user.has_usable_password %}Cuenta con contraseña local{% else %}Acceso social, sin contraseña local{% endif %}</strong></p>
+              <p>Confirmación por correo: <strong>Activa</strong></p>
+              {% if user.has_usable_password %}<a class="btn btn-outline-primary mb-3" href="{% url 'cambiar_clave_cuenta' %}">Modificar contraseña</a>{% endif %}
+              <h3 class="h6">Sesiones activas</h3><ul class="list-group mb-3">{% for sesion in sesiones %}<li class="list-group-item d-flex justify-content-between"><span>{% if sesion.actual %}Esta sesión{% else %}Otra sesión{% endif %}</span><small>Vence {{ sesion.vence|date:"d/m/Y H:i" }}</small></li>{% empty %}<li class="list-group-item">Sin sesiones registradas.</li>{% endfor %}</ul>
+            </section>
+            <section class="tab-pane fade" id="actividad" role="tabpanel" aria-labelledby="actividad-tab" tabindex="0"><h2 class="h5">Actividad reciente</h2>
+              <ul class="list-group">{% for evento in eventos %}<li class="list-group-item d-flex justify-content-between"><span>{{ evento.get_tipo_display }}</span><time datetime="{{ evento.fecha_hora|date:'c' }}">{{ evento.fecha_hora|date:"d/m/Y H:i" }}</time></li>{% empty %}<li class="list-group-item">Sin eventos registrados.</li>{% endfor %}</ul>
+            </section>
+          </div>
+        </form>
+      </div>
+    </div>
+    <aside class="col-xl-3 col-lg-3">
+      <section class="panel-card mb-3 h-auto"><h2 class="h6">Estado del perfil</h2>
+        <p class="mb-1">Cuenta: <strong>{{ perfil.get_estado_display|default:"Sin perfil" }}</strong></p>
+        <p class="mb-1">Completitud: <strong>{{ completitud }} %</strong></p>
+        <p class="mb-1">Políticas: <strong>{% if perfil.acepto_datos_personales_en %}Aceptadas{% else %}Pendientes{% endif %}</strong></p>
+        <p class="mb-0">Aprobación de roles:</p>
+        {% for asignacion in roles %}<p class="small mb-1">{{ asignacion.rol.nombre }}: <strong>{{ asignacion.get_estado_aprobacion_display }}</strong></p>{% empty %}<p class="small">Sin rol solicitado.</p>{% endfor %}
+      </section>
+      <section class="panel-card mb-3 h-auto"><h2 class="h6">Datos pendientes</h2><ul class="small mb-0">{% if not perfil.contacto_alternativo %}<li>Agregar contacto alternativo</li>{% endif %}{% if not perfil.disponibilidad %}<li>Confirmar disponibilidad</li>{% endif %}{% if not perfil.sector_aproximado %}<li>Indicar sector aproximado</li>{% endif %}{% if perfil.contacto_alternativo and perfil.disponibilidad and perfil.sector_aproximado %}<li>Datos básicos completos</li>{% endif %}</ul></section>
+      <section class="panel-card mb-3 h-auto"><h2 class="h6">Privacidad y cuenta</h2>
+        <p class="small">Datos personales: {% if perfil.acepto_datos_personales_en %}aceptados {{ perfil.acepto_datos_personales_en|date:"d/m/Y H:i" }}{% else %}pendientes{% endif %}</p>
+        <a href="{% url 'datos_personales' %}" target="_blank" rel="noopener noreferrer" class="d-block mb-3">Ver política de privacidad</a>
+        <a href="{% url 'descargar_datos_cuenta' %}" class="btn btn-outline-primary btn-sm d-block mb-2">Descargar mis datos</a>
+        <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2" data-bs-toggle="modal" data-bs-target="#correccionModal">Solicitar corrección</button>
+        <button type="button" class="btn btn-outline-danger btn-sm w-100" data-bs-toggle="modal" data-bs-target="#desactivarModal">Desactivar mi cuenta</button>
+      </section>
+      <section class="panel-card h-auto"><h2 class="h6">Sesiones</h2><p class="small">Sesiones activas: {{ sesiones|length }}</p>
+        <a href="#seguridad" class="btn btn-outline-secondary btn-sm mb-2 w-100" id="irSeguridad">Revisar sesiones</a>
+        <form method="post" action="{% url 'cerrar_otras_sesiones_cuenta' %}">{% csrf_token %}<button type="submit" class="btn btn-outline-secondary btn-sm w-100">Cerrar otras sesiones</button></form>
+      </section>
+    </aside>
+  </div>
+  <div class="panel-actions mt-3"><div class="d-flex flex-wrap gap-2 align-items-center">
+    <button type="reset" form="perfilForm" class="btn btn-outline-secondary">Deshacer edición</button>
+    <form method="post" action="{% url 'descartar_borrador_perfil' %}">{% csrf_token %}<button type="submit" class="btn btn-outline-secondary">Descartar borrador</button></form>
+    <button type="submit" form="perfilForm" name="modo" value="borrador" class="btn btn-outline-primary">Guardar borrador</button>
+    <button type="button" class="btn btn-panel" data-bs-toggle="modal" data-bs-target="#guardarModal">Guardar perfil</button>
+    <span class="ms-auto small text-muted">La aprobación del rol la realiza un administrador.</span>
+  </div></div>
+</main>
+<div class="modal fade" id="guardarModal" tabindex="-1" aria-labelledby="guardarTitulo" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title h5" id="guardarTitulo">Guardar cambios</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body"><p>La información y las preferencias del perfil serán actualizadas.</p><div class="form-check"><input class="form-check-input" type="checkbox" id="confirmaDatos" required form="perfilForm" name="confirmacion_datos" value="1"><label class="form-check-label" for="confirmaDatos">Confirmo que los datos son correctos</label></div></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Volver</button><button type="submit" form="perfilForm" name="modo" value="final" class="btn btn-panel">Sí, guardar</button></div></div></div></div>
+<div class="modal fade" id="correccionModal" tabindex="-1" aria-labelledby="correccionTitulo" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><form class="modal-content" method="post" action="{% url 'solicitar_correccion_cuenta' %}">{% csrf_token %}<div class="modal-header"><h2 class="modal-title h5" id="correccionTitulo">Solicitar corrección</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body"><label class="form-label" for="descripcionCorreccion">Describe el dato que se debe corregir</label><textarea class="form-control" id="descripcionCorreccion" name="descripcion" minlength="10" maxlength="500" rows="4" required></textarea></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Volver</button><button type="submit" class="btn btn-panel">Enviar solicitud</button></div></form></div></div>
+<div class="modal fade" id="desactivarModal" tabindex="-1" aria-labelledby="desactivarTitulo" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><form class="modal-content" method="post" action="{% url 'desactivar_cuenta' %}">{% csrf_token %}<div class="modal-header"><h2 class="modal-title h5" id="desactivarTitulo">Desactivar mi cuenta</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body"><p>Al desactivar tu cuenta se cerrará la sesión y no podrás entrar hasta que un administrador la reactive.</p><label class="form-label" for="confirmacionDesactivar">Escribe DESACTIVAR para confirmar</label><input class="form-control" name="confirmacion" id="confirmacionDesactivar" required autocomplete="off"></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger">Desactivar</button></div></form></div></div>
+<div class="modal fade" id="recortarAvatarModal" tabindex="-1" aria-labelledby="recortarAvatarTitulo" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title h5" id="recortarAvatarTitulo">Ajustar foto de perfil</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body text-center"><p class="small">Arrastra la imagen para centrarla. Usa el zoom para elegir la proporción que se verá en tu avatar.</p><canvas id="avatarCanvas" width="320" height="320" tabindex="0" aria-label="Recorte de foto; usa las flechas para mover la imagen" style="width:min(320px,100%);height:auto;aspect-ratio:1;touch-action:none;cursor:grab;border-radius:50%;background:#eee"></canvas><label for="avatarZoom" class="form-label d-block mt-3">Zoom</label><input id="avatarZoom" type="range" class="form-range" min="1" max="3" step="0.01" value="1" aria-label="Zoom de la foto"><button type="button" id="avatarCentrar" class="btn btn-outline-secondary btn-sm">Centrar imagen</button><div id="recorteError" class="text-danger small mt-2" role="alert"></div></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" id="avatarAplicar" class="btn btn-panel">Aplicar recorte</button></div></div></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function(){
+  const form = document.getElementById('perfilForm');
+  const tabs = document.querySelectorAll('#perfilTabs button[data-bs-toggle="tab"]');
+  tabs.forEach(tab => tab.addEventListener('shown.bs.tab', () => { history.replaceState(null, '', '#' + tab.dataset.bsTarget.slice(1)); }));
+  const desired = location.hash;
+  const active = document.querySelector('#perfilTabs button[data-bs-target="' + desired + '"]');
+  if (active) bootstrap.Tab.getOrCreateInstance(active).show();
+  document.getElementById('irSeguridad').addEventListener('click',function(){bootstrap.Tab.getOrCreateInstance(document.getElementById('seguridad-tab')).show();});
+  const error = document.querySelector('#perfilForm .errorlist');
+  if (error) { const pane = error.closest('.tab-pane'); const tab = pane && document.querySelector('#perfilTabs button[data-bs-target="#' + pane.id + '"]'); if (tab) bootstrap.Tab.getOrCreateInstance(tab).show(); }
+  form.addEventListener('submit', function(e){
+    if (e.submitter && e.submitter.value === 'final' && !document.getElementById('confirmaDatos').checked) { e.preventDefault(); document.getElementById('confirmaDatos').focus(); }
+  });
+  const input = document.getElementById('id_avatar');
+  const modalElement = document.getElementById('recortarAvatarModal');
+  const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+  const canvas = document.getElementById('avatarCanvas');
+  const ctx = canvas.getContext('2d');
+  const zoom = document.getElementById('avatarZoom');
+  const errorAvatar = document.getElementById('avatarError');
+  const errorRecorte = document.getElementById('recorteError');
+  const preview = document.getElementById('avatarVista');
+  let image = null, sourceUrl = null, offsetX = 0, offsetY = 0, scaleBase = 1, applied = false, dragging = null;
+  function size(){ return {w:image.naturalWidth * scaleBase * Number(zoom.value), h:image.naturalHeight * scaleBase * Number(zoom.value)}; }
+  function draw(){
+    if (!image) return;
+    const {w,h} = size();
+    offsetX = Math.max(320-w, Math.min(0, offsetX));
+    offsetY = Math.max(320-h, Math.min(0, offsetY));
+    ctx.clearRect(0,0,320,320);
+    ctx.drawImage(image, offsetX, offsetY, w, h);
+  }
+  function clearSource(){ if(sourceUrl){URL.revokeObjectURL(sourceUrl); sourceUrl=null;} image=null; }
+  input.addEventListener('change', () => {
+    clearSource(); errorAvatar.textContent=''; errorRecorte.textContent=''; applied=false;
+    const file = input.files[0]; if(!file) return;
+    if(!['image/jpeg','image/png'].includes(file.type) || file.size>10*1024*1024){ errorAvatar.textContent='Selecciona un JPG o PNG de hasta 10 MB para editarlo.'; input.value=''; return; }
+    sourceUrl=URL.createObjectURL(file);
+    const selected=new Image();
+    selected.onload=()=>{
+      if(selected.naturalWidth*selected.naturalHeight>24000000){ errorAvatar.textContent='La imagen supera los 24 megapíxeles permitidos.'; input.value=''; clearSource(); return; }
+      image=selected; scaleBase=Math.max(320/image.naturalWidth,320/image.naturalHeight); zoom.value='1'; zoom.dataset.previous='1';
+      const {w,h}=size(); offsetX=(320-w)/2; offsetY=(320-h)/2; draw(); modal.show();
+    };
+    selected.onerror=()=>{ errorAvatar.textContent='No se pudo abrir la imagen.'; input.value=''; clearSource(); };
+    selected.src=sourceUrl;
+  });
+  canvas.addEventListener('pointerdown', e=>{if(!image)return; canvas.setPointerCapture(e.pointerId); dragging={x:e.clientX,y:e.clientY}; canvas.style.cursor='grabbing';});
+  canvas.addEventListener('pointermove', e=>{if(!dragging)return; const r=canvas.getBoundingClientRect(); offsetX+=(e.clientX-dragging.x)*320/r.width; offsetY+=(e.clientY-dragging.y)*320/r.height; dragging={x:e.clientX,y:e.clientY}; draw();});
+  canvas.addEventListener('pointerup', ()=>{dragging=null;canvas.style.cursor='grab';});
+  canvas.addEventListener('pointercancel', ()=>{dragging=null;canvas.style.cursor='grab';});
+  canvas.addEventListener('keydown', e=>{const move={ArrowLeft:[-8,0],ArrowRight:[8,0],ArrowUp:[0,-8],ArrowDown:[0,8]}[e.key];if(move){e.preventDefault();offsetX+=move[0];offsetY+=move[1];draw();}});
+  zoom.addEventListener('input', ()=>{if(!image)return;const old={w:image.naturalWidth*scaleBase*Number(zoom.dataset.previous||1),h:image.naturalHeight*scaleBase*Number(zoom.dataset.previous||1)};const next=size();offsetX=160-(160-offsetX)*next.w/old.w;offsetY=160-(160-offsetY)*next.h/old.h;zoom.dataset.previous=zoom.value;draw();});
+  document.getElementById('avatarCentrar').addEventListener('click',()=>{if(!image)return;zoom.value='1';zoom.dataset.previous='1';const {w,h}=size();offsetX=(320-w)/2;offsetY=(320-h)/2;draw();});
+  document.getElementById('avatarAplicar').addEventListener('click',()=>{
+    if(!image)return;
+    const output=document.createElement('canvas');output.width=512;output.height=512;
+    const outputContext=output.getContext('2d');outputContext.fillStyle='#fff';outputContext.fillRect(0,0,512,512);outputContext.drawImage(canvas,0,0,512,512);
+    output.toBlob(blob=>{
+      if(!blob || blob.size>2*1024*1024){errorRecorte.textContent='No se pudo preparar el recorte. Prueba otra imagen.';return;}
+      try {
+        const transfer=new DataTransfer();transfer.items.add(new File([blob],'avatar.jpg',{type:'image/jpeg'}));input.files=transfer.files;
+        if(preview){preview.src=URL.createObjectURL(blob);preview.classList.remove('d-none');}
+        const placeholder=document.getElementById('avatarInicial');if(placeholder)placeholder.classList.add('d-none');
+        applied=true;modal.hide();
+      } catch(err){errorRecorte.textContent='Tu navegador no permite preparar el recorte. Actualízalo e inténtalo de nuevo.';}
+    },'image/jpeg',0.88);
+  });
+  modalElement.addEventListener('hidden.bs.modal',()=>{if(!applied)input.value='';clearSource();});
+  form.addEventListener('reset',()=>{input.value='';const old=document.getElementById('avatarInicial');if(old){old.classList.remove('d-none');preview.classList.add('d-none');preview.removeAttribute('src');}else if(preview)preview.src="{% url 'avatar_cuenta' %}";});
+})();
+</script>
+{% endblock %}

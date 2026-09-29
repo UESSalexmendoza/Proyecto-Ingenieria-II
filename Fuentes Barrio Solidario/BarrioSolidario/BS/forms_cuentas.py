@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from .models import PerfilUsuario
 
@@ -87,30 +88,6 @@ class ReenviarActivacionForm(forms.Form):
 
 class SolicitarRecuperacionForm(forms.Form):
     email = forms.EmailField(max_length=150)
-
-
-class PerfilCuentaForm(forms.Form):
-    nombres = forms.CharField(min_length=2, max_length=60)
-    apellidos = forms.CharField(min_length=2, max_length=60)
-    telefono = forms.CharField(min_length=8, max_length=15)
-
-    def __init__(self, *args, usuario, perfil=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.is_bound:
-            self.initial.update({"nombres": usuario.first_name, "apellidos": usuario.last_name,
-                                 "telefono": perfil.telefono if perfil else ""})
-
-    def clean_nombres(self):
-        return RegistroForm._validar_nombre(self.cleaned_data["nombres"])
-
-    def clean_apellidos(self):
-        return RegistroForm._validar_nombre(self.cleaned_data["apellidos"])
-
-    def clean_telefono(self):
-        telefono = self.cleaned_data["telefono"]
-        if not re.fullmatch(r"[0-9]{8,15}", telefono):
-            raise ValidationError("Ingresa únicamente números: entre 8 y 15 dígitos.")
-        return telefono
 
 
 class CambiarClaveCuentaForm(PasswordChangeForm):

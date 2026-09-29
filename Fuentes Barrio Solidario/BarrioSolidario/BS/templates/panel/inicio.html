@@ -1,0 +1,16 @@
+{% extends "panel/base.html" %}
+{% block title %}Mi panel | Barrio Solidario{% endblock %}
+{% block content %}
+<main class="container-fluid px-3 px-xl-4 py-4">
+  <h1>Panel general</h1><p class="lead">Bienvenido, {{ user.get_full_name|default:user.username }}.</p>
+  <div class="row g-3 mt-1">
+    <div class="col-lg-4"><section class="panel-card"><h2 class="h5">Mi perfil</h2><p>Completa tus datos, preferencias, accesibilidad y seguridad.</p><a class="btn btn-panel" href="{% url 'perfil_cuenta' %}">Abrir mi perfil</a></section></div>
+    <div class="col-lg-4"><section class="panel-card"><h2 class="h5">Estado de la cuenta</h2><p>Cuenta: <strong>{{ perfil.get_estado_display|default:"Sin perfil" }}</strong></p><p class="mb-0">La activación de la cuenta y la aprobación para operar son procesos separados.</p></section></div>
+    <div class="col-lg-4"><section class="panel-card"><h2 class="h5">Roles solicitados</h2>
+      {% for asignacion in roles %}<p class="mb-2">{{ asignacion.rol.nombre }}: <strong>{% if asignacion.puede_operar %}Aprobado para operar{% else %}{{ asignacion.get_estado_aprobacion_display }}{% endif %}</strong></p>{% empty %}<p>Aún no tienes roles solicitados.</p>{% endfor %}
+      <a href="{% url 'perfil_cuenta' %}" class="btn btn-outline-primary btn-sm">Ver detalles y solicitar otro rol</a>
+    </section></div>
+  </div>
+  <p class="mt-4"><a href="{% url 'inicio' %}">Volver al portal público</a></p>
+</main>
+{% endblock %}

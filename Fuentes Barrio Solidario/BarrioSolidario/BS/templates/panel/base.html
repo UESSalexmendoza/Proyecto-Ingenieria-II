@@ -1,0 +1,105 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Panel | Barrio Solidario{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="{% static 'css/css.css' %}" rel="stylesheet">
+  <style>
+    body{background:#f3f6fa;color:#17304c;min-height:100vh}
+    .panel-navbar{background:#102d52!important;color:#fff}
+    .panel-navbar .navbar-brand,.panel-navbar .navbar-nav .nav-link{color:#fff!important;text-decoration:none}
+    .panel-navbar .navbar-nav .nav-link:hover,.panel-navbar .navbar-nav .nav-link.active{color:#ffd1dc!important}
+    .panel-navbar .panel-utilities{display:flex;align-items:center;gap:.75rem}
+    .panel-navbar .panel-accessibility{display:inline-flex;align-items:center;justify-content:center;flex:0 0 36px;width:36px;height:36px;padding:0;border:0;background:transparent;color:#fff;font-size:1.25rem;line-height:1}
+    .panel-navbar .panel-account-trigger{display:inline-flex;align-items:center;gap:.5rem;min-height:38px;padding:2px 6px;border:0;border-radius:.5rem;background:transparent;color:#fff;text-decoration:none}
+    .panel-navbar .panel-account-trigger:hover,.panel-navbar .panel-account-trigger:focus-visible{color:#fff;background:rgba(255,255,255,.12)}
+    .panel-navbar .panel-account-avatar{display:inline-flex;align-items:center;justify-content:center;flex:0 0 36px;width:36px;height:36px;overflow:hidden;border-radius:50%;background:#fff;color:#17365d;font-size:1.15rem}
+    .panel-navbar .panel-account-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+    .panel-navbar .panel-account-name{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .panel-navbar .panel-account-menu{min-width:245px;max-width:min(92vw,320px);background:#fff;color:#233a66;border:1px solid #dbe2ec;z-index:1060}
+    .panel-navbar .panel-account-menu .dropdown-item{color:#233a66!important;text-decoration:none;white-space:normal}
+    .panel-navbar .panel-account-menu .dropdown-item:hover,.panel-navbar .panel-account-menu .dropdown-item:focus{color:#c91944!important;background:#f4f6fa;text-decoration:none}
+    .panel-navbar .panel-account-menu .dropdown-header{color:#64748b}
+    .panel-navbar .panel-account-menu .account-email{overflow-wrap:anywhere}
+    .panel-card{background:#fff;border:1px solid #dfe7f0;border-radius:12px;padding:1.25rem;height:100%}
+    .panel-tabs{gap:.35rem;border-bottom:1px solid #d6e1ec;overflow-x:auto;flex-wrap:nowrap}
+    .panel-tabs .nav-link{white-space:nowrap;color:#17365d}
+    .panel-tabs .nav-link.active{color:#102d52;font-weight:700;border-bottom:3px solid #b7365d}
+    .panel-label{font-size:.84rem;color:#64748b}
+    .panel-stat{background:#eef4fa;border-radius:10px;padding:.75rem}
+    .panel-actions{position:sticky;bottom:0;background:#fff;border-top:1px solid #dce5ed;padding:.75rem 0;z-index:5}
+    .btn-panel{background:#b7365d;color:#fff}.btn-panel:hover{background:#922849;color:#fff}
+    .form-check-label{cursor:pointer}
+    .errorlist{color:#a12642;padding-left:1.25rem;margin:.2rem 0}
+    .panel-texto-grande{font-size:1.13rem}.panel-texto-pequeno{font-size:.92rem}
+    .panel-alto-contraste{background:#fff;color:#000}.panel-alto-contraste .panel-card{border:2px solid #000;color:#000}.panel-alto-contraste .panel-navbar{background:#000!important}
+    .panel-subrayar-enlaces a{text-decoration:underline}
+    .panel-lectura-simplificada{line-height:1.8}
+    @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+    .panel-reducir-animaciones *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  html.bs-large-text { font-size: 125%; }
+  html.bs-large-text .bs-account-screen { font-size: 1rem; }
+  body.bs-high-contrast { background: #fff !important; color: #111 !important; }
+  body.bs-high-contrast main, body.bs-high-contrast .bs-card { background: #fff !important; color: #111 !important; }
+  body.bs-high-contrast a { text-decoration: underline !important; }
+  body.bs-high-contrast :focus-visible { outline: 3px solid #000 !important; outline-offset: 3px; }
+  body.bs-wide-spacing { letter-spacing: .05em; line-height: 1.7; }
+  body.bs-mark-links a { text-decoration: underline !important; text-underline-offset: .18em; }
+  body.bs-mark-links a:focus-visible, body.bs-mark-links button:focus-visible { outline: 3px solid currentColor !important; outline-offset: 3px; }
+  body.bs-reduce-motion *, body.bs-reduce-motion *::before, body.bs-reduce-motion *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .accessibility-panel { color: #233a66; }
+  body.bs-high-contrast .panel-card { background:#fff !important; color:#111 !important; border-color:#111; }
+  body.bs-simple-reading main { line-height:1.8; }
+    .accessibility-panel .access-profile { min-height: 56px; text-align: left; font-weight: 600; }
+  .accessibility-panel .access-profile i { margin-right: .5rem; font-size: 1.2rem; }
+  body.bs-highlight-headings main :is(h1,h2,h3,h4,h5,h6) { border-inline-start: 4px solid #233a66; padding-inline-start: .5rem; }
+  body.bs-focus-guide :is(a,button,input,select,textarea):focus-visible { outline: 4px solid #e02a56 !important; outline-offset: 4px !important; }
+  body.bs-simple-reading main p, body.bs-simple-reading main li { line-height: 1.8; }
+  body.bs-simple-reading main a { text-decoration: underline; text-underline-offset: .2em; }
+  .bs-skip-link { position:fixed; top:0; left:1rem; z-index:2000; transform:translateY(-150%); padding:.65rem 1rem; background:#fff; color:#102d52; border:2px solid #102d52; border-radius:.3rem; }
+  .bs-skip-link:focus { transform:translateY(.5rem); }
+</style>
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="{% if user.perfil_barrio.alto_contraste %}panel-alto-contraste{% endif %} {% if user.perfil_barrio.tamano_texto == 'grande' %}panel-texto-grande{% elif user.perfil_barrio.tamano_texto == 'pequeno' %}panel-texto-pequeno{% endif %} {% if user.perfil_barrio.subrayar_enlaces %}panel-subrayar-enlaces{% endif %} {% if user.perfil_barrio.reducir_animaciones %}panel-reducir-animaciones{% endif %} {% if user.perfil_barrio.lectura_simplificada %}panel-lectura-simplificada{% endif %}">
+  <a href="#contenidoPrincipal" class="bs-skip-link">Saltar al contenido principal</a>
+  <nav class="navbar navbar-expand-lg panel-navbar sticky-top" aria-label="Navegación del panel">
+    <div class="container-fluid px-3 px-xl-4">
+      <a class="navbar-brand fw-bold" href="{% url 'panel_cuenta' %}">Barrio <span style="color:#ffd1dc">Solidario</span></a>
+      <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#panelNav" aria-controls="panelNav" aria-expanded="false" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="panelNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link{% if request.resolver_match.url_name == 'panel_cuenta' %} active{% endif %}" href="{% url 'panel_cuenta' %}">Panel</a></li>
+          <li class="nav-item"><a class="nav-link{% if request.resolver_match.url_name == 'perfil_cuenta' %} active{% endif %}" href="{% url 'perfil_cuenta' %}">Mi perfil</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}">Portal público</a></li>
+        </ul>
+        <div class="panel-utilities">
+          <button type="button" class="panel-accessibility" data-bs-toggle="offcanvas" data-bs-target="#panelAccesibilidad" aria-controls="panelAccesibilidad" aria-label="Abrir opciones de accesibilidad" title="Accesibilidad"><i class="bi bi-universal-access" aria-hidden="true"></i></button>
+          <div class="dropdown">
+            <button class="panel-account-trigger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Opciones de cuenta de {{ user.get_full_name|default:user.username }}"><span class="panel-account-avatar" aria-hidden="true">{% if user.perfil_barrio.avatar %}<img src="{% url 'avatar_cuenta' %}" width="36" height="36" alt="">{% else %}<i class="bi bi-person-fill"></i>{% endif %}</span><span class="panel-account-name">{{ user.get_full_name|default:user.username }}</span></button>
+            <div class="dropdown-menu dropdown-menu-end panel-account-menu shadow">
+              <div class="px-3 py-2"><strong class="d-block">{{ user.get_full_name|default:user.username }}</strong><small class="d-block account-email text-muted">{{ user.email }}</small><small class="d-block text-muted">Último acceso: {{ user.last_login|date:"d/m/Y H:i"|default:"Primer acceso" }}</small></div>
+              <hr class="dropdown-divider"><h6 class="dropdown-header">Personalización</h6>
+              <a class="dropdown-item" href="{% url 'perfil_cuenta' %}"><i class="bi bi-person-gear me-2" aria-hidden="true"></i>Mi perfil</a>
+              {% if user.has_usable_password %}<a class="dropdown-item" href="{% url 'cambiar_clave_cuenta' %}"><i class="bi bi-key me-2" aria-hidden="true"></i>Modificar contraseña</a>{% endif %}
+              <h6 class="dropdown-header">Trabajo</h6><a class="dropdown-item" href="{% url 'panel_cuenta' %}"><i class="bi bi-grid-1x2 me-2" aria-hidden="true"></i>Mi panel</a>
+              <hr class="dropdown-divider"><form action="{% url 'cerrar_sesion_cuenta' %}" method="post">{% csrf_token %}<button class="dropdown-item" type="submit"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Cerrar sesión</button></form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  {% include "componentes/accesibilidad_panel.html" %}
+  {% if messages %}<div class="container-fluid px-3 px-xl-4 mt-3" aria-live="polite">{% for message in messages %}<div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} mb-2" role="alert">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% block content %}{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

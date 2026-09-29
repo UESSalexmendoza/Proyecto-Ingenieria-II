@@ -50,6 +50,35 @@ class PerfilUsuario(models.Model):
     estado = models.CharField(max_length=12, choices=Estado.choices, default=Estado.ACTIVA)
     acepto_politicas_en = models.DateTimeField()
     acepto_datos_personales_en = models.DateTimeField(null=True, blank=True)
+    fecha_nacimiento = models.DateField(null=True, blank=True)
+    sector_aproximado = models.CharField(max_length=80, blank=True)
+    contacto_alternativo = models.CharField(max_length=15, blank=True)
+    canal_preferido = models.CharField(max_length=20, default="PLATAFORMA")
+    recibir_notificaciones = models.BooleanField(default=True)
+    alto_contraste = models.BooleanField(default=False)
+    informacion_adicional = models.CharField(max_length=500, blank=True)
+    idioma = models.CharField(max_length=8, default="es")
+    zona_horaria = models.CharField(max_length=40, default="America/Guayaquil")
+    disponibilidad = models.CharField(max_length=120, blank=True)
+    permitir_ubicacion_aproximada = models.BooleanField(default=False)
+    compartir_ubicacion_atencion = models.BooleanField(default=False)
+    recibir_recordatorios = models.BooleanField(default=True)
+    recibir_mensajes = models.BooleanField(default=True)
+    recibir_resumen_semanal = models.BooleanField(default=False)
+    distancia_maxima_km = models.PositiveSmallIntegerField(default=10)
+    notificaciones_desde = models.TimeField(default="07:00")
+    notificaciones_hasta = models.TimeField(default="21:00")
+    modo_silencioso = models.BooleanField(default=True)
+    tamano_texto = models.CharField(max_length=12, default="mediano")
+    subrayar_enlaces = models.BooleanField(default=True)
+    reducir_animaciones = models.BooleanField(default=False)
+    lectura_simplificada = models.BooleanField(default=False)
+    lectura_idioma = models.CharField(max_length=8, default="es")
+    ocultar_datos_personales = models.BooleanField(default=True)
+    permitir_contacto_coordinacion = models.BooleanField(default=True)
+    permitir_contacto_usuarios = models.BooleanField(default=False)
+    ocultar_informacion_adicional = models.BooleanField(default=True)
+    avatar = models.ImageField(upload_to="avatares/%Y/%m/", blank=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -57,6 +86,11 @@ class PerfilUsuario(models.Model):
 
 
 class UsuarioRol(models.Model):
+    class Aprobacion(models.TextChoices):
+        PENDIENTE = "PENDIENTE", "Pendiente de aprobación"
+        APROBADO = "APROBADO", "Aprobado"
+        RECHAZADO = "RECHAZADO", "Rechazado"
+
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         related_name="roles_barrio",
@@ -64,6 +98,13 @@ class UsuarioRol(models.Model):
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT, related_name="asignaciones")
     fecha_asignacion = models.DateTimeField(auto_now_add=True)
     activo = models.BooleanField(default=True)
+    estado_aprobacion = models.CharField(max_length=12, choices=Aprobacion.choices, default=Aprobacion.PENDIENTE)
+    fecha_revision = models.DateTimeField(null=True, blank=True)
+    observacion_revision = models.CharField(max_length=300, blank=True)
+    revisado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="roles_revisados_barrio",
+    )
 
     class Meta:
         constraints = [
@@ -72,6 +113,22 @@ class UsuarioRol(models.Model):
 
     def __str__(self):
         return f"{self.usuario_id}: {self.rol.codigo}"
+
+    @property
+    def puede_operar(self):
+        return self.activo and self.rol.activo and self.estado_aprobacion == self.Aprobacion.APROBADO
+
+
+class SolicitudCorreccionPerfil(models.Model):
+    class Estado(models.TextChoices):
+        PENDIENTE = "PENDIENTE", "Pendiente"
+        RESUELTA = "RESUELTA", "Resuelta"
+
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="correcciones_perfil")
+    descripcion = models.CharField(max_length=500)
+    estado = models.CharField(max_length=12, choices=Estado.choices, default=Estado.PENDIENTE)
+    creada_en = models.DateTimeField(auto_now_add=True)
+    resuelta_en = models.DateTimeField(null=True, blank=True)
 
 
 class EventoAcceso(models.Model):

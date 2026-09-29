@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Revisa tu correo | Barrio Solidario{% endblock %}
+{% block content %}
+<section class="bs-auth-wrap"><div class="bs-auth-grid">
+  <aside class="bs-card bs-auth-info"><h2>Barrio Solidario</h2><p>Acceso seguro con confirmación por correo.</p></aside>
+  <div class="bs-card bs-auth-form"><h1 class="bs-h1">Revisa tu correo</h1>
+    <p>Si la solicitud pudo procesarse, recibirás un enlace válido durante 10 minutos. Abre el mensaje y confirma el acceso.</p>
+    {% if correo_destino %}<p>Enviamos el enlace a <strong>{{ correo_destino }}</strong>. Revisa también Spam y Promociones.</p>{% endif %}
+    <a href="{% url 'inicio' %}" class="btn btn-login">Volver al inicio</a>
+  </div>
+</div></section>
+{% endblock %}

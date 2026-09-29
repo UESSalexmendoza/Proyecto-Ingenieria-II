@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Completar registro | Barrio Solidario{% endblock %}
+
+{% block content %}
+<main class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <h1 class="h3">Completa tu registro</h1>
+          <p>
+            Para acceder con Google, primero necesitamos registrar tu rol,
+            teléfono y aceptación de políticas en Barrio Solidario.
+          </p>
+          <a href="{% url 'registro' %}" class="btn btn-register">
+            Registrar usuario
+          </a>
+          <a href="{% url 'acceso' %}" class="btn btn-login">
+            Iniciar sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

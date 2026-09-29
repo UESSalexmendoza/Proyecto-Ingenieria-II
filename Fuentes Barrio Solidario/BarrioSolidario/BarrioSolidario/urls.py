@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from BS import views
-
+from django.views.generic import RedirectView
 urlpatterns = [
     path("admin/", admin.site.urls),
 
@@ -24,6 +24,14 @@ urlpatterns = [
         "declaracion-accesibilidad/",
         views.declaracion_accesibilidad,
         name="declaracion_accesibilidad",
-    ),    
+    ),   
+    path(
+            "accounts/login/",
+            RedirectView.as_view(pattern_name="acceso", permanent=False),
+        ),
+    path(
+        "accounts/signup/",
+        RedirectView.as_view(pattern_name="registro", permanent=False),
+    ),
     path("accounts/", include("allauth.urls")),    
 ]

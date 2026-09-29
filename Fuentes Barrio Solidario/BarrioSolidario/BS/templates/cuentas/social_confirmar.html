@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Confirmar acceso | Barrio Solidario{% endblock %}
+{% block content %}
+<section class="bs-auth-wrap"><div class="bs-auth-grid">
+  <aside class="bs-card bs-auth-info"><h2>Barrio Solidario</h2><p>Confirma tu acceso de forma segura.</p></aside>
+  <div class="bs-card bs-auth-form">
+    {% if invalido %}
+      <h1 class="bs-h1">El enlace ya no está disponible</h1>
+      <p>Es posible que haya vencido o que ya se haya utilizado. Inicia un nuevo acceso.</p>
+      <a href="{% url 'acceso' %}" class="btn btn-login">Iniciar sesión</a>
+    {% else %}
+      <h1 class="bs-h1">Confirmar acceso</h1>
+      <p>Presiona el botón para confirmar tu cuenta o sesión e ingresar a Barrio Solidario.</p>
+      <form method="post">{% csrf_token %}<button type="submit" class="btn btn-login">Confirmar e ingresar</button></form>
+    {% endif %}
+  </div>
+</div></section>
+{% endblock %}

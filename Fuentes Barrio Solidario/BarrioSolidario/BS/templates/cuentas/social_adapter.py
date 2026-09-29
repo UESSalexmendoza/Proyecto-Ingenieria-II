@@ -69,7 +69,6 @@ class BarrioSocialAccountAdapter(DefaultSocialAccountAdapter):
                 logger.exception("Error enviando enlace de acceso social")
                 messages.error(request, "No se pudo enviar el enlace. Inténtalo más tarde.")
                 raise ImmediateHttpResponse(redirect("acceso"))
-            request.session["bs_correo_acceso_enviado"] = email
             raise ImmediateHttpResponse(redirect("social_enviado"))
 
         # No se enlazan automáticamente cuentas existentes por coincidencia de correo.

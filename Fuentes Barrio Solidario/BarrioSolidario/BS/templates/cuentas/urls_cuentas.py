@@ -3,7 +3,6 @@ from django.urls import path
 from . import views_cuentas, views_social
 
 urlpatterns = [
-    path("cuenta/aceptar-datos-personales/", views_cuentas.aceptar_datos_personales, name="aceptar_datos_personales"),
     path("registro/google/completar/", views_social.completar_registro_google, name="social_completar"),
     path("registro/google/enviado/", views_social.enlace_enviado, name="social_enviado"),
     path("registro/google/confirmar/<str:token>/", views_social.confirmar_acceso_social, name="social_confirmar"),

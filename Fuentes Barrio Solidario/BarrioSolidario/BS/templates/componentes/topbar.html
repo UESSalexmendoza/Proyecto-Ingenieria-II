@@ -73,7 +73,9 @@
           <hr class="dropdown-divider">
           <h6 class="dropdown-header">Personalización</h6>
           <a class="dropdown-item" href="{% url 'perfil_cuenta' %}"><i class="bi bi-person-gear me-2" aria-hidden="true"></i>Mi perfil</a>
-          <a class="dropdown-item" href="{% url 'cambiar_clave_cuenta' %}"><i class="bi bi-key me-2" aria-hidden="true"></i>Cambiar contraseña</a>
+          {% if user.has_usable_password %}
+            <a class="dropdown-item" href="{% url 'cambiar_clave_cuenta' %}"><i class="bi bi-key me-2" aria-hidden="true"></i>Cambiar contraseña</a>
+          {% endif %}          
           <h6 class="dropdown-header">Trabajo</h6>
           <a class="dropdown-item" href="{% url 'panel_cuenta' %}"><i class="bi bi-grid-1x2 me-2" aria-hidden="true"></i>Mi panel</a>
           <hr class="dropdown-divider">

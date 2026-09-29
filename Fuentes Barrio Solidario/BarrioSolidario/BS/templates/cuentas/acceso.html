@@ -52,7 +52,14 @@
           <p class="text-muted mb-4">
             Ingresa con tu usuario o correo y contraseña.
           </p>
-
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %}"
+         role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
           <form id="loginForm" method="post" action="{% url 'acceso' %}">
             {% csrf_token %}
             {% if error %}
@@ -89,21 +96,6 @@
                 {% csrf_token %}
                 <button type="submit" class="btn btn-social btn-google w-100"><i class="bi bi-google me-2" aria-hidden="true"></i>Google</button>
               </form>
-            </div>
-            <div class="col-sm-6">
-              <form method="post" action="{% provider_login_url 'microsoft' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-social btn-google w-100"><i class="bi bi-microsoft me-2" aria-hidden="true"></i>Microsoft</button>
-              </form>
-            </div>
-            <div class="col-sm-6">
-              <form method="post" action="{% provider_login_url 'facebook' %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-social btn-google w-100"><i class="bi bi-facebook me-2" aria-hidden="true"></i>Facebook</button>
-              </form>
-            </div>
-            <div class="col-sm-6">
-              <button type="button" class="btn btn-social btn-google w-100" disabled aria-describedby="instagram-ayuda"><i class="bi bi-instagram me-2" aria-hidden="true"></i>Instagram</button>
             </div>
           </div>
           <p id="instagram-ayuda" class="small text-muted mt-2 mb-0">El acceso con Instagram no está disponible para cuentas personales.</p>

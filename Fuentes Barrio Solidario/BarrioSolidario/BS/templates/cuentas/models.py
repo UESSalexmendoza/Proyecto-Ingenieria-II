@@ -49,7 +49,6 @@ class PerfilUsuario(models.Model):
     telefono = models.CharField(max_length=25)
     estado = models.CharField(max_length=12, choices=Estado.choices, default=Estado.ACTIVA)
     acepto_politicas_en = models.DateTimeField()
-    acepto_datos_personales_en = models.DateTimeField(null=True, blank=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
     def __str__(self):

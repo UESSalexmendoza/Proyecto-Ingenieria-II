@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}No se pudo iniciar sesión | Barrio Solidario{% endblock %}
+
+{% block content %}
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="h3 mb-3">No se pudo iniciar sesión con Google</h1>
+                    <p class="mb-4">
+                        No fue posible completar el acceso. Si ya tienes una cuenta
+                        en Barrio Solidario, inicia sesión con tu correo y contraseña.
+                    </p>
+                    <a href="{% url 'acceso' %}" class="btn btn-login">
+                        Volver a iniciar sesión
+                    </a>
+                    <a href="{% url 'registro' %}" class="btn btn-register">
+                        Registrar usuario
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

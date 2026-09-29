@@ -84,7 +84,6 @@ def acceso(request):
                         contexto["error"] = "No pudimos enviar el enlace de acceso. Inténtalo más tarde."
                         return render(request, "cuentas/acceso.html", contexto, status=503)
                     request.session["bs_recordarme"] = contexto["recordarme"]
-                    request.session["bs_correo_acceso_enviado"] = usuario.email
                     messages.success(request, "Te enviamos un enlace para completar el inicio de sesión.")
                     return redirect("social_enviado")
         contexto["error"] = "No pudimos iniciar sesión. Verifica tus credenciales y que tu cuenta esté activa."
@@ -230,30 +229,6 @@ def reenviar_activacion(request):
 @login_required(login_url="acceso")
 def panel_cuenta(request):
     return render(request, "cuentas/panel_cuenta.html")
-
-
-@login_required(login_url="acceso")
-@require_http_methods(["GET", "POST"])
-@csrf_protect
-@never_cache
-def aceptar_datos_personales(request):
-    perfil = PerfilUsuario.objects.filter(usuario=request.user).first()
-    if perfil is None:
-        messages.error(request, "No encontramos el perfil asociado a tu cuenta.")
-        return redirect("inicio")
-    if perfil.acepto_datos_personales_en is not None:
-        return redirect("inicio")
-    if request.method == "POST":
-        if request.POST.get("acepto_datos") == "1":
-            PerfilUsuario.objects.filter(pk=perfil.pk, acepto_datos_personales_en__isnull=True).update(
-                acepto_datos_personales_en=timezone.now(),
-            )
-            messages.success(request, "Registramos tu aceptación de la política de protección de datos personales.")
-            return redirect("inicio")
-        return render(request, "cuentas/aceptar_datos_personales.html", {
-            "error": "Debes marcar la casilla para continuar.",
-        }, status=400)
-    return render(request, "cuentas/aceptar_datos_personales.html")
 
 
 @login_required(login_url="acceso")

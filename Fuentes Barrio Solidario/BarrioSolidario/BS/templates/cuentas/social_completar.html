@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Completar registro con Google | Barrio Solidario{% endblock %}
+{% block content %}
+<section class="bs-auth-wrap">
+  <div class="bs-auth-grid">
+    <aside class="bs-card bs-auth-info">
+      <div class="bs-brand"><div class="d-flex align-items-center gap-3 mb-4">
+        <img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
+        <span class="brand-text">Barrio Solidario</span>
+      </div></div>
+      <p class="bs-brand__subtitle">Registro con Google</p>
+      <p class="bs-text">Completa los datos necesarios para participar de forma segura. Recibirás un correo para confirmar tu acceso.</p>
+      <div class="bs-divider"></div>
+      <a href="{% url 'terminos' %}" class="btn btn-social btn-google w-100">Ver términos y condiciones</a>
+    </aside>
+    <div class="bs-card bs-auth-form">
+      <header class="bs-auth-header"><h1 class="bs-h1">Completa tu registro</h1>
+        <p class="bs-subtitle">Correo verificado por Google: <strong>{{ correo }}</strong></p>
+      </header>
+      <form class="bs-form" method="post" autocomplete="on">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="bs-field"><label class="bs-label" for="tipoUsuario">Tipo de usuario</label>
+          <select class="bs-input" id="tipoUsuario" name="tipoUsuario" required>
+            <option value="">Selecciona una opción</option>
+            <option value="ADULTO_MAYOR" {% if form.tipoUsuario.value == 'ADULTO_MAYOR' %}selected{% endif %}>Adulto mayor</option>
+            <option value="FAMILIAR_CUIDADOR" {% if form.tipoUsuario.value == 'FAMILIAR_CUIDADOR' %}selected{% endif %}>Familiar / cuidador</option>
+            <option value="VOLUNTARIO" {% if form.tipoUsuario.value == 'VOLUNTARIO' %}selected{% endif %}>Voluntario</option>
+          </select>{{ form.tipoUsuario.errors }}</div>
+        <div class="bs-field"><label class="bs-label" for="nombres">Nombres</label>
+          <input class="bs-input" id="nombres" name="nombres" type="text" minlength="2" maxlength="60" value="{{ form.nombres.value|default_if_none:'' }}" required autocomplete="given-name">{{ form.nombres.errors }}</div>
+        <div class="bs-field"><label class="bs-label" for="apellidos">Apellidos</label>
+          <input class="bs-input" id="apellidos" name="apellidos" type="text" minlength="2" maxlength="60" value="{{ form.apellidos.value|default_if_none:'' }}" required autocomplete="family-name">{{ form.apellidos.errors }}</div>
+        <div class="bs-field"><label class="bs-label" for="telefono">Teléfono</label>
+          <input class="bs-input" id="telefono" name="telefono" type="tel" inputmode="numeric" pattern="[0-9]{8,15}" minlength="8" maxlength="15" value="{{ form.telefono.value|default_if_none:'' }}" required autocomplete="tel">{{ form.telefono.errors }}</div>
+        <label class="bs-check"><input type="checkbox" name="aceptaPoliticas" required {% if form.aceptaPoliticas.value %}checked{% endif %}>
+          <span>Acepto los <a href="{% url 'terminos' %}">términos</a>, la <a href="{% url 'privacidad' %}">política de privacidad</a> y la <a href="{% url 'politica_uso' %}">política de uso</a>.</span>
+        </label>{{ form.aceptaPoliticas.errors }}
+        <button type="submit" class="btn btn-login w-100 py-2">Enviar enlace de acceso</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}<script>document.getElementById('telefono')?.addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'').slice(0,15)})</script>{% endblock %}

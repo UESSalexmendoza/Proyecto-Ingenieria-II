@@ -52,11 +52,18 @@ DATABASES = {
 En **la misma ventana de CMD** donde ejecutarás Django, define tus credenciales locales:
 
 ```cmd
-set DB_NAME=barrio_solidario
-set DB_USER=barrio_app
-set DB_PASSWORD=TU_CONTRASENA_LOCAL
-set DB_HOST=127.0.0.1
-set DB_PORT=3306
+setx DB_NAME "barrio_solidario"
+setx DB_USER "barrio_app"
+setx DB_PASSWORD "<CONTRASEÑA_DEL_USUARIO_BARRIO_APP_EN_MYSQL>"
+setx DB_HOST "127.0.0.1"
+setx DB_PORT "3306"
+
+setx EMAIL_HOST "smtp.gmail.com"
+setx EMAIL_PORT "587"
+setx EMAIL_HOST_USER "<TU_CORREO_GMAIL>"
+setx EMAIL_HOST_PASSWORD "<CLAVE_DE_APLICACION_DE_GMAIL>"
+setx EMAIL_FROM "<TU_CORREO_GMAIL>"
+setx PUBLIC_BASE_URL "http://127.0.0.1:8000"
 ```
 
 `set` dura solo durante esa sesión de CMD. No escribas tu contraseña real en archivos versionados. Si en tu instalación MySQL el usuario está creado como `'barrio_app'@'localhost'`, verifica la conexión con `127.0.0.1` y ajusta el host/permisos del usuario si MySQL lo requiere.

@@ -1,0 +1,8 @@
+Hola {{ nombre }}:
+
+Recibimos una solicitud para acceder a Barrio Solidario {% if acceso_con_clave %}con usuario y contraseña{% else %}mediante Google{% endif %}. Confirma tu acceso en este enlace:
+{{ enlace }}
+
+El enlace vence en 10 minutos y solo se puede usar una vez. Si no realizaste esta solicitud, ignora este mensaje.
+
+Barrio Solidario | UEES

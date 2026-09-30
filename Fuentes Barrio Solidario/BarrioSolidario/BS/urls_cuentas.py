@@ -5,9 +5,12 @@ from . import views_cuentas, views_social
 
 urlpatterns = [
     path("cuenta/aceptar-datos-personales/", views_cuentas.aceptar_datos_personales, name="aceptar_datos_personales"),
-    path("registro/google/completar/", views_social.completar_registro_google, name="social_completar"),
-    path("registro/google/enviado/", views_social.enlace_enviado, name="social_enviado"),
-    path("registro/google/confirmar/<str:token>/", views_social.confirmar_acceso_social, name="social_confirmar"),
+    path("registro/google/completar/", views_social.completar_registro_social, {"proveedor": "google"}, name="social_completar"),
+    path("registro/microsoft/completar/", views_social.completar_registro_social, {"proveedor": "microsoft"}, name="social_completar_microsoft"),
+    path("registro/social/enviado/", views_social.enlace_enviado, name="social_enviado"),
+    path("registro/google/enviado/", views_social.enlace_enviado, name="social_enviado_google_legado"),
+    path("registro/social/confirmar/<str:token>/", views_social.confirmar_acceso_social, name="social_confirmar"),
+    path("registro/google/confirmar/<str:token>/", views_social.confirmar_acceso_social, name="social_confirmar_google_legado"),
     path("acceso/", views_cuentas.acceso, name="acceso"),
     path("registro/", views_cuentas.registro, name="registro"),
     path("registro/enviado/", views_cuentas.registro_enviado, name="registro_enviado"),

@@ -1,0 +1,12 @@
+{% extends "cuentas/correo_base.html" %}
+{% block correo_titulo %}Confirmación de contacto | Barrio Solidario{% endblock %}
+{% block correo_previa %}Recibimos tu mensaje y lo revisaremos próximamente.{% endblock %}
+{% block correo_encabezado %}Hemos recibido tu mensaje{% endblock %}
+{% block correo_contenido %}
+<p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Gracias por escribirnos. Registramos tu consulta con el número de referencia <strong>#{{ referencia }}</strong> y se encuentra pendiente de revisión.</p>
+<p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Nuestro equipo analizará la información enviada y responderá al correo electrónico que registraste cuando haya revisado el caso.</p>
+{% endblock %}
+{% block correo_boton %}Ir a Barrio Solidario{% endblock %}
+{% block correo_indicaciones %}<p style="margin:0 0 14px;font-size:14px;line-height:1.6;">Conserva el número de referencia para identificar tu consulta.</p>{% endblock %}
+{% block correo_aviso %}Este mensaje confirma la recepción de tu consulta; aún no constituye una respuesta al caso.{% endblock %}
+{% block correo_pie %}Mensaje automático del formulario de contacto de Barrio Solidario. No envíes información sensible como contraseñas o documentos por respuesta a este correo.{% endblock %}

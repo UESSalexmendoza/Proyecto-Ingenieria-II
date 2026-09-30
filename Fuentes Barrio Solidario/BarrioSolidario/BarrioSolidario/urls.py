@@ -1,9 +1,12 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
-from BS import views
+from django.urls import include, path, re_path
 from django.views.generic import RedirectView
-from django.urls import re_path
+
+from BS import views
 from BS.views_errors import pagina_no_encontrada
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -21,21 +24,30 @@ urlpatterns = [
         "datos-personales/",
         views.datos_personales,
         name="datos_personales",
-    ),    
-    path("", include("BS.urls_cuentas")),    
+    ),
     path(
         "declaracion-accesibilidad/",
         views.declaracion_accesibilidad,
         name="declaracion_accesibilidad",
-    ),   
+    ),
+
     path(
-            "accounts/login/",
-            RedirectView.as_view(pattern_name="acceso", permanent=False),
-        ),
+        "accounts/login/",
+        RedirectView.as_view(pattern_name="acceso", permanent=False),
+    ),
     path(
         "accounts/signup/",
         RedirectView.as_view(pattern_name="registro", permanent=False),
     ),
-    path("accounts/", include("allauth.urls")),    
+    path("accounts/", include("allauth.urls")),
+    path("", include("BS.urls_cuentas")),
+]
+
+# Imágenes cargadas, únicamente durante el desarrollo.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Esta ruta general debe ser siempre la última.
+urlpatterns += [
     re_path(r"^.*$", pagina_no_encontrada),
 ]

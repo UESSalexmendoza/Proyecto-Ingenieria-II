@@ -24,6 +24,7 @@ from django.utils.encoding import force_bytes
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods, require_POST
+from allauth.socialaccount.models import SocialApp
 
 from .forms_cuentas import ActivarCuentaForm, ReenviarActivacionForm, RegistroForm, CambiarClaveCuentaForm, SolicitarRecuperacionForm
 from .models import EventoAcceso, PerfilUsuario, Rol, UsuarioRol, RecuperacionClave, SolicitudAccesoSocial
@@ -48,11 +49,15 @@ def acceso(request):
     if request.user.is_authenticated:
         return redirect("inicio")
 
-    contexto = {}
+    # provider_login_url requiere una SocialApp válida incluso al mostrar el formulario.
+    microsoft_disponible = SocialApp.objects.filter(
+        provider="microsoft", sites__id=settings.SITE_ID
+    ).exclude(client_id="").exclude(secret="").exists()
+    contexto = {"microsoft_disponible": microsoft_disponible}
     if request.method == "POST":
         identificador = request.POST.get("usuario", "").strip()[:150]
         clave = request.POST.get("password", "")
-        contexto = {"usuario": identificador, "recordarme": request.POST.get("recordarme") == "1"}
+        contexto.update({"usuario": identificador, "recordarme": request.POST.get("recordarme") == "1"})
         if _limitado(request, "acceso", maximo=10, minutos=15):
             contexto["error"] = "Demasiados intentos. Inténtalo más tarde."
             return render(request, "cuentas/acceso.html", contexto, status=429)

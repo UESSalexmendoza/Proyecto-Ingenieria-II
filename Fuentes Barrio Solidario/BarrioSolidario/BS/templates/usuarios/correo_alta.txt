@@ -1,0 +1,9 @@
+Barrio Solidario | Universidad Espíritu Santo (UEES)
+
+Hola {{ nombre }}:
+
+Se creó una cuenta para ti en Barrio Solidario. Para activarla, aceptar las políticas y definir tu contraseña, abre este enlace:
+{{ enlace }}
+
+Tu usuario de acceso es {{ correo }}.
+Si no esperabas esta invitación, ignora este mensaje y contacta con Barrio Solidario.

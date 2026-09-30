@@ -3,7 +3,7 @@
 {% block correo_previa %}Confirme su acceso a Barrio Solidario mediante un enlace seguro.{% endblock %}
 {% block correo_encabezado %}Confirme su acceso{% endblock %}
 {% block correo_contenido %}
-<p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Reciba un cordial saludo. Hemos recibido una solicitud para acceder a Barrio Solidario {% if acceso_con_clave %}con su usuario y contraseña{% else %}mediante Google{% endif %}. Para continuar, confirme el acceso desde este correo.</p>
+<p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Reciba un cordial saludo. Hemos recibido una solicitud para acceder a Barrio Solidario {% if acceso_con_clave %}con su usuario y contraseña{% else %}mediante {{ proveedor }}{% endif %}. Para continuar, confirme el acceso desde este correo.</p>
 {% endblock %}
 {% block correo_boton %}Haz clic aquí para confirmar tu acceso{% endblock %}
 {% block correo_indicaciones %}<p style="margin:0 0 15px;font-size:14px;line-height:1.6;">Por seguridad, el enlace tiene una vigencia de <strong>10 minutos</strong> y solo puede utilizarse una vez.</p>{% endblock %}

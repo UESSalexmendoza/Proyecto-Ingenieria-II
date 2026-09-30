@@ -1,0 +1,12 @@
+{% extends "cuentas/correo_base.html" %}
+{% block correo_titulo %}Actualización de caso | Barrio Solidario{% endblock %}
+{% block correo_previa %}Hay una actualización sobre tu consulta a Barrio Solidario.{% endblock %}
+{% block correo_encabezado %}Actualización de tu caso{% endblock %}
+{% block correo_contenido %}
+<p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Hay una actualización del caso <strong>#{{ referencia }}</strong>. Su estado actual es <strong>{{ estado }}</strong>.</p>
+{% if nota %}<p style="margin:0 0 8px;font-size:15px;line-height:1.7;"><strong>Nota del equipo:</strong></p><p style="margin:0 0 18px;font-size:15px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;">{{ nota }}</p>{% endif %}
+<p style="margin:0 0 18px;font-size:15px;line-height:1.7;">Conserva este número como referencia para cualquier consulta adicional.</p>
+{% endblock %}
+{% block correo_boton %}Ir a Barrio Solidario{% endblock %}
+{% block correo_aviso %}Si necesitas comunicarte con nuestro equipo, usa el formulario de contacto del portal e indica el número de caso.{% endblock %}
+{% block correo_pie %}Notificación automática sobre el estado de tu consulta en Barrio Solidario.{% endblock %}

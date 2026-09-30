@@ -1,8 +1,14 @@
 from django.shortcuts import render
+from .models import InstitucionAval
+from .forms_contacto import CasoContactoForm
 
 
 def inicio(request):
-    return render(request, "publica/index.html")
+    instituciones = InstitucionAval.objects.filter(activa=True)
+    return render(request, "publica/index.html", {
+        "instituciones": instituciones,
+        "contacto_form": CasoContactoForm(),
+    })
 
 
 def acceso(request):

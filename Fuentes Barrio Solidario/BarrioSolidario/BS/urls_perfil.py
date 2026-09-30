@@ -1,9 +1,32 @@
 from django.urls import path
 
-from . import views_cuentas, views_perfil
+from . import views_cuentas, views_perfil, views_instituciones, views_contacto, views_panel, views_usuarios, views_roles, views_catalogos
 
 urlpatterns = [
-    path("panel/", views_perfil.panel_cuenta, name="panel_cuenta"),
+    path("contacto/enviar/", views_contacto.registrar, name="contacto_enviar"),
+    path("panel/contactos/", views_contacto.lista, name="contactos_panel"),
+    path("panel/contactos/<int:pk>/", views_contacto.detalle, name="contacto_detalle"),
+    path("panel/instituciones/", views_instituciones.lista, name="instituciones_panel"),
+    path("panel/instituciones/nueva/", views_instituciones.editar, name="institucion_nueva"),
+    path("panel/instituciones/<int:pk>/editar/", views_instituciones.editar, name="institucion_editar"),
+    path("panel/instituciones/<int:pk>/eliminar/", views_instituciones.eliminar, name="institucion_eliminar"),
+    path("panel/catalogos/", views_catalogos.catalogos_panel, name="catalogos_panel"),
+    path("panel/catalogos/nuevo/", views_catalogos.crear_catalogo, name="catalogo_nuevo"),
+    path("panel/catalogos/<int:pk>/", views_catalogos.catalogo_detalle, name="catalogo_detalle"),
+    path("panel/catalogos/<int:pk>/duplicar/", views_catalogos.duplicar_catalogo, name="catalogo_duplicar"),
+    path("panel/catalogos/<int:pk>/exportar/", views_catalogos.exportar_catalogo, name="catalogo_exportar"),
+    path("panel/roles/", views_roles.roles_panel, name="roles_panel"),
+    path("panel/roles/nuevo/", views_roles.crear_rol, name="rol_nuevo"),
+    path("panel/roles/<int:pk>/", views_roles.rol_detalle, name="rol_detalle"),
+    path("panel/roles/<int:pk>/duplicar/", views_roles.duplicar_rol, name="rol_duplicar"),
+    path("panel/roles/<int:pk>/desactivar/", views_roles.desactivar_rol, name="rol_desactivar"),
+    path("panel/usuarios/", views_usuarios.usuarios_panel, name="usuarios_panel"),
+    path("panel/usuarios/nuevo/", views_usuarios.crear_usuario, name="usuario_nuevo"),
+    path("panel/usuarios/<int:pk>/", views_usuarios.usuario_detalle, name="usuario_detalle"),
+    path("panel/usuarios/<int:pk>/avatar/", views_usuarios.avatar_usuario, name="usuario_avatar"),
+    path("panel/usuarios/<int:pk>/reenviar/", views_usuarios.reenviar_invitacion, name="usuario_reenviar"),
+    path("panel/usuarios/activar/<str:uidb64>/<str:token>/", views_usuarios.activar_alta_administrativa, name="activar_alta_administrativa"),
+    path("panel/", views_panel.panel_cuenta, name="panel_cuenta"),
     path("perfil/", views_perfil.perfil_cuenta, name="perfil_cuenta"),
     path("perfil/borrador/descartar/", views_perfil.descartar_borrador_perfil, name="descartar_borrador_perfil"),
     path("perfil/avatar/", views_perfil.avatar_cuenta, name="avatar_cuenta"),

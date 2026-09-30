@@ -1,0 +1,28 @@
+{% extends "panel/base.html" %}
+{% block title %}Casos de contacto | Barrio Solidario{% endblock %}
+{% block content %}
+<main id="contenidoPrincipal" class="container-fluid px-3 px-xl-4 py-4">
+  <h1 class="h3">Casos de contacto</h1>
+  <p class="text-muted">Consultas recibidas desde el portal público. Los nuevos casos aparecen como pendientes.</p>
+  <form method="get" class="mb-3 d-flex align-items-center gap-2">
+    <label for="estado_contacto">Estado</label>
+    <select id="estado_contacto" name="estado" class="form-select w-auto" onchange="this.form.submit()">
+      <option value="">Todos</option>
+      {% for valor, etiqueta in estados %}<option value="{{ valor }}" {% if estado == valor %}selected{% endif %}>{{ etiqueta }}</option>{% endfor %}
+    </select>
+    <noscript><button class="btn btn-outline-primary" type="submit">Filtrar</button></noscript>
+  </form>
+  <div class="table-responsive panel-card">
+    <table class="table align-middle">
+      <thead><tr><th scope="col">Caso</th><th scope="col">Recibido</th><th scope="col">Remitente</th><th scope="col">Correo</th><th scope="col">Estado</th><th scope="col">Acuse</th><th scope="col">Notificación</th><th scope="col">Acción</th></tr></thead>
+      <tbody>{% for caso in casos %}<tr>
+        <td>#{{ caso.pk }}</td><td>{{ caso.creado_en|date:"d/m/Y H:i" }}</td><td>{{ caso.nombre }}</td><td>{{ caso.email }}</td>
+        <td><span class="badge {% if caso.estado == 'PENDIENTE' %}text-bg-warning{% else %}text-bg-primary{% endif %}">{{ caso.get_estado_display }}</span></td>
+        <td>{% if caso.acuse_enviado_en %}Enviado{% else %}No enviado{% endif %}</td>
+        <td>{% if caso.notificacion_estado_pendiente %}<span class="text-danger">Pendiente</span>{% elif caso.estado_notificado_en %}Enviada{% else %}—{% endif %}</td>
+        <td><a class="btn btn-outline-primary btn-sm" href="{% url 'contacto_detalle' caso.pk %}">Revisar</a></td>
+      </tr>{% empty %}<tr><td colspan="8">No hay casos con este filtro.</td></tr>{% endfor %}</tbody>
+    </table>
+  </div>
+</main>
+{% endblock %}

@@ -1,16 +1,73 @@
 {% extends "panel/base.html" %}
-{% block title %}Mi panel | Barrio Solidario{% endblock %}
+{% block title %}Panel administrativo | Barrio Solidario{% endblock %}
+{% block head_extra %}
+<style>
+.admin-dashboard{--admin-border:#dce5ee;--admin-muted:#62748a;--admin-accent:#b7365d}
+.admin-dashboard .dash-card,.admin-dashboard .dash-stat{background:#fff;border:1px solid var(--admin-border);border-radius:16px;box-shadow:0 4px 18px rgba(21,49,83,.045)}
+.admin-dashboard .dash-card{padding:1.15rem;height:100%}
+.admin-dashboard .dash-stat{padding:1.1rem;min-height:132px;border-top:4px solid var(--admin-accent)}
+.admin-dashboard .dash-stat .number{font-size:2rem;line-height:1.1;font-weight:750;color:#102d52}
+.admin-dashboard .dash-stat .label{font-size:.88rem;color:var(--admin-muted)}
+.admin-dashboard .dash-title{font-size:1.05rem;font-weight:700;margin-bottom:1rem;color:#102d52}
+.admin-dashboard .dash-muted{color:var(--admin-muted);font-size:.88rem}
+.admin-dashboard .dash-entry{border-bottom:1px solid #edf1f6;padding:.75rem 0}
+.admin-dashboard .dash-entry:last-child{border-bottom:0;padding-bottom:0}
+.admin-dashboard .dash-entry:first-of-type{padding-top:0}
+.admin-dashboard .dash-progress{height:8px;background:#e9eff5;border-radius:30px;overflow:hidden}
+.admin-dashboard .dash-progress span{height:100%;display:block;background:#b7365d;border-radius:30px}
+.admin-dashboard .dash-action{display:flex;gap:.7rem;align-items:center;padding:.75rem;border:1px solid var(--admin-border);border-radius:10px;text-decoration:none;color:#17304c;font-weight:600}
+.admin-dashboard .dash-action:hover,.admin-dashboard .dash-action:focus-visible{border-color:#b7365d;background:#fff6f8;color:#8e2545}
+.admin-dashboard .dash-unavailable{border:1px dashed var(--admin-border);border-radius:10px;padding:.75rem;color:var(--admin-muted)}
+.admin-dashboard .dash-kicker{font-size:.82rem;letter-spacing:.03em;color:#64748b}
+.admin-dashboard .dash-pill{display:inline-block;padding:.23rem .6rem;border-radius:30px;background:#fceaf0;color:#8e2545;font-size:.77rem;font-weight:700}
+.admin-dashboard .dash-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1rem}
+@media(max-width:1100px){.admin-dashboard .dash-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.admin-dashboard .dash-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.admin-dashboard .dash-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
 {% block content %}
-<main class="container-fluid px-3 px-xl-4 py-4">
-  <h1>Panel general</h1><p class="lead">Bienvenido, {{ user.get_full_name|default:user.username }}.</p>
-  <div class="row g-3 mt-1">
-    <div class="col-lg-4"><section class="panel-card"><h2 class="h5">Mi perfil</h2><p>Completa tus datos, preferencias, accesibilidad y seguridad.</p><a class="btn btn-panel" href="{% url 'perfil_cuenta' %}">Abrir mi perfil</a></section></div>
-    <div class="col-lg-4"><section class="panel-card"><h2 class="h5">Estado de la cuenta</h2><p>Cuenta: <strong>{{ perfil.get_estado_display|default:"Sin perfil" }}</strong></p><p class="mb-0">La activación de la cuenta y la aprobación para operar son procesos separados.</p></section></div>
-    <div class="col-lg-4"><section class="panel-card"><h2 class="h5">Roles solicitados</h2>
-      {% for asignacion in roles %}<p class="mb-2">{{ asignacion.rol.nombre }}: <strong>{% if asignacion.puede_operar %}Aprobado para operar{% else %}{{ asignacion.get_estado_aprobacion_display }}{% endif %}</strong></p>{% empty %}<p>Aún no tienes roles solicitados.</p>{% endfor %}
-      <a href="{% url 'perfil_cuenta' %}" class="btn btn-outline-primary btn-sm">Ver detalles y solicitar otro rol</a>
-    </section></div>
+<main id="contenidoPrincipal" class="container-fluid px-3 px-xl-4 py-4 admin-dashboard">
+  <nav aria-label="Ruta de navegación" class="dash-kicker mb-2">Administración / Panel</nav>
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-4">
+    <div><h1 class="h2 fw-bold mb-1">Panel administrativo</h1><p class="dash-muted mb-0">Supervisión general, control y seguimiento de Barrio Solidario.</p></div>
+    <div class="dash-muted"><i class="bi bi-clock" aria-hidden="true"></i> Actualizado: <time datetime="{{ actualizado_en|date:'c' }}">{{ actualizado_en|date:'d/m/Y H:i' }}</time></div>
   </div>
-  <p class="mt-4"><a href="{% url 'inicio' %}">Volver al portal público</a></p>
+  <section aria-label="Indicadores generales" class="dash-grid mb-4">
+    {% if es_superusuario %}<div class="dash-stat"><div class="label">Usuarios por aprobar</div><div class="number">{{ usuarios_pendientes }}</div><small class="dash-muted">Con rol solicitado pendiente</small></div>{% endif %}
+    <div class="dash-stat"><div class="label">Contactos pendientes</div><div class="number">{{ contactos_pendientes }}</div><small class="dash-muted">Por revisar</small></div>
+    <div class="dash-stat"><div class="label">Contactos en revisión</div><div class="number">{{ contactos_revision }}</div><small class="dash-muted">Con seguimiento</small></div>
+    <div class="dash-stat"><div class="label">Casos abiertos</div><div class="number">{{ contactos_abiertos }}</div><small class="dash-muted">Pendientes de cierre</small></div>
+    <div class="dash-stat"><div class="label">Correos pendientes</div><div class="number">{{ correos_pendientes }}</div><small class="dash-muted">Notificaciones de estado</small></div>
+    {% if not es_superusuario %}<div class="dash-stat"><div class="label">Casos antiguos</div><div class="number">{{ casos_antiguos }}</div><small class="dash-muted">Abiertos hace más de 2 días</small></div>{% endif %}
+  </section>
+  <div class="row g-3 align-items-stretch">
+    <div class="col-xl-4 d-flex flex-column gap-3">
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-list-check me-2" aria-hidden="true"></i>Revisiones pendientes</h2>
+        {% for caso in contactos_recientes %}<div class="dash-entry d-flex align-items-center justify-content-between gap-2"><div><strong>Caso de contacto #{{ caso.pk }}</strong><div class="dash-muted">{{ caso.nombre }} · {{ caso.creado_en|date:'d/m/Y H:i' }}</div></div><a class="btn btn-sm btn-outline-primary" href="{% url 'contacto_detalle' caso.pk %}">Revisar</a></div>{% endfor %}
+        {% for asignacion in roles_recientes %}<div class="dash-entry d-flex align-items-center justify-content-between gap-2"><div><strong>Rol de {{ asignacion.usuario.get_full_name|default:asignacion.usuario.username }}</strong><div class="dash-muted">{{ asignacion.rol.nombre }} · Pendiente</div></div><a class="btn btn-sm btn-outline-primary" href="{% url 'usuario_detalle' asignacion.usuario_id %}">Revisar</a></div>{% endfor %}
+        {% if not contactos_recientes and not roles_recientes %}<p class="dash-muted mb-0">No hay revisiones pendientes.</p>{% endif %}
+      </section>
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-bar-chart me-2" aria-hidden="true"></i>Estado de los contactos</h2>{% for estado in estados_contacto %}<div class="mb-3"><div class="d-flex justify-content-between small mb-1"><span>{{ estado.nombre }}</span><strong>{{ estado.cantidad }}</strong></div><div class="dash-progress" role="img" aria-label="{{ estado.nombre }}: {{ estado.cantidad }} casos, {{ estado.porcentaje }} por ciento"><span style="width:{{ estado.porcentaje }}%"></span></div></div>{% endfor %}</section>
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-clock-history me-2" aria-hidden="true"></i>Actividad reciente</h2>{% for item in actividad %}<div class="dash-entry"><a href="{% url 'contacto_detalle' item.caso_id %}"><strong>{{ item.get_tipo_display }} · Caso #{{ item.caso_id }}</strong></a><div class="dash-muted">{{ item.fecha|date:'d/m/Y H:i' }} · {{ item.actor.get_full_name|default:item.actor.username|default:'Sistema' }}</div></div>{% empty %}<p class="dash-muted mb-0">Todavía no hay actuaciones.</p>{% endfor %}</section>
+    </div>
+    <div class="col-xl-4 d-flex flex-column gap-3">
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-lightning-charge me-2" aria-hidden="true"></i>Gestión rápida</h2><div class="d-grid gap-2">
+        <a class="dash-action" href="{% url 'contactos_panel' %}"><i class="bi bi-inbox" aria-hidden="true"></i>Gestionar contactos <i class="bi bi-arrow-right ms-auto" aria-hidden="true"></i></a>
+        {% if es_superusuario %}<a class="dash-action" href="{% url 'usuarios_panel' %}"><i class="bi bi-people" aria-hidden="true"></i>Revisar usuarios y roles <i class="bi bi-arrow-right ms-auto" aria-hidden="true"></i></a><a class="dash-action" href="{% url 'catalogos_panel' %}"><i class="bi bi-list-ul" aria-hidden="true"></i>Administrar catálogos <i class="bi bi-arrow-right ms-auto" aria-hidden="true"></i></a><a class="dash-action" href="{% url 'instituciones_panel' %}"><i class="bi bi-buildings" aria-hidden="true"></i>Administrar instituciones <i class="bi bi-arrow-right ms-auto" aria-hidden="true"></i></a>{% endif %}
+        <a class="dash-action" href="{% url 'perfil_cuenta' %}"><i class="bi bi-person-gear" aria-hidden="true"></i>Mi perfil <i class="bi bi-arrow-right ms-auto" aria-hidden="true"></i></a>
+      </div></section>
+      {% if es_superusuario %}<section class="dash-card"><h2 class="dash-title"><i class="bi bi-person-lines-fill me-2" aria-hidden="true"></i>Usuarios por estado</h2>{% for estado in estados_usuario %}<div class="mb-3"><div class="d-flex justify-content-between small mb-1"><span>{{ estado.nombre }}</span><strong>{{ estado.cantidad }}</strong></div><div class="dash-progress" role="img" aria-label="{{ estado.nombre }}: {{ estado.cantidad }} usuarios, {{ estado.porcentaje }} por ciento"><span style="width:{{ estado.porcentaje }}%"></span></div></div>{% endfor %}</section>{% endif %}
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-clipboard-data me-2" aria-hidden="true"></i>Seguimiento operativo</h2><div class="dash-entry d-flex justify-content-between"><span>Casos abiertos hace más de 2 días</span><strong>{{ casos_antiguos }}</strong></div><div class="dash-entry d-flex justify-content-between"><span>Notificaciones por enviar</span><strong>{{ correos_pendientes }}</strong></div>{% if es_superusuario %}<div class="dash-entry d-flex justify-content-between"><span>Instituciones publicadas</span><strong>{{ instituciones_activas }}</strong></div>{% endif %}</section>
+      <section class="dash-card"><h2 class="dash-title">Solicitudes de asistencia</h2><p class="dash-muted mb-0">El módulo de solicitudes aún no está integrado en este panel.</p></section>
+    </div>
+    <div class="col-xl-4 d-flex flex-column gap-3">
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-exclamation-circle me-2" aria-hidden="true"></i>Alertas</h2>{% if correos_pendientes %}<div class="dash-entry"><span class="dash-pill">Seguimiento</span><p class="mb-1 mt-2">{{ correos_pendientes }} notificación{{ correos_pendientes|pluralize:"es" }} de estado pendiente{{ correos_pendientes|pluralize:"s" }}.</p><a href="{% url 'contactos_panel' %}">Abrir contactos</a></div>{% endif %}{% if casos_antiguos %}<div class="dash-entry"><span class="dash-pill">Atención</span><p class="mb-1 mt-2">{{ casos_antiguos }} caso{{ casos_antiguos|pluralize:"s" }} abierto{{ casos_antiguos|pluralize:"s" }} hace más de dos días.</p><a href="{% url 'contactos_panel' %}">Revisar casos</a></div>{% endif %}{% if not correos_pendientes and not casos_antiguos %}<p class="dash-muted mb-0">Sin alertas operativas registradas.</p>{% endif %}</section>
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-check2-square me-2" aria-hidden="true"></i>Tareas administrativas</h2><div class="dash-entry"><a href="{% url 'contactos_panel' %}">Revisar mensajes recibidos</a></div>{% if es_superusuario %}<div class="dash-entry"><a href="{% url 'usuarios_panel' %}">Validar roles solicitados</a></div><div class="dash-entry"><a href="{% url 'instituciones_panel' %}">Verificar instituciones</a></div>{% endif %}</section>
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-calendar-check me-2" aria-hidden="true"></i>Resumen del día</h2><div class="dash-entry d-flex justify-content-between"><span>Contactos recibidos</span><strong>{{ contactos_hoy }}</strong></div><div class="dash-entry d-flex justify-content-between"><span>Revisiones realizadas</span><strong>{{ revisiones_hoy }}</strong></div><div class="dash-entry d-flex justify-content-between"><span>Casos cerrados</span><strong>{{ cierres_hoy }}</strong></div></section>
+      <section class="dash-card"><h2 class="dash-title"><i class="bi bi-journal-text me-2" aria-hidden="true"></i>Observaciones administrativas</h2><p class="dash-muted mb-2">Las notas de cada caso se guardan con fecha y responsable en su historial.</p><a href="{% url 'contactos_panel' %}" class="btn btn-outline-primary btn-sm">Abrir casos y registrar nota</a></section>
+    </div>
+  </div>
+  <div class="d-flex flex-wrap gap-2 mt-4"><a class="btn btn-panel" href="{% url 'contactos_panel' %}">Gestionar pendientes</a>{% if es_superusuario %}<a class="btn btn-outline-primary" href="{% url 'usuarios_panel' %}">Revisar aprobaciones</a>{% endif %}<a class="btn btn-outline-secondary" href="{% url 'inicio' %}">Volver al portal público</a></div>
 </main>
 {% endblock %}

@@ -1,0 +1,52 @@
+{% extends "panel/base.html" %}
+{% block title %}{% if institucion %}Editar{% else %}Agregar{% endif %} institución | Barrio Solidario{% endblock %}
+{% block content %}
+<main id="contenidoPrincipal" class="container-fluid px-3 px-xl-4 py-4">
+  <div class="row g-4"><div class="col-lg-7"><div class="panel-card">
+    <h1 class="h3 mb-4">{% if institucion %}Editar institución{% else %}Agregar institución{% endif %}</h1>
+    <form id="institucionForm" method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}{{ form.non_field_errors }}
+      <div class="mb-3"><label class="form-label" for="{{ form.nombre.id_for_label }}">Nombre</label>{{ form.nombre }}{{ form.nombre.errors }}</div>
+      <div class="mb-3"><label class="form-label" for="{{ form.descripcion.id_for_label }}">Descripción breve</label>{{ form.descripcion }}{{ form.descripcion.errors }}</div>
+      <div class="mb-3"><label class="form-label" for="{{ form.url.id_for_label }}">Sitio web oficial</label>{{ form.url }}{{ form.url.errors }}</div>
+      <div class="mb-3"><label class="form-label" for="{{ form.imagen.id_for_label }}">Imagen institucional {% if institucion %}(opcional para conservar la actual){% endif %}</label>{{ form.imagen }}{{ form.imagen.errors }}<div class="form-text">JPG, PNG o WebP hasta 8 MB. Arrastra y ajusta la imagen antes de guardar.</div><div id="imagenError" class="text-danger small" role="alert"></div></div>
+      {% if institucion and institucion.imagen %}<img id="vistaInstitucion" src="{{ institucion.imagen.url }}" alt="Imagen actual de {{ institucion.nombre }}" class="img-fluid rounded mb-3" style="width:320px;aspect-ratio:5/3;object-fit:contain;background:#eef2f7">{% else %}<img id="vistaInstitucion" alt="Vista previa del recorte" class="img-fluid rounded mb-3 d-none" style="width:320px;aspect-ratio:5/3;object-fit:contain;background:#eef2f7">{% endif %}
+      <div class="row g-3 mb-3"><div class="col-sm-4"><label class="form-label" for="{{ form.orden.id_for_label }}">Orden</label>{{ form.orden }}{{ form.orden.errors }}</div><div class="col-sm-8 align-self-end"><div class="form-check">{{ form.activa }}<label class="form-check-label" for="{{ form.activa.id_for_label }}">Publicar en el portal</label></div></div></div>
+      <div class="d-flex gap-2"><button class="btn btn-panel" type="submit">Guardar institución</button><a class="btn btn-outline-secondary" href="{% url 'instituciones_panel' %}">Cancelar</a></div>
+    </form>
+  </div></div><div class="col-lg-5"><aside class="panel-card"><h2 class="h5">Vista en el portal</h2><p>La imagen se adapta al espacio del card sin deformarse. Usa el recorte para elegir la zona que quieres mostrar.</p><p class="small text-muted mb-0">Publica solo instituciones cuyo aval o alianza esté confirmado.</p></aside></div></div>
+</main>
+<div class="modal fade" id="recortarInstitucionModal" tabindex="-1" aria-labelledby="recortarInstitucionTitulo" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><div class="modal-header"><h2 class="modal-title h5" id="recortarInstitucionTitulo">Elegir área de la imagen</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div><div class="modal-body text-center"><p class="small">Arrastra la imagen para centrarla; usa el zoom o las flechas del teclado para ajustar el área visible.</p><canvas id="institucionCanvas" width="500" height="300" tabindex="0" role="img" aria-label="Área de recorte, proporción cinco por tres" style="width:min(500px,100%);height:auto;aspect-ratio:5/3;touch-action:none;cursor:grab;background:#eef2f7"></canvas><label class="form-label d-block mt-3" for="institucionZoom">Zoom</label><input class="form-range" type="range" id="institucionZoom" min="1" max="4" step="0.01" value="1"><div id="recorteError" class="text-danger small" role="alert"></div></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar recorte</button><button type="button" class="btn btn-panel" id="aplicarInstitucion">Aplicar recorte</button></div></div></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const input=document.getElementById('id_imagen'), element=document.getElementById('recortarInstitucionModal');
+  const modal=bootstrap.Modal.getOrCreateInstance(element), canvas=document.getElementById('institucionCanvas');
+  const ctx=canvas.getContext('2d'), zoom=document.getElementById('institucionZoom');
+  const preview=document.getElementById('vistaInstitucion'), error=document.getElementById('imagenError'), cropError=document.getElementById('recorteError');
+  let picture=null, source=null, base=1, x=0, y=0, previous=1, drag=null, applied=false;
+  function dims(){return [picture.naturalWidth*base*Number(zoom.value),picture.naturalHeight*base*Number(zoom.value)];}
+  function draw(){if(!picture)return;const [w,h]=dims();x=Math.max(500-w,Math.min(0,x));y=Math.max(300-h,Math.min(0,y));ctx.clearRect(0,0,500,300);ctx.drawImage(picture,x,y,w,h);}
+  function clear(){if(source){URL.revokeObjectURL(source);source=null;}picture=null;}
+  input.addEventListener('change',()=>{
+    clear();applied=false;error.textContent='';cropError.textContent='';const file=input.files[0];if(!file)return;
+    if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>8*1024*1024){error.textContent='Selecciona un JPG, PNG o WebP de hasta 8 MB.';input.value='';return;}
+    source=URL.createObjectURL(file);const image=new Image();
+    image.onload=()=>{if(image.naturalWidth*image.naturalHeight>24000000){error.textContent='La imagen supera 24 megapíxeles.';input.value='';clear();return;}picture=image;base=Math.max(500/image.naturalWidth,300/image.naturalHeight);zoom.value='1';previous=1;const [w,h]=dims();x=(500-w)/2;y=(300-h)/2;draw();modal.show();};
+    image.onerror=()=>{error.textContent='No se pudo abrir la imagen.';input.value='';clear();};image.src=source;
+  });
+  canvas.addEventListener('pointerdown',e=>{if(!picture)return;canvas.setPointerCapture(e.pointerId);drag={x:e.clientX,y:e.clientY};canvas.style.cursor='grabbing';});
+  canvas.addEventListener('pointermove',e=>{if(!drag)return;const rect=canvas.getBoundingClientRect();x+=(e.clientX-drag.x)*500/rect.width;y+=(e.clientY-drag.y)*300/rect.height;drag={x:e.clientX,y:e.clientY};draw();});
+  for(const event of ['pointerup','pointercancel'])canvas.addEventListener(event,()=>{drag=null;canvas.style.cursor='grab';});
+  canvas.addEventListener('keydown',e=>{const delta={ArrowLeft:[-8,0],ArrowRight:[8,0],ArrowUp:[0,-8],ArrowDown:[0,8]}[e.key];if(delta){e.preventDefault();x+=delta[0];y+=delta[1];draw();}});
+  zoom.addEventListener('input',()=>{if(!picture)return;const ratio=Number(zoom.value)/previous;x=250-(250-x)*ratio;y=150-(150-y)*ratio;previous=Number(zoom.value);draw();});
+  document.getElementById('aplicarInstitucion').addEventListener('click',()=>{if(!picture)return;const output=document.createElement('canvas');output.width=900;output.height=540;output.getContext('2d').drawImage(canvas,0,0,900,540);
+    output.toBlob(blob=>{if(!blob||blob.size>8*1024*1024){cropError.textContent='No se pudo preparar el recorte. Prueba otra imagen.';return;}
+      try{const transfer=new DataTransfer();transfer.items.add(new File([blob],'institucion.png',{type:'image/png'}));input.files=transfer.files;preview.src=URL.createObjectURL(blob);preview.classList.remove('d-none');applied=true;modal.hide();}
+      catch(e){cropError.textContent='Tu navegador no permite preparar el recorte.';}
+    },'image/png');});
+  element.addEventListener('hidden.bs.modal',()=>{if(!applied)input.value='';clear();});
+})();
+</script>
+{% endblock %}

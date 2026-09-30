@@ -295,12 +295,32 @@
 						Esta plataforma está dirigida a personas que necesitan apoyo y a quienes desean brindarlo de forma organizada. Barrio Solidario prioriza la atención a adultos mayores y sus cuidadores, conectándolos con voluntarios e instituciones aliadas para coordinar ayuda real, segura y con seguimiento.
 					</p>
 					<div class="how-divider"></div>
+					<style>
+					  #usuarios .users-carousel-3 .users-track{display:flex;gap:18px;animation:none!important;transform:translateX(0)}
+					  #usuarios .users-carousel-3:hover .users-track{animation:none!important}
+					  #usuarios .users-carousel-3 .user-card{flex:0 0 calc((100% - 36px)/3);min-width:0}
+					  #usuarios .users-carousel-3 .nav{position:static}
+					  #usuarios .users-carousel-3 .nav button{
+					    position:absolute;top:50%;z-index:2;transform:translateY(-50%);
+					    display:flex;align-items:center;justify-content:center;
+					    width:48px;height:48px;border:0;border-radius:50%;
+					    background:#fff;color:#233a66;box-shadow:0 10px 25px rgba(0,0,0,.15);cursor:pointer;
+					  }
+					  #usuarios .users-carousel-3 .nav button:hover,
+					  #usuarios .users-carousel-3 .nav button:focus-visible{color:#e02a56;outline:2px solid #e02a56}
+					  #usuarios .users-carousel-3 .nav .prev{left:-20px}
+					  #usuarios .users-carousel-3 .nav .next{right:-20px}
+					  #usuarios .users-carousel-3 .dots button{
+					    appearance:none;display:block;flex:0 0 10px;width:10px;height:10px;
+					    min-width:10px;min-height:10px;margin:0;padding:0;border:1px solid #233a6630;
+					    border-radius:50%;background:#ffffffaa;cursor:pointer;
+					  }
+					  #usuarios .users-carousel-3 .dots button[aria-current="true"]{background:#e02a56;border-color:#e02a56}
+					  #usuarios .users-carousel-3 .dots button:focus-visible{outline:2px solid #233a66;outline-offset:3px}
+					  @media(max-width:767px){#usuarios .users-carousel-3 .user-card{flex-basis:calc((100% - 18px)/2)}}
+					  @media(max-width:575px){#usuarios .users-carousel-3 .user-card{flex-basis:100%}}
+					</style>
 					<div class="users-carousel-3">
-						<input type="radio" name="users" id="u1" checked style = "display:none">
-						<input type="radio" name="users" id="u2" style = "display:none">
-						<input type="radio" name="users" id="u3" style = "display:none">
-						<input type="radio" name="users" id="u4" style = "display:none">
-						<input type="radio" name="users" id="u5" style = "display:none">				 	
 						<div class="users-viewport">
 							<div class="users-track">
 								<article class="user-card">
@@ -431,27 +451,84 @@
 							</div>
 						</div>
 						<div class="nav">
-							<label for="u5" class="prev p1"><i class="bi bi-chevron-left"></i></label>
-							<label for="u2" class="next p1"><i class="bi bi-chevron-right"></i></label>
-							<label for="u1" class="prev p2"></label>
-							<label for="u3" class="next p2"></label>
-							<label for="u2" class="prev p3"></label>
-							<label for="u4" class="next p3"></label>
-							<label for="u3" class="prev p4"></label>
-							<label for="u5" class="next p4"></label>
-							<label for="u4" class="prev p5"></label>
-							<label for="u1" class="next p5"></label>
-						</div>	
-						<div class="dots">
-							<label for="u1"></label>
-							<label for="u2"></label>
-							<label for="u3"></label>
-							<label for="u4"></label>
-							<label for="u5"></label>
-						</div>  
+							<button type="button" class="prev" aria-label="Ver tipos de usuarios anteriores"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+							<button type="button" class="next" aria-label="Ver siguientes tipos de usuarios"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+						</div>
+						<div class="dots" aria-label="Elegir tipo de usuario"></div>
 					</div>					
 				</div>
 			</section>
+<script>
+(() => {
+  const carousel = document.querySelector('#usuarios .users-carousel-3');
+  if (!carousel) return;
+  const track = carousel.querySelector('.users-track');
+  const cards = [...track.children];
+  const dots = carousel.querySelector('.dots');
+  if (cards.length < 2) return;
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let current = 0;
+  let moving = false;
+  let paused = false;
+  let direction = 0;
+  const visible = () => window.innerWidth <= 575 ? 1 : window.innerWidth <= 767 ? 2 : 3;
+  const step = () => track.children[1].offsetLeft - track.firstElementChild.offsetLeft;
+  function update() {
+    [...dots.children].forEach((dot, i) => dot.setAttribute('aria-current', String(i === current)));
+  }
+  cards.forEach((card, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Mostrar desde ${card.querySelector('h5').textContent.trim()}`);
+    dot.addEventListener('click', () => {
+      if (moving) return;
+      current = i;
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(0)';
+      cards.forEach((_, offset) => track.append(cards[(i + offset) % cards.length]));
+      update();
+    });
+    dots.append(dot);
+  });
+  update();
+  if (cards.length <= visible()) return;
+  function next(manual = false) {
+    if (moving || (!manual && (paused || motion.matches))) return;
+    moving = true;
+    direction = 1;
+    track.style.transition = 'transform .6s ease';
+    track.style.transform = `translateX(-${step()}px)`;
+  }
+  function previous() {
+    if (moving) return;
+    moving = true;
+    direction = -1;
+    track.style.transition = 'none';
+    track.prepend(track.lastElementChild);
+    track.style.transform = `translateX(-${step()}px)`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      track.style.transition = 'transform .6s ease';
+      track.style.transform = 'translateX(0)';
+    }));
+  }
+  track.addEventListener('transitionend', event => {
+    if (!moving || event.target !== track || event.propertyName !== 'transform') return;
+    track.style.transition = 'none';
+    if (direction === 1) track.append(track.firstElementChild);
+    track.style.transform = 'translateX(0)';
+    current = (current + direction + cards.length) % cards.length;
+    moving = false;
+    update();
+  });
+  carousel.querySelector('.next').addEventListener('click', () => next(true));
+  carousel.querySelector('.prev').addEventListener('click', previous);
+  carousel.addEventListener('mouseenter', () => { paused = true; });
+  carousel.addEventListener('mouseleave', () => { paused = false; });
+  carousel.addEventListener('focusin', () => { paused = true; });
+  carousel.addEventListener('focusout', () => { paused = false; });
+  window.setInterval(() => next(), 3600);
+})();
+</script>
 <section id="beneficios" class="section-benefits py-5">
   <div class="container">
 
@@ -659,139 +736,177 @@ En el mediano y largo plazo, se espera que la plataforma se convierta en un punt
       </p>
     </div>
 
-    <div class="row g-4">
-
-      <!-- 1 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Vicepresidencia del Ecuador</div>
-          <div class="ally-type">Sector público</div>
+    <style>
+      #aliados .allies-marquee{width:100%;overflow:hidden;padding:8px 0 22px}
+      #aliados .allies-carousel{position:relative;padding:0 30px}
+      #aliados .allies-arrow{
+        position:absolute;top:50%;z-index:2;transform:translateY(-70%);
+        width:48px;height:48px;border:0;border-radius:50%;background:#fff;
+        color:#233a66;box-shadow:0 8px 24px rgba(35,58,102,.22);
+        display:grid;place-items:center;font-size:1.3rem;cursor:pointer;
+      }
+      #aliados .allies-arrow:hover,#aliados .allies-arrow:focus-visible{
+        color:#e02a56;box-shadow:0 8px 28px rgba(35,58,102,.32);outline:2px solid #e02a56;
+      }
+      #aliados .allies-arrow--prev{left:-14px}
+      #aliados .allies-arrow--next{right:-14px}
+      #aliados .allies-dots{display:flex;justify-content:center;align-items:center;gap:9px;margin-top:2px}
+      #aliados .allies-dots .allies-dot{
+        appearance:none;display:block;flex:0 0 9px;
+        box-sizing:border-box;width:9px!important;height:9px!important;
+        min-width:9px!important;min-height:9px!important;
+        max-width:9px!important;max-height:9px!important;
+        margin:0;padding:0!important;border:0;border-radius:50%!important;
+        background:#b9c4d5;line-height:0;cursor:pointer;
+      }
+      #aliados .allies-dots .allies-dot[aria-current="true"]{background:#e02a56}
+      #aliados .allies-dot:focus-visible{outline:2px solid #233a66;outline-offset:3px}
+      #aliados .allies-arrow[hidden],#aliados .allies-dots[hidden]{display:none!important}
+      #aliados .allies-track{display:flex;flex-wrap:nowrap;gap:20px;width:100%;transform:translateX(0)}
+      #aliados .allies-track.is-scrolling{animation:none}
+      #aliados .allies-track .ally-card{
+        box-sizing:border-box;flex:0 0 calc((100% - 40px)/3);
+        width:calc((100% - 40px)/3);min-width:0;height:214px;
+        display:flex;flex-direction:column;align-items:stretch;
+        justify-content:space-between;background:#fff;border:1px solid #dbe2ec;
+        position:relative;border-radius:18px;padding:0;overflow:hidden;
+        color:#233a66;text-decoration:none;
+        box-shadow:0 8px 22px rgba(35,58,102,.08);
+        transition:box-shadow .2s,border-color .2s,transform .2s;
+      }
+      #aliados .allies-track .ally-card::before{
+        content:"";position:absolute;top:0;left:0;right:0;z-index:1;
+        height:4px;background:linear-gradient(90deg,#233a66,#e02a56);
+        pointer-events:none;
+      }
+      #aliados .allies-track .ally-card:hover,
+      #aliados .allies-track .ally-card:focus-visible{
+        border-color:#e02a56;box-shadow:0 14px 30px rgba(35,58,102,.18);
+        transform:translateY(-4px);outline:2px solid #e02a56;outline-offset:-2px;
+      }
+      #aliados .allies-track .ally-logo{
+        box-sizing:border-box;display:block;width:100%;height:160px;
+        margin:0;padding:0;object-fit:cover;object-position:center;
+        border-radius:17px 17px 0 0;
+        background:#fff;
+      }
+      #aliados .allies-track .ally-name{
+        box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+        min-height:52px;margin:0;padding:6px 10px;text-align:center;
+        font-size:.9rem;line-height:1.3;font-weight:700;color:#233a66;
+        border-top:1px solid #edf0f5;background:#fff;
+      }
+      @media(max-width:767px){
+        #aliados .allies-track .ally-card{flex-basis:calc((100% - 20px)/2);width:calc((100% - 20px)/2)}
+      }
+      @media(max-width:575px){
+        #aliados .allies-carousel{padding:0 22px}
+        #aliados .allies-track .ally-card{flex-basis:100%;width:100%}
+      }
+      @media(prefers-reduced-motion:reduce){
+        #aliados .allies-marquee{overflow-x:auto}
+      }
+    </style>
+    {% if instituciones %}
+    <div class="allies-carousel" aria-label="Carrusel de instituciones">
+      <button class="allies-arrow allies-arrow--prev" type="button" aria-label="Institución anterior"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+      <div class="allies-marquee">
+        <div class="allies-track">
+        {% for institucion in instituciones %}
+        <a class="ally-card ally-card-link" href="{{ institucion.url }}" target="_blank" rel="noopener noreferrer" aria-label="Visitar el sitio de {{ institucion.nombre }} (se abre en otra pestaña)" title="{{ institucion.descripcion }}">
+          <img class="ally-logo" src="{{ institucion.imagen.url }}" alt="Logo de {{ institucion.nombre }}" loading="lazy" width="300" height="180">
+          <span class="ally-name">{{ institucion.nombre }}</span>
+        </a>
+        {% endfor %}
         </div>
       </div>
-
-      <!-- 2 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Municipio de Guayaquil</div>
-          <div class="ally-type">Gobierno local</div>
-        </div>
-      </div>
-
-      <!-- 3 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Universidad Espíritu Santo</div>
-          <div class="ally-type">Academia</div>
-        </div>
-      </div>
-
-      <!-- 4 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">ONU (Naciones Unidas)</div>
-          <div class="ally-type">Organización internacional</div>
-        </div>
-      </div>
-
-      <!-- 5 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Cruz Roja</div>
-          <div class="ally-type">Ayuda humanitaria</div>
-        </div>
-      </div>
-
-      <!-- 6 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Ministerio de Salud Pública</div>
-          <div class="ally-type">Salud</div>
-        </div>
-      </div>
-
-      <!-- 7 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">MIES</div>
-          <div class="ally-type">Inclusión social</div>
-        </div>
-      </div>
-
-      <!-- 8 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Iglesia (red comunitaria)</div>
-          <div class="ally-type">Organización comunitaria</div>
-        </div>
-      </div>
-
-      <!-- 9 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Fundación Techo</div>
-          <div class="ally-type">ONG</div>
-        </div>
-      </div>
-
-      <!-- 10 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Universidad de Guayaquil</div>
-          <div class="ally-type">Academia</div>
-        </div>
-      </div>
-
-      <!-- 11 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">ESPOL</div>
-          <div class="ally-type">Academia</div>
-        </div>
-      </div>
-
-      <!-- 12 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Programa Mundial de Alimentos</div>
-          <div class="ally-type">Cooperación</div>
-        </div>
-      </div>
-
-      <!-- 13 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Banco de Alimentos</div>
-          <div class="ally-type">Apoyo social</div>
-        </div>
-      </div>
-
-      <!-- 14 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Empresas aliadas</div>
-          <div class="ally-type">Sector privado</div>
-        </div>
-      </div>
-
-      <!-- 15 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">Cáritas</div>
-          <div class="ally-type">Organización social</div>
-        </div>
-      </div>
-
-      <!-- 16 -->
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="ally-card">
-          <div class="ally-name">UNICEF</div>
-          <div class="ally-type">Organización internacional</div>
-        </div>
-      </div>
-
+      <button class="allies-arrow allies-arrow--next" type="button" aria-label="Institución siguiente"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+      <div class="allies-dots" aria-label="Elegir institución"></div>
     </div>
+    {% else %}
+    <p class="text-muted">Próximamente publicaremos las instituciones que acompañan al proyecto.</p>
+    {% endif %}
   </div>
 </section>
+<script>
+(() => {
+  const carousel = document.querySelector('#aliados .allies-carousel');
+  if (!carousel) return;
+  const marquee = carousel.querySelector('.allies-marquee');
+  const track = marquee.querySelector('.allies-track');
+  const cards = [...track.children];
+  if (!cards.length) return;
+  const dots = carousel.querySelector('.allies-dots');
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let paused = false;
+  let moving = false;
+  let current = 0;
+  const visible = () => window.innerWidth <= 575 ? 1 : window.innerWidth <= 767 ? 2 : 3;
+  function updateDots() {
+    [...dots.children].forEach((dot, i) => {
+      dot.setAttribute('aria-current', String(i === current));
+    });
+  }
+  cards.forEach((card, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'allies-dot';
+    dot.setAttribute('aria-label', `Mostrar desde ${card.querySelector('.ally-name').textContent.trim()}`);
+    dot.addEventListener('click', () => {
+      if (moving) return;
+      current = i;
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(0)';
+      for (let n = 0; n < cards.length; n++) track.append(cards[(i + n) % cards.length]);
+      updateDots();
+    });
+    dots.append(dot);
+  });
+  updateDots();
+  if (cards.length <= visible()) {
+    carousel.querySelectorAll('.allies-arrow, .allies-dots').forEach(el => { el.hidden = true; });
+    return;
+  }
+  const step = () => track.children[1].offsetLeft - track.firstElementChild.offsetLeft;
+  function advance(manual = false) {
+    if ((!manual && (paused || motion.matches)) || moving) return;
+    moving = true;
+    track.style.transition = 'transform .65s ease-in-out';
+    track.style.transform = `translateX(-${step()}px)`;
+  }
+  function previous() {
+    if (moving) return;
+    moving = true;
+    track.style.transition = 'none';
+    track.prepend(track.lastElementChild);
+    track.style.transform = `translateX(-${step()}px)`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      track.style.transition = 'transform .65s ease-in-out';
+      track.style.transform = 'translateX(0)';
+    }));
+  }
+  track.addEventListener('transitionend', event => {
+    if (!moving || event.target !== track || event.propertyName !== 'transform') return;
+    if (track.style.transform !== 'translateX(0)') {
+      track.appendChild(track.firstElementChild);
+      current = (current + 1) % cards.length;
+    } else {
+      current = (current - 1 + cards.length) % cards.length;
+    }
+    track.style.transition = 'none';
+    track.style.transform = 'translateX(0)';
+    moving = false;
+    updateDots();
+  });
+  carousel.querySelector('.allies-arrow--next').addEventListener('click', () => advance(true));
+  carousel.querySelector('.allies-arrow--prev').addEventListener('click', previous);
+  marquee.addEventListener('mouseenter', () => { paused = true; });
+  marquee.addEventListener('mouseleave', () => { paused = false; });
+  marquee.addEventListener('focusin', () => { paused = true; });
+  marquee.addEventListener('focusout', () => { paused = false; });
+  window.setInterval(() => advance(), 3200);
+})();
+</script>
 
 
 
@@ -800,6 +915,11 @@ En el mediano y largo plazo, se espera que la plataforma se convierta en un punt
 
 <section id="contacto" class="section-contact d-flex align-items-center">
   <div class="container py-5">
+    {% if messages %}
+      <div aria-live="polite">{% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %}" role="alert">{{ message }}</div>
+      {% endfor %}</div>
+    {% endif %}
 
     <div class="mb-4">
 		<p class="users-eyebrow mb-2">
@@ -899,31 +1019,38 @@ En el mediano y largo plazo, se espera que la plataforma se convierta en un punt
             Cuéntanos tu necesidad, iniciativa o propuesta de colaboración. Te responderemos por correo.
           </p>
 
-          <form class="row g-3" action="{% url 'inicio' %}#contacto" method="post">
+          <form class="row g-3" action="{% url 'contacto_enviar' %}#contacto" method="post">
             {% csrf_token %}
+            {{ contacto_form.sitio_web }}
+            {% if contacto_form.non_field_errors %}<div class="col-12 text-danger" role="alert">{{ contacto_form.non_field_errors }}</div>{% endif %}
             <div class="col-12">
-              <label class="form-label">Nombres</label>
-              <input type="text" name="nombre" class="form-control" placeholder="Tu nombre completo" required>
+              <label class="form-label" for="contacto_nombre">Nombres</label>
+              <input id="contacto_nombre" type="text" name="nombre" class="form-control" maxlength="120" value="{{ contacto_form.nombre.value|default:'' }}" placeholder="Tu nombre completo" required>
+              {% if contacto_form.nombre.errors %}<div class="text-danger small" role="alert">{{ contacto_form.nombre.errors }}</div>{% endif %}
             </div>
 
             <div class="col-12 col-md-6">
-              <label class="form-label">Email</label>
-              <input type="email" name="email" class="form-control" placeholder="tu@email.com" required>
+              <label class="form-label" for="contacto_email">Email</label>
+              <input id="contacto_email" type="email" name="email" class="form-control" maxlength="254" value="{{ contacto_form.email.value|default:'' }}" placeholder="tu@email.com" required>
+              {% if contacto_form.email.errors %}<div class="text-danger small" role="alert">{{ contacto_form.email.errors }}</div>{% endif %}
             </div>
 
             <div class="col-12 col-md-6">
-              <label class="form-label">Teléfono</label>
-              <input type="tel" name="telefono" class="form-control" placeholder="+593 9 0000 0000">
+              <label class="form-label" for="contacto_telefono">Teléfono</label>
+              <input id="contacto_telefono" type="tel" name="telefono" class="form-control" maxlength="20" value="{{ contacto_form.telefono.value|default:'' }}" placeholder="+593 9 0000 0000">
+              {% if contacto_form.telefono.errors %}<div class="text-danger small" role="alert">{{ contacto_form.telefono.errors }}</div>{% endif %}
             </div>
 
             <div class="col-12">
-              <label class="form-label">Empresa / Institución (opcional)</label>
-              <input type="text" name="institucion" class="form-control" placeholder="ONG, GAD, empresa, universidad, etc.">
+              <label class="form-label" for="contacto_institucion">Empresa / Institución (opcional)</label>
+              <input id="contacto_institucion" type="text" name="institucion" class="form-control" maxlength="120" value="{{ contacto_form.institucion.value|default:'' }}" placeholder="ONG, GAD, empresa, universidad, etc.">
+              {% if contacto_form.institucion.errors %}<div class="text-danger small" role="alert">{{ contacto_form.institucion.errors }}</div>{% endif %}
             </div>
 
             <div class="col-12">
-              <label class="form-label">Mensaje</label>
-              <textarea name="mensaje" class="form-control" rows="5" placeholder="Cuéntanos tu idea o necesidad" required></textarea>
+              <label class="form-label" for="contacto_mensaje">Mensaje</label>
+              <textarea id="contacto_mensaje" name="mensaje" class="form-control" rows="5" maxlength="3000" placeholder="Cuéntanos tu idea o necesidad" required>{{ contacto_form.mensaje.value|default:'' }}</textarea>
+              {% if contacto_form.mensaje.errors %}<div class="text-danger small" role="alert">{{ contacto_form.mensaje.errors }}</div>{% endif %}
             </div>
 
             <div class="col-12 d-flex gap-2 align-items-center">

@@ -1,4 +1,4 @@
-"""Segundo paso por correo para el acceso de Google."""
+"""Segundo paso por correo para el acceso social."""
 import hashlib
 import logging
 from datetime import datetime
@@ -22,16 +22,17 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 
 from .forms_cuentas import ROLES_PUBLICOS
-from .forms_social import CompletarRegistroGoogleForm
+from .forms_social import CompletarRegistroSocialForm
 from .models import EventoAcceso, PerfilUsuario, Rol, SolicitudAccesoSocial, UsuarioRol
 from .views_cuentas import _adjuntar_logo_uees
 
 logger = logging.getLogger(__name__)
+PROVEEDORES = {"google": "Google", "microsoft": "Microsoft"}
 
 
 def _candidate(request):
     value = request.session.get("bs_social_candidate")
-    if not value or value.get("provider") != "google" or not value.get("uid"):
+    if not value or value.get("provider") not in PROVEEDORES or not value.get("uid"):
         return None
     try:
         if datetime.fromisoformat(value["vence"]) <= timezone.now():
@@ -45,7 +46,7 @@ def enviar_enlace_social(request, pending, token):
     path = reverse("social_confirmar", kwargs={"token": token})
     origin = settings.PUBLIC_BASE_URL.rstrip("/")
     url = f"{origin}{path}" if origin else request.build_absolute_uri(path)
-    context = {"nombre": pending.nombres or (pending.usuario.first_name if pending.usuario else ""), "enlace": url, "acceso_con_clave": pending.proveedor == "password"}
+    context = {"nombre": pending.nombres or (pending.usuario.first_name if pending.usuario else ""), "enlace": url, "acceso_con_clave": pending.proveedor == "password", "proveedor": PROVEEDORES.get(pending.proveedor, "")}
     message = EmailMultiAlternatives(
         subject="Confirma tu acceso a Barrio Solidario",
         body=render_to_string("cuentas/correo_social.txt", context),
@@ -61,15 +62,15 @@ def enviar_enlace_social(request, pending, token):
 @never_cache
 @csrf_protect
 @require_http_methods(["GET", "POST"])
-def completar_registro_google(request):
+def completar_registro_social(request, proveedor):
     candidate = _candidate(request)
-    if candidate is None:
+    if candidate is None or candidate["provider"] != proveedor:
         request.session.pop("bs_social_candidate", None)
-        messages.error(request, "Vuelve a identificarte con Google para continuar.")
+        messages.error(request, "Vuelve a identificarte con el proveedor elegido para continuar.")
         return redirect("acceso")
 
     initial = {"nombres": candidate.get("nombres", ""), "apellidos": candidate.get("apellidos", "")}
-    form = CompletarRegistroGoogleForm(request.POST or None, initial=initial)
+    form = CompletarRegistroSocialForm(request.POST or None, initial=initial)
     if request.method == "POST" and form.is_valid():
         email = candidate["email"]
         User = get_user_model()
@@ -78,12 +79,12 @@ def completar_registro_google(request):
             form.add_error(None, "Espera un minuto antes de solicitar otro enlace.")
         elif User.objects.filter(email__iexact=email).exists() or PerfilUsuario.objects.filter(correo__iexact=email).exists():
             cache.delete(f"bs:social-register:{fingerprint}")
-            form.add_error(None, "Este correo ya está registrado. Entra con tu contraseña y vincula Google desde tu perfil.")
+            form.add_error(None, "Este correo ya está registrado. Entra con tu método habitual.")
         else:
             try:
                 with transaction.atomic():
                     pending, token = SolicitudAccesoSocial.crear(
-                        email=email, provider="google", uid=candidate["uid"],
+                        email=email, provider=proveedor, uid=candidate["uid"],
                         datos=form.cleaned_data,
                     )
                     enviar_enlace_social(request, pending, token)
@@ -95,7 +96,7 @@ def completar_registro_google(request):
                 request.session.pop("bs_social_candidate", None)
                 request.session["bs_correo_acceso_enviado"] = pending.correo
                 return redirect("social_enviado")
-    return render(request, "cuentas/social_completar.html", {"form": form, "correo": candidate["email"]})
+    return render(request, "cuentas/social_completar.html", {"form": form, "correo": candidate["email"], "proveedor": PROVEEDORES[proveedor]})
 
 
 @never_cache
@@ -129,13 +130,13 @@ def confirmar_acceso_social(request, token):
                 profile = PerfilUsuario.objects.filter(usuario=user).first()
                 if not user.is_active or (profile and profile.estado != PerfilUsuario.Estado.ACTIVA) or user.email.casefold() != pending.correo.casefold():
                     return render(request, "cuentas/social_confirmar.html", {"invalido": True}, status=400)
-            elif pending.usuario_id and pending.proveedor == "google":
+            elif pending.usuario_id and pending.proveedor in PROVEEDORES:
                 user = User.objects.select_for_update().get(pk=pending.usuario_id)
                 profile = PerfilUsuario.objects.get(usuario=user)
                 social = SocialAccount.objects.filter(user=user, provider=pending.proveedor, uid=pending.uid_proveedor).first()
                 if not social or not user.is_active or profile.estado != PerfilUsuario.Estado.ACTIVA or user.email.casefold() != pending.correo.casefold():
                     return render(request, "cuentas/social_confirmar.html", {"invalido": True}, status=400)
-            elif pending.proveedor == "google":
+            elif pending.proveedor in PROVEEDORES:
                 if not pending.acepto_politicas_en or User.objects.filter(email__iexact=pending.correo).exists() or PerfilUsuario.objects.filter(correo__iexact=pending.correo).exists():
                     return render(request, "cuentas/social_confirmar.html", {"invalido": True}, status=400)
                 rol, _ = Rol.objects.get_or_create(
@@ -152,7 +153,7 @@ def confirmar_acceso_social(request, token):
                     estado=PerfilUsuario.Estado.ACTIVA, acepto_politicas_en=pending.acepto_politicas_en,
                 )
                 UsuarioRol.objects.create(usuario=user, rol=rol)
-                SocialAccount.objects.create(user=user, provider="google", uid=pending.uid_proveedor)
+                SocialAccount.objects.create(user=user, provider=pending.proveedor, uid=pending.uid_proveedor)
                 EmailAddress.objects.create(user=user, email=pending.correo, verified=True, primary=True)
                 EventoAcceso.objects.create(usuario=user, tipo=EventoAcceso.Tipo.REGISTRO)
             else:

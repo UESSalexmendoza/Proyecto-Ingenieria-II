@@ -8,7 +8,7 @@ from .forms_cuentas import ROLES_PUBLICOS, RegistroForm
 from .models import PerfilUsuario
 
 
-class CompletarRegistroGoogleForm(forms.Form):
+class CompletarRegistroSocialForm(forms.Form):
     tipoUsuario = forms.ChoiceField(choices=(("", "Selecciona una opción"), *ROLES_PUBLICOS))
     nombres = forms.CharField(min_length=2, max_length=60, strip=True)
     apellidos = forms.CharField(min_length=2, max_length=60, strip=True)

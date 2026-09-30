@@ -1,0 +1,46 @@
+{% extends "panel/base.html" %}
+{% block title %}Caso #{{ caso.pk }} | Barrio Solidario{% endblock %}
+{% block content %}
+<main id="contenidoPrincipal" class="container-fluid px-3 px-xl-4 py-4">
+  <a href="{% url 'contactos_panel' %}" class="d-inline-block mb-3">← Volver a casos</a>
+  <h1 class="h3">Caso #{{ caso.pk }} <span class="badge text-bg-secondary">{{ caso.get_estado_display }}</span></h1>
+  <div class="row g-3">
+    <div class="col-lg-7"><section class="panel-card">
+      <h2 class="h5">Mensaje recibido</h2>
+      <dl class="row">
+        <dt class="col-sm-4">Nombre</dt><dd class="col-sm-8">{{ caso.nombre }}</dd>
+        <dt class="col-sm-4">Correo</dt><dd class="col-sm-8"><a href="mailto:{{ caso.email }}">{{ caso.email }}</a></dd>
+        <dt class="col-sm-4">Teléfono</dt><dd class="col-sm-8">{{ caso.telefono|default:"No proporcionado" }}</dd>
+        <dt class="col-sm-4">Institución</dt><dd class="col-sm-8">{{ caso.institucion|default:"No proporcionada" }}</dd>
+        <dt class="col-sm-4">Recibido</dt><dd class="col-sm-8">{{ caso.creado_en|date:"d/m/Y H:i" }}</dd>
+        <dt class="col-sm-4">Acuse</dt><dd class="col-sm-8">{{ caso.acuse_enviado_en|date:"d/m/Y H:i"|default:"No enviado" }}</dd>
+      </dl>
+      <p class="mb-0" style="white-space:pre-wrap;overflow-wrap:anywhere">{{ caso.mensaje }}</p>
+    </section></div>
+    <div class="col-lg-5"><section class="panel-card">
+      <h2 class="h5">Seguimiento</h2>
+      {% if puede_editar %}<form method="post">{% csrf_token %}
+        <div class="mb-3"><label for="{{ form.estado.id_for_label }}" class="form-label">Estado</label>{{ form.estado }}{{ form.estado.errors }}</div>
+        <div class="mb-3"><label for="{{ form.nota_revision.id_for_label }}" class="form-label">Nota para el remitente</label>{{ form.nota_revision }}{{ form.nota_revision.errors }}<small class="text-muted">Al cambiar el estado, esta nota se incluirá en el correo enviado al remitente. No escribas información interna aquí.</small></div>
+        <button class="btn btn-panel" type="submit">Guardar revisión</button>
+      </form>{% else %}<p>Estado: <strong>{{ caso.get_estado_display }}</strong></p><p>Nota registrada: {{ caso.nota_revision|default:"Sin nota" }}</p><p class="small text-muted">Tienes acceso de consulta a este caso.</p>{% endif %}
+      {% if caso.revisado_por %}<p class="small text-muted mt-3">Última revisión: {{ caso.revisado_por }} · {{ caso.revisado_en|date:"d/m/Y H:i" }}</p>{% endif %}
+      {% if caso.notificacion_estado_pendiente %}<p class="small text-danger mt-3" role="status">La notificación del estado actual está pendiente de envío. Guarda nuevamente para reintentar.</p>{% endif %}
+    </section></div>
+  </div>
+  <section class="panel-card mt-3" aria-labelledby="historial-contacto">
+    <h2 id="historial-contacto" class="h5">Historial de actuaciones</h2>
+    <div class="table-responsive"><table class="table align-middle">
+      <thead><tr><th scope="col">Fecha y hora</th><th scope="col">Acción</th><th scope="col">Usuario revisor</th><th scope="col">Cambio de estado</th><th scope="col">Nota al remitente</th><th scope="col">Correo</th></tr></thead>
+      <tbody>{% for actuacion in actuaciones %}<tr>
+        <td>{{ actuacion.fecha|date:"d/m/Y H:i:s" }}</td>
+        <td>{{ actuacion.get_tipo_display }}</td>
+        <td>{{ actuacion.actor.get_full_name|default:actuacion.actor.username|default:"Formulario público" }}</td>
+        <td>{% if actuacion.estado_anterior and actuacion.estado_anterior != actuacion.estado_nuevo %}{{ actuacion.estado_anterior }} → {% endif %}{{ actuacion.estado_nuevo }}</td>
+        <td style="white-space:pre-wrap;overflow-wrap:anywhere">{{ actuacion.nota|default:"—" }}</td>
+        <td>{{ actuacion.get_resultado_correo_display }}</td>
+      </tr>{% empty %}<tr><td colspan="6">Aún no hay actuaciones registradas.</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+</main>
+{% endblock %}

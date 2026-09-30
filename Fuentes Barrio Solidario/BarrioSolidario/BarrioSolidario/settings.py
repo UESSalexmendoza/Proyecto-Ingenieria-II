@@ -64,6 +64,7 @@ MIDDLEWARE = [
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
+    "BS.backends.BarrioRolBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
@@ -142,7 +143,7 @@ USE_I18N = True
 
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24  # 24 horas
 PUBLIC_BASE_URL = os.environ.get(
-    "PUBLIC_BASE_URL", "http://127.0.0.1:8000"
+    "PUBLIC_BASE_URL", "http://localhost:8000"
 )
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

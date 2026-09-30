@@ -19,6 +19,114 @@ class Rol(models.Model):
         return self.nombre
 
 
+class CambioRol(models.Model):
+    """Auditoría de configuración de roles, sin datos sensibles de los usuarios."""
+    rol = models.ForeignKey(Rol, on_delete=models.PROTECT, related_name="cambios_configuracion")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL,
+                              related_name="cambios_roles_barrio")
+    accion = models.CharField(max_length=24)
+    antes = models.JSONField(default=dict, blank=True)
+    despues = models.JSONField(default=dict, blank=True)
+    motivo = models.CharField(max_length=500)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-fecha", "-pk")
+        verbose_name = "Cambio de rol"
+        verbose_name_plural = "Cambios de roles"
+
+
+class InstitucionAval(models.Model):
+    """Instituciones publicadas en el portal por un administrador."""
+
+    nombre = models.CharField(max_length=120)
+    descripcion = models.CharField(max_length=240)
+    url = models.URLField(max_length=300)
+    imagen = models.ImageField(upload_to="instituciones/%Y/%m/")
+    activa = models.BooleanField(default=False)
+    orden = models.PositiveSmallIntegerField(default=0)
+    creada_en = models.DateTimeField(auto_now_add=True)
+    actualizada_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("orden", "nombre", "pk")
+        verbose_name = "Institución que nos avala"
+        verbose_name_plural = "Instituciones que nos avalan"
+
+    def __str__(self):
+        return self.nombre
+
+
+class CasoContacto(models.Model):
+    """Consulta pública recibida desde el formulario del portal."""
+
+    class Estado(models.TextChoices):
+        PENDIENTE = "PENDIENTE", "Pendiente"
+        EN_REVISION = "EN_REVISION", "En revisión"
+        RESPONDIDO = "RESPONDIDO", "Respondido"
+        CERRADO = "CERRADO", "Cerrado"
+
+    nombre = models.CharField(max_length=120)
+    email = models.EmailField(max_length=254)
+    telefono = models.CharField(max_length=20, blank=True)
+    institucion = models.CharField(max_length=120, blank=True)
+    mensaje = models.TextField(max_length=3000)
+    estado = models.CharField(max_length=15, choices=Estado.choices, default=Estado.PENDIENTE, db_index=True)
+    creado_en = models.DateTimeField(auto_now_add=True, db_index=True)
+    acuse_enviado_en = models.DateTimeField(null=True, blank=True)
+    notificacion_estado_pendiente = models.BooleanField(default=False)
+    estado_notificado_en = models.DateTimeField(null=True, blank=True)
+    revisado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="contactos_revisados_barrio",
+    )
+    revisado_en = models.DateTimeField(null=True, blank=True)
+    nota_revision = models.TextField(
+        "Nota para el remitente", max_length=2000, blank=True,
+        help_text="Se enviará por correo al remitente al guardar un cambio de estado o de nota.",
+    )
+
+    class Meta:
+        ordering = ("-creado_en",)
+        verbose_name = "Caso de contacto"
+        verbose_name_plural = "Casos de contacto"
+
+    def __str__(self):
+        return f"Caso #{self.pk}: {self.nombre}"
+
+
+class ActuacionContacto(models.Model):
+    class Tipo(models.TextChoices):
+        CREACION = "CREACION", "Creación"
+        REVISION = "REVISION", "Revisión"
+        REINTENTO = "REINTENTO", "Reintento de notificación"
+
+    class Correo(models.TextChoices):
+        NO_APLICA = "NO_APLICA", "No aplica"
+        PENDIENTE = "PENDIENTE", "Pendiente"
+        ENVIADO = "ENVIADO", "Enviado"
+        FALLIDO = "FALLIDO", "Fallido"
+
+    caso = models.ForeignKey(CasoContacto, on_delete=models.CASCADE, related_name="actuaciones")
+    tipo = models.CharField(max_length=10, choices=Tipo.choices)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                              on_delete=models.SET_NULL, related_name="actuaciones_contacto")
+    fecha = models.DateTimeField(auto_now_add=True)
+    estado_anterior = models.CharField(max_length=15, blank=True)
+    estado_nuevo = models.CharField(max_length=15)
+    nota = models.TextField(max_length=2000, blank=True)
+    resultado_correo = models.CharField(max_length=10, choices=Correo.choices,
+                                       default=Correo.NO_APLICA)
+
+    class Meta:
+        ordering = ("fecha", "pk")
+        verbose_name = "Actuación de contacto"
+        verbose_name_plural = "Actuaciones de contacto"
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} del caso #{self.caso_id}"
+
+
 class RolPermiso(models.Model):
     """Enlaza roles de Barrio Solidario con permisos de Django."""
 
@@ -48,7 +156,7 @@ class PerfilUsuario(models.Model):
     correo = models.EmailField(max_length=254, unique=True)
     telefono = models.CharField(max_length=25)
     estado = models.CharField(max_length=12, choices=Estado.choices, default=Estado.ACTIVA)
-    acepto_politicas_en = models.DateTimeField()
+    acepto_politicas_en = models.DateTimeField(null=True, blank=True)
     acepto_datos_personales_en = models.DateTimeField(null=True, blank=True)
     fecha_nacimiento = models.DateField(null=True, blank=True)
     sector_aproximado = models.CharField(max_length=80, blank=True)
@@ -117,6 +225,22 @@ class UsuarioRol(models.Model):
     @property
     def puede_operar(self):
         return self.activo and self.rol.activo and self.estado_aprobacion == self.Aprobacion.APROBADO
+
+
+class ActuacionUsuario(models.Model):
+    """Historial de administración; nunca almacena contraseñas ni tokens."""
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                related_name="actuaciones_administrativas")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                              on_delete=models.SET_NULL, related_name="acciones_usuarios_barrio")
+    accion = models.CharField(max_length=50)
+    detalle = models.CharField(max_length=500, blank=True)
+    fecha = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ("-fecha", "-pk")
+        verbose_name = "Actuación sobre usuario"
+        verbose_name_plural = "Actuaciones sobre usuarios"
 
 
 class SolicitudCorreccionPerfil(models.Model):
@@ -208,3 +332,73 @@ class SolicitudAccesoSocial(models.Model):
     @property
     def vigente(self):
         return self.utilizado_en is None and self.vence_en > timezone.now()
+
+
+class CatalogoSistema(models.Model):
+    """Definición administrable de un conjunto de valores del sistema."""
+    codigo = models.CharField(max_length=32, unique=True)
+    nombre = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=300)
+    activo = models.BooleanField(default=False)
+    visible_formularios = models.BooleanField(default=False)
+    version = models.PositiveIntegerField(default=1)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("nombre", "pk")
+        verbose_name = "Catálogo del sistema"
+        verbose_name_plural = "Catálogos del sistema"
+
+    def __str__(self):
+        return f"{self.codigo} · {self.nombre}"
+
+
+class ValorCatalogo(models.Model):
+    catalogo = models.ForeignKey(CatalogoSistema, on_delete=models.PROTECT, related_name="valores")
+    codigo = models.CharField(max_length=32)
+    nombre = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=300, blank=True)
+    orden = models.PositiveSmallIntegerField(default=1)
+    activo = models.BooleanField(default=True)
+    disponible_nuevas = models.BooleanField(default=True)
+    requiere_ubicacion = models.BooleanField(default=False)
+    requiere_validacion = models.BooleanField(default=False)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("orden", "pk")
+        constraints = [models.UniqueConstraint(fields=("catalogo", "codigo"), name="bs_catalogo_codigo_unico")]
+        verbose_name = "Valor de catálogo"
+        verbose_name_plural = "Valores de catálogo"
+
+    def __str__(self):
+        return f"{self.catalogo.codigo}: {self.nombre}"
+
+
+class BorradorCatalogo(models.Model):
+    catalogo = models.ForeignKey(CatalogoSistema, on_delete=models.CASCADE, related_name="borradores")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="borradores_catalogo")
+    datos = models.JSONField(default=dict)
+    version_base = models.PositiveIntegerField()
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=("catalogo", "actor"), name="bs_borrador_catalogo_actor_unico")]
+
+
+class CambioCatalogo(models.Model):
+    catalogo = models.ForeignKey(CatalogoSistema, on_delete=models.PROTECT, related_name="historial_publicacion")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    accion = models.CharField(max_length=24)
+    detalle = models.CharField(max_length=500)
+    antes = models.JSONField(default=dict)
+    despues = models.JSONField(default=dict)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-fecha", "-pk")
+        verbose_name = "Cambio de catálogo"
+        verbose_name_plural = "Cambios de catálogos"

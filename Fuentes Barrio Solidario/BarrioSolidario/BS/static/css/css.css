@@ -1478,6 +1478,10 @@
   box-shadow:0 22px 45px rgba(0,0,0,.12);
 }
 
+.ally-card-link{color:inherit;}
+.ally-card-link:focus-visible{outline:3px solid #233a66;outline-offset:3px;}
+.ally-logo{display:block;width:100%;height:auto;aspect-ratio:5/3;object-fit:contain;margin-bottom:14px;background:#f4f6fa;border-radius:10px;}
+
 .ally-badge{
   width:44px;
   height:44px;
@@ -1501,6 +1505,60 @@
 .ally-type{
   font-size:.9rem;
   color:#6b778c;
+}
+
+/* Carrusel continuo de instituciones */
+.allies-marquee{
+  overflow:hidden;
+  width:100%;
+  padding:12px 0 28px;
+  mask-image:linear-gradient(to right,transparent,#000 3%,#000 97%,transparent);
+}
+.allies-track{
+  display:flex;
+  align-items:stretch;
+  gap:20px;
+  width:max-content;
+  will-change:transform;
+}
+.allies-track.is-scrolling{
+  animation:allies-scroll var(--allies-duration,30s) linear infinite;
+}
+@keyframes allies-scroll{
+  to{transform:translate3d(calc(-1 * var(--allies-distance)),0,0)}
+}
+.allies-marquee:hover .allies-track,
+.allies-marquee:focus-within .allies-track{animation-play-state:paused}
+.allies-marquee .ally-card{
+  flex:0 0 clamp(190px,21vw,260px);
+  width:clamp(190px,21vw,260px);
+  min-height:205px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  text-decoration:none;
+  padding:16px;
+}
+.allies-marquee .ally-logo{
+  height:145px;
+  max-width:100%;
+  aspect-ratio:auto;
+  margin:0;
+  padding:8px;
+  object-fit:contain;
+}
+.allies-marquee .ally-name{
+  display:block;
+  margin:12px 0 0;
+  text-align:right;
+  font-size:.92rem;
+}
+@media(max-width:575px){
+  .allies-marquee .ally-card{flex-basis:190px;width:190px}
+}
+@media(prefers-reduced-motion:reduce){
+  .allies-marquee{overflow-x:auto;mask-image:none}
+  .allies-track.is-scrolling{animation:none}
 }
 
 .section-contact{
@@ -2035,114 +2093,3 @@
   @media (max-width: 980px){
     .bs-auth-grid{ grid-template-columns: 1fr; }
   }
-/* Páginas de cuenta: distribución coherente con el registro. */
-html, body { min-height: 100%; }
-body {
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-}
-body > main {
-  flex: 1 0 auto;
-  display: flex;
-  flex-direction: column;
-}
-body > main > .bs-auth-wrap,
-body > main > .bs-login,
-body > main > .bs-recover {
-  flex: 1 0 auto;
-  width: 100%;
-  min-height: 0;
-  padding: clamp(20px, 3vw, 42px) 0;
-  background: linear-gradient(180deg, #fff 0%, #f7f9fc 100%);
-}
-body > main > .bs-auth-wrap {
-  display: flex;
-  align-items: stretch;
-}
-.bs-auth-wrap > .bs-auth-grid {
-  flex: 1 1 auto;
-  width: 100%;
-}
-.bs-auth-grid > .bs-card { height: 100%; }
-
-/* El crecimiento vertical permite conservar el ancho máximo de 1180px. */
-.bs-account-screen { display: flex; flex-direction: column; align-items: stretch; }
-.bs-account-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
-  gap: 22px;
-  max-width: 1180px;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0 18px;
-  margin: 0 auto;
-  flex: 1 1 auto;
-}
-.bs-account-grid > .bs-card {
-  min-width: 0;
-  height: 100%;
-  padding: clamp(24px, 3vw, 38px);
-}
-.bs-account-body { display: flex; flex-direction: column; justify-content: center; }
-.bs-account-body > :last-child { margin-bottom: 0; }
-.bs-account-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
-.bs-account-actions .btn { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; }
-.bs-account-status-icon { font-size: 2.5rem; line-height: 1; color: #233a66; margin-bottom: 18px; }
-.bs-account-email-note { max-width: 55ch; line-height: 1.65; }
-
-.bs-login > .container, .bs-recover > .container {
-  display: flex;
-  flex: 1 1 auto;
-  max-width: 1180px;
-}
-.bs-login > .container > .row, .bs-recover > .container > .row { flex: 1 1 auto; }
-
-@media (max-width: 767.98px) {
-  .bs-account-grid { grid-template-columns: 1fr; gap: 16px; }
-  .bs-account-grid > .bs-card { height: auto; }
-  .bs-auth-wrap > .bs-auth-grid { align-self: stretch; }
-}
-
-/* Confirmaciones de cuenta: dos tarjetas con la altura del área principal. */
-body > main > .bs-account-screen { flex: 1 0 auto; }
-.bs-account-screen > .bs-account-grid { align-self: stretch; }
-.bs-account-grid > .bs-account-body { box-sizing: border-box; }
-
-/* El formulario de activación conserva las dos columnas y la altura disponible. */
-.bs-account-screen > .bs-account-grid { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.25fr); width:min(1180px, 100%); flex:1 1 auto; margin:0 auto; align-items:stretch; }
-.bs-account-grid > .bs-card { min-width:0; height:100%; box-sizing:border-box; }
-@media (max-width:767.98px) { .bs-account-screen > .bs-account-grid { grid-template-columns:minmax(0,1fr); } }
-
-/* Navegación: sección actual y opción legal sin línea inferior. */
-.navbar #mainNav > .navbar-nav .nav-link.active { color: #e02a56 !important; }
-.navbar #mainNav > .navbar-nav .nav-link.active::after { width: 100%; }
-.navbar #mainNav #menuLegal::after { content: none; }
-.navbar #mainNav .dropdown-item.active { background: #233a66; color: #fff; }
-@media (max-width: 1399.98px) {
-  .navbar #mainNav > .navbar-nav .nav-link::after { bottom: 0; }
-}
-
-/* Mismo color durante hover y cuando la sección está seleccionada. */
-#mainNav .navbar-nav .nav-link:hover,
-#mainNav .navbar-nav .nav-link.active { color: #e02a56 !important; }
-#mainNav .navbar-nav .nav-link.active::after { width: 100%; }
-/* Evita que el pseudo-elemento del desplegable Legal herede la línea roja. */
-#mainNav .navbar-nav #menuLegal::after { display: none !important; content: none !important; width: 0 !important; }
-#mainNav .navbar-nav #menuLegal:hover,
-#mainNav .navbar-nav #menuLegal.active,
-#mainNav .navbar-nav #menuLegal.show { color: #e02a56 !important; }
-
-/* Accesibilidad compartida: teclado, controles y lectura. */
-.bs-skip-link { position:fixed; left:1rem; top:-5rem; z-index:1100; padding:.65rem 1rem; background:#fff; color:#111; border:2px solid #111; }
-.bs-skip-link:focus { top:1rem; }
-:where(a, button, input, select, textarea, [tabindex]):focus-visible { outline:3px solid #172f60 !important; outline-offset:3px; }
-:where(button, .btn, .top-icon, .nav-link, .dropdown-item) { min-height:44px; }
-:where(input[type="checkbox"], input[type="radio"]) { min-width:20px; min-height:20px; }
-html.bs-large-text { font-size:125%; }
-body.bs-simple-reading main { max-width:80rem; margin-inline:auto; }
-body.bs-simple-reading main .carousel, body.bs-simple-reading main .hero-float-carousel { animation:none !important; }
-body.bs-simple-reading main p, body.bs-simple-reading main li { line-height:1.8; }
-body.bs-simple-reading main a { text-decoration:underline; text-underline-offset:.18em; }
-@media (max-width:767.98px) { body.bs-simple-reading main { padding-inline:1rem; } }

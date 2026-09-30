@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Completar registro con Google | Barrio Solidario{% endblock %}
+{% block title %}Completar registro con {{ proveedor }} | Barrio Solidario{% endblock %}
 {% block content %}
 <section class="bs-auth-wrap">
   <div class="bs-auth-grid">
@@ -9,14 +9,14 @@
         <img src="{% static 'img/Logo.png' %}" alt="Barrio Solidario" height="55" class="logo-img">
         <span class="brand-text">Barrio Solidario</span>
       </div></div>
-      <p class="bs-brand__subtitle">Registro con Google</p>
+      <p class="bs-brand__subtitle">Registro con {{ proveedor }}</p>
       <p class="bs-text">Completa los datos necesarios para participar de forma segura. Recibirás un correo para confirmar tu acceso.</p>
       <div class="bs-divider"></div>
       <a href="{% url 'terminos' %}" class="btn btn-social btn-google w-100">Ver términos y condiciones</a>
     </aside>
     <div class="bs-card bs-auth-form">
       <header class="bs-auth-header"><h1 class="bs-h1">Completa tu registro</h1>
-        <p class="bs-subtitle">Correo verificado por Google: <strong>{{ correo }}</strong></p>
+        <p class="bs-subtitle">Correo proporcionado por {{ proveedor }}: <strong>{{ correo }}</strong>. Lo confirmarás desde el enlace que enviaremos.</p>
       </header>
       <form class="bs-form" method="post" autocomplete="on">
         {% csrf_token %}

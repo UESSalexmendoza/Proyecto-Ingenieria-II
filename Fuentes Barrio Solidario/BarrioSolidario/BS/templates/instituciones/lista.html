@@ -1,0 +1,21 @@
+{% extends "panel/base.html" %}
+{% block title %}Instituciones | Barrio Solidario{% endblock %}
+{% block content %}
+<main id="contenidoPrincipal" class="container-fluid px-3 px-xl-4 py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div><h1 class="h3 mb-1">Instituciones que nos avalan</h1><p class="text-muted mb-0">Solo las instituciones activas se muestran en el portal.</p></div>
+    <a class="btn btn-panel" href="{% url 'institucion_nueva' %}"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Agregar institución</a>
+  </div>
+  <div class="row g-3">
+    {% for institucion in instituciones %}
+      <div class="col-md-6 col-xl-4"><article class="panel-card h-100">
+        <img src="{{ institucion.imagen.url }}" alt="" class="img-fluid rounded mb-3" style="width:100%;aspect-ratio:5/3;object-fit:contain;background:#eef2f7">
+        <div class="d-flex align-items-start justify-content-between gap-2"><h2 class="h5">{{ institucion.nombre }}</h2><span class="badge {% if institucion.activa %}text-bg-success{% else %}text-bg-secondary{% endif %}">{% if institucion.activa %}Visible{% else %}Oculta{% endif %}</span></div>
+        <p>{{ institucion.descripcion }}</p><p class="small text-muted text-break">{{ institucion.url }}</p>
+        <div class="d-flex gap-2"><a class="btn btn-outline-primary btn-sm" href="{% url 'institucion_editar' institucion.pk %}">Editar</a>
+          <form method="post" action="{% url 'institucion_eliminar' institucion.pk %}" onsubmit="return confirm('¿Eliminar esta institución y su imagen?');">{% csrf_token %}<button class="btn btn-outline-danger btn-sm" type="submit">Eliminar</button></form></div>
+      </article></div>
+    {% empty %}<div class="col-12"><div class="panel-card">Todavía no se han registrado instituciones.</div></div>{% endfor %}
+  </div>
+</main>
+{% endblock %}

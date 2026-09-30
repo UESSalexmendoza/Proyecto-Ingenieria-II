@@ -1,0 +1,12 @@
+{% extends "panel/base.html" %}
+{% block title %}Solicitud no disponible | Barrio Solidario{% endblock %}
+{% block content %}
+<main id="contenidoPrincipal" class="container py-5">
+  <section class="panel-card h-auto mx-auto text-center py-5" style="max-width:700px" role="alert">
+    <i class="bi bi-shield-lock fs-1 text-secondary" aria-hidden="true"></i>
+    <h1 class="h3 mt-3">Solicitud no disponible</h1>
+    <p>El enlace no corresponde a una solicitud de tu cuenta o ya no está disponible. Revisa tus solicitudes para abrirla desde su enlace actual.</p>
+    <a class="btn btn-panel" href="{% url 'mis_solicitudes' %}">Ir a Mis solicitudes</a>
+  </section>
+</main>
+{% endblock %}

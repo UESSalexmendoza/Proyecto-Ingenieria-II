@@ -1,0 +1,30 @@
+{% extends "panel/base.html" %}
+{% load static %}
+{% block title %}Panel del solicitante | Barrio Solidario{% endblock %}
+{% block head_extra %}<link href="{% static 'css/solicitudes.css' %}" rel="stylesheet">{% endblock %}
+{% block content %}
+<div class="bs-request"><main id="contenidoPrincipal" class="container-fluid px-3 px-xl-4 py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div><h1 class="h2 mb-1">Hola, {{ user.first_name|default:user.username }}</h1><p class="request-muted mb-0">Consulta y administra tus solicitudes de asistencia.</p></div>
+    <a class="btn btn-panel" href="{% url 'solicitud_nueva' %}"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Nueva solicitud</a>
+  </div>
+  {% if not rol_aprobado %}<div class="alert alert-warning">Tu rol de solicitante espera aprobación. Puedes preparar un borrador; podrás enviarlo cuando se apruebe el rol.</div>{% endif %}
+  <div class="row g-3 mb-3">
+    <div class="col-sm-6 col-xl-3"><div class="request-card request-stat"><i class="bi bi-clipboard2-check" aria-hidden="true"></i><div><small>Solicitudes activas</small><strong>{{ activas }}</strong></div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="request-card request-stat"><i class="bi bi-search" aria-hidden="true"></i><div><small>En revisión</small><strong>{{ revision }}</strong></div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="request-card request-stat"><i class="bi bi-check-circle" aria-hidden="true"></i><div><small>Atenciones completadas</small><strong>{{ completadas }}</strong></div></div></div>
+    <div class="col-sm-6 col-xl-3"><div class="request-card request-stat"><i class="bi bi-file-earmark-text" aria-hidden="true"></i><div><small>Borradores</small><strong>{{ borradores }}</strong></div></div></div>
+  </div>
+  <div class="row g-3 mb-3">
+    <section class="col-lg-8"><div class="request-card"><h2>Mis solicitudes recientes</h2><div class="table-responsive"><table class="table request-table"><thead><tr><th>Solicitud</th><th>Estado</th><th>Fecha</th><th>Acción</th></tr></thead><tbody>
+      {% for s in recientes %}<tr><td><strong>{{ s.tipo_ayuda.nombre }}</strong><div class="request-muted">{{ s.codigo }}</div></td><td>{{ s.get_estado_display }}</td><td>{{ s.creado_en|date:'d/m/Y' }}</td><td><a class="btn btn-outline-primary btn-sm" href="{% url 'solicitud_detalle' s.codigo_acceso %}">Ver detalle</a></td></tr>{% empty %}<tr><td colspan="4" class="request-muted">Todavía no tienes solicitudes registradas.</td></tr>{% endfor %}
+    </tbody></table></div><a class="request-list-link" href="{% url 'mis_solicitudes' %}">Ver todas las solicitudes</a></div></section>
+    <section class="col-lg-4"><div class="request-card"><h2>Próxima atención</h2><p class="request-muted mb-0"><i class="bi bi-calendar-event me-2" aria-hidden="true"></i>Aún no hay una atención programada. Cuando coordinación asigne fecha y voluntario, aparecerá aquí.</p></div></section>
+  </div>
+  <div class="row g-3">
+    <section class="col-lg-6"><div class="request-card"><h2>Actividad reciente</h2>{% for a in actividades %}<div class="request-activity"><i class="bi bi-check-circle" aria-hidden="true"></i><div><a href="{% url 'solicitud_detalle' a.solicitud.codigo_acceso %}">{{ a.solicitud.codigo }}</a> · {{ a.descripcion }}<div class="request-muted">{{ a.fecha|date:'d/m/Y H:i' }}</div></div></div>{% empty %}<p class="request-muted mb-0">Aún no hay actividad.</p>{% endfor %}</div></section>
+    <section class="col-lg-6"><div class="request-card"><h2>Notificaciones</h2><p class="request-muted">Los cambios de estado se muestran en el historial de cada solicitud.</p><a href="{% url 'mis_solicitudes' %}">Consultar mis solicitudes</a></div></section>
+  </div>
+  <div class="request-card mt-3 py-3"><i class="bi bi-question-circle me-2" aria-hidden="true"></i>¿Necesitas ayuda? <a href="{% url 'inicio' %}#contacto">Contactar soporte</a></div>
+</main></div>
+{% endblock %}

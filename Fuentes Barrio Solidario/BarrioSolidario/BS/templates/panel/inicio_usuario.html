@@ -14,6 +14,8 @@
   </div>
   {% if user.is_superuser %}<section class="panel-card mt-4"><h2 class="h5">Instituciones que nos avalan</h2><p>Revisa y publica las instituciones visibles en el portal público.</p><a class="btn btn-panel" href="{% url 'instituciones_panel' %}">Administrar instituciones</a></section>{% endif %}
   {% if user|puede_moderar_contactos %}<section class="panel-card mt-4"><h2 class="h5">Casos de contacto</h2><p>Revisa los mensajes recibidos y actualiza el estado de cada caso.</p><a class="btn btn-panel" href="{% url 'contactos_panel' %}">Revisar casos</a></section>{% endif %}
+  {% for asignacion in roles %}{% if asignacion.rol.codigo == 'VOLUNTARIO' and asignacion.puede_operar %}<section class="panel-card mt-3 h-auto"><h2 class="h5">Mi radio de apoyo</h2><p>Indica tu ubicación aproximada y cuántos kilómetros estás dispuesto a recorrer para futuras asignaciones.</p><a href="{% url 'ubicacion_voluntario' %}" class="btn btn-outline-primary">Configurar ubicación</a></section>{% endif %}{% endfor %}
+  {% for asignacion in roles %}{% if asignacion.rol.codigo == 'COORDINADOR' and asignacion.puede_operar %}<section class="panel-card mt-3 h-auto"><h2 class="h5">Solicitudes por revisar</h2><a href="{% url 'revisar_solicitudes' %}" class="btn btn-outline-primary">Abrir revisión</a></section>{% endif %}{% endfor %}
   <p class="mt-4"><a href="{% url 'inicio' %}">Volver al portal público</a></p>
 </main>
 {% endblock %}

@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django import forms
+from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.utils import timezone
 
 from .forms_contacto import validar_texto_plano
@@ -15,7 +17,55 @@ from .models import (
     SolicitudCorreccionPerfil,
     CasoContacto,
     ActuacionContacto,
+    PostulacionVoluntario,
 )
+
+
+class RevisionPostulacionAdminForm(forms.ModelForm):
+    class Meta:
+        model = PostulacionVoluntario
+        fields = "__all__"
+
+    def clean_estado(self):
+        nuevo = self.cleaned_data["estado"]
+        if self.instance.pk and nuevo != self.instance.estado:
+            if self.instance.estado != PostulacionVoluntario.Estado.ENVIADA or nuevo not in (
+                    PostulacionVoluntario.Estado.APROBADA, PostulacionVoluntario.Estado.RECHAZADA):
+                raise ValidationError("Solo se puede aprobar o rechazar una postulación enviada.")
+        return nuevo
+
+
+@admin.register(PostulacionVoluntario)
+class PostulacionVoluntarioAdmin(admin.ModelAdmin):
+    form = RevisionPostulacionAdminForm
+    list_display = ("solicitud", "voluntario", "estado", "fecha_disponible", "enviada_en", "revisado_en")
+    list_filter = ("estado", "enviada_en")
+    search_fields = ("voluntario__email", "=solicitud__id")
+    readonly_fields = ("solicitud", "voluntario", "fecha_disponible", "hora_desde", "hora_hasta",
+        "tiene_transporte", "mensaje", "confirmado_en", "acepto_revision_en", "enviada_en",
+        "creado_en", "actualizado_en", "revisado_por", "revisado_en")
+    fields = readonly_fields + ("estado", "nota_revision")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_readonly_fields(self, request, obj=None):
+        campos = super().get_readonly_fields(request, obj)
+        if obj and obj.estado != PostulacionVoluntario.Estado.ENVIADA:
+            return (*campos, "estado")
+        return campos
+
+    def save_model(self, request, obj, form, change):
+        if "estado" in form.changed_data:
+            obj.revisado_por = request.user
+            obj.revisado_en = timezone.now()
+        super().save_model(request, obj, form, change)
+        if "estado" in form.changed_data:
+            from .views_voluntariado import notificar_resultado_postulacion
+            transaction.on_commit(lambda: notificar_resultado_postulacion(obj.pk, request))
 
 
 @admin.register(PerfilUsuario)

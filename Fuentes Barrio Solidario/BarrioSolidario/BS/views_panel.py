@@ -23,6 +23,13 @@ def _resumen(estados, conteos, total):
 @login_required(login_url="acceso")
 def panel_cuenta(request):
     usuario = request.user
+    if not usuario.is_superuser and not _puede_moderar(usuario):
+        from .views_solicitudes import tiene_rol_solicitante, panel_solicitante
+        if tiene_rol_solicitante(usuario):
+            return panel_solicitante(request)
+        from .views_voluntariado import rol_voluntario, panel_voluntario
+        if rol_voluntario(usuario):
+            return panel_voluntario(request)
     if not _puede_moderar(usuario):
         return render(request, "panel/inicio_usuario.html", {
             "perfil": PerfilUsuario.objects.filter(usuario=usuario).first(),

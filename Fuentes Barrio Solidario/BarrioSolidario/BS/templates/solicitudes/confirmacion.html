@@ -1,0 +1,24 @@
+{% extends "panel/base.html" %}
+{% load static %}
+{% block title %}Solicitud registrada | Barrio Solidario{% endblock %}
+{% block head_extra %}<link href="{% static 'css/solicitudes.css' %}" rel="stylesheet">{% endblock %}
+{% block content %}
+<div class="bs-request"><main id="contenidoPrincipal" class="container-fluid px-3 px-xl-4 py-4">
+  <nav class="small mb-3" aria-label="Ruta"><a href="{% url 'panel_cuenta' %}">Panel</a> / <a href="{% url 'solicitud_nueva' %}">Nueva solicitud</a> / Confirmación</nav>
+  <div class="row g-3 justify-content-center">
+    <section class="col-lg-8"><div class="request-card text-center">
+      <div class="request-confirm-icon"><i class="bi bi-check-circle" aria-hidden="true"></i></div>
+      <h1 class="h3">Solicitud registrada correctamente</h1>
+      <p class="request-muted">La información fue enviada para revisión. Te avisaremos cuando cambie su estado.</p>
+      <div class="fw-bold fs-5">Código de solicitud: {{ solicitud.codigo }}</div><span class="badge text-bg-warning">{{ solicitud.get_estado_display }}</span>
+      <div class="request-summary"><h2 class="mb-2">Resumen de la solicitud</h2><dl class="row mb-0"><dt class="col-sm-5">Tipo de ayuda</dt><dd class="col-sm-7">{{ solicitud.tipo_ayuda.nombre }}</dd><dt class="col-sm-5">Prioridad</dt><dd class="col-sm-7">{{ solicitud.prioridad.nombre }}</dd><dt class="col-sm-5">Fecha requerida</dt><dd class="col-sm-7">{{ solicitud.fecha_requerida|date:'d/m/Y' }}</dd><dt class="col-sm-5">Ubicación</dt><dd class="col-sm-7">{{ solicitud.sector_referencia }}</dd></dl></div>
+      <div class="request-timeline" aria-label="Etapas de la solicitud"><div class="done"><span><i class="bi bi-check" aria-hidden="true"></i></span>Registrada</div><div class="current"><span>2</span>En revisión</div><div><span>3</span>Publicada</div></div>
+      <p class="request-muted">Un coordinador verificará la solicitud antes de ponerla a disposición de voluntarios.</p>
+      {% if solicitud.confirmacion_pendiente %}<div class="alert alert-warning">La solicitud se guardó, pero el correo de confirmación está pendiente. Puedes reintentarlo desde el detalle.</div>{% else %}<div class="alert alert-success">Enviamos el resumen al correo registrado en tu cuenta.</div>{% endif %}
+      <div class="d-flex justify-content-center flex-wrap gap-2"><a class="btn btn-panel" href="{% url 'solicitud_detalle' solicitud.codigo_acceso %}">Ver mi solicitud</a><a class="btn btn-outline-secondary" href="{% url 'panel_cuenta' %}">Volver al panel</a><a class="btn btn-outline-primary" href="{% url 'solicitud_nueva' %}">Registrar otra solicitud</a></div>
+    </div></section>
+    <aside class="col-lg-4"><div class="request-card h-auto mb-3"><h2>¿Qué puedes hacer ahora?</h2><ul class="mb-0"><li>Consultar el estado en Mis solicitudes.</li><li>Cancelarla si ya no necesitas ayuda.</li><li>Revisar su historial de actuaciones.</li></ul></div><div class="request-card h-auto"><i class="bi bi-bell me-2" aria-hidden="true"></i><strong>Solicitud recibida</strong><p class="request-muted mb-0">Te avisaremos cuando sea revisada.</p></div></aside>
+  </div>
+  <div class="text-center mt-3"><i class="bi bi-question-circle me-2" aria-hidden="true"></i>¿Necesitas ayuda? <a href="{% url 'inicio' %}#contacto">Contactar soporte</a></div>
+</main></div>
+{% endblock %}

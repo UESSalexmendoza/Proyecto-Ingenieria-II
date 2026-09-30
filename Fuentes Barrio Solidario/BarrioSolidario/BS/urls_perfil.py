@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views_cuentas, views_perfil, views_instituciones, views_contacto, views_panel, views_usuarios, views_roles, views_catalogos
+from . import views_cuentas, views_perfil, views_instituciones, views_contacto, views_panel, views_usuarios, views_roles, views_catalogos, views_solicitudes, views_ubicacion_voluntario, views_voluntariado
 
 urlpatterns = [
     path("contacto/enviar/", views_contacto.registrar, name="contacto_enviar"),
@@ -26,6 +26,23 @@ urlpatterns = [
     path("panel/usuarios/<int:pk>/avatar/", views_usuarios.avatar_usuario, name="usuario_avatar"),
     path("panel/usuarios/<int:pk>/reenviar/", views_usuarios.reenviar_invitacion, name="usuario_reenviar"),
     path("panel/usuarios/activar/<str:uidb64>/<str:token>/", views_usuarios.activar_alta_administrativa, name="activar_alta_administrativa"),
+    path("panel/solicitudes/revision/", views_solicitudes.revisar_solicitudes, name="revisar_solicitudes"),
+    path("panel/solicitudes/revision/<int:pk>/", views_solicitudes.revisar_solicitud, name="solicitud_revision"),
+    path("panel/solicitudes/", views_solicitudes.mis_solicitudes, name="mis_solicitudes"),
+    path("panel/solicitudes/nueva/", views_solicitudes.nueva_solicitud, name="solicitud_nueva"),
+    path("panel/solicitudes/borrador/<slug:codigo>/", views_solicitudes.nueva_solicitud, name="solicitud_editar_borrador"),
+    path("panel/solicitudes/<int:pk>/", views_solicitudes.solicitud_no_disponible, name="solicitud_enlace_anterior"),
+    path("panel/solicitudes/<slug:codigo>/", views_solicitudes.solicitud_detalle, name="solicitud_detalle"),
+    path("panel/solicitudes/<slug:codigo>/editar/", views_solicitudes.editar_solicitud, name="solicitud_editar"),
+    path("panel/solicitudes/<slug:codigo>/confirmacion/", views_solicitudes.solicitud_confirmacion, name="solicitud_confirmacion"),
+    path("panel/solicitudes/<slug:codigo>/cancelar/", views_solicitudes.cancelar_solicitud, name="solicitud_cancelar"),
+    path("panel/solicitudes/<slug:codigo>/reenviar/", views_solicitudes.reenviar_confirmacion, name="solicitud_reenviar"),
+    path("panel/solicitante/", views_solicitudes.panel_solicitante, name="panel_solicitante"),
+    path("panel/voluntario/ubicacion/", views_ubicacion_voluntario.ubicacion_voluntario, name="ubicacion_voluntario"),
+    path("panel/voluntario/", views_voluntariado.panel_voluntario, name="voluntario_panel"),
+    path("panel/voluntario/postulaciones/", views_voluntariado.mis_postulaciones, name="voluntario_postulaciones"),
+    path("panel/voluntario/ayudas/<slug:codigo>/", views_voluntariado.detalle_voluntario, name="voluntario_detalle"),
+    path("panel/voluntario/ayudas/<slug:codigo>/postular/", views_voluntariado.postulacion, name="voluntario_postular"),
     path("panel/", views_panel.panel_cuenta, name="panel_cuenta"),
     path("perfil/", views_perfil.perfil_cuenta, name="perfil_cuenta"),
     path("perfil/borrador/descartar/", views_perfil.descartar_borrador_perfil, name="descartar_borrador_perfil"),

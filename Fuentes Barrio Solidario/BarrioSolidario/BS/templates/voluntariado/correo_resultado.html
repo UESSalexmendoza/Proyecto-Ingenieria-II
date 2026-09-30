@@ -1,0 +1,8 @@
+{% extends 'cuentas/correo_base.html' %}
+{% block correo_titulo %}Resultado de postulación | Barrio Solidario{% endblock %}
+{% block correo_previa %}Tu postulación a la solicitud {{ postulacion.solicitud.codigo }} fue revisada.{% endblock %}
+{% block correo_encabezado %}Resultado de tu postulación{% endblock %}
+{% block correo_contenido %}<p style="font-size:15px;line-height:1.7;">Hola {{ nombre|default:'voluntario' }}, tu postulación a la solicitud <strong>{{ postulacion.solicitud.codigo }}</strong> tiene el estado <strong>{{ postulacion.get_estado_display }}</strong>.</p>{% if nota %}<p style="font-size:15px;line-height:1.7;">Nota de coordinación: {{ nota }}</p>{% endif %}<p style="font-size:15px;line-height:1.7;">Consulta el estado en tu panel. La aprobación de una postulación no constituye por sí sola una asignación confirmada.</p>{% endblock %}
+{% block correo_boton %}Ver mis postulaciones{% endblock %}
+{% block correo_aviso %}Ingresa en Barrio Solidario para consultar las próximas novedades.{% endblock %}
+{% block correo_pie %}No compartas información sensible respondiendo a este correo.{% endblock %}

@@ -1,0 +1,5 @@
+Barrio Solidario | Universidad Espíritu Santo (UEES)
+Hola {{ nombre }}:
+La solicitud {{ solicitud.codigo }} cambió a {{ solicitud.get_estado_display }}.
+Nota del equipo: {{ nota }}
+Consulta el detalle: {{ enlace }}

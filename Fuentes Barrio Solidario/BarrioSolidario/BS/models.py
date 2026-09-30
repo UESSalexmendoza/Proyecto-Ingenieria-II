@@ -186,6 +186,9 @@ class PerfilUsuario(models.Model):
     permitir_contacto_coordinacion = models.BooleanField(default=True)
     permitir_contacto_usuarios = models.BooleanField(default=False)
     ocultar_informacion_adicional = models.BooleanField(default=True)
+    latitud_ubicacion = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitud_ubicacion = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    ubicacion_actualizada_en = models.DateTimeField(null=True, blank=True)
     avatar = models.ImageField(upload_to="avatares/%Y/%m/", blank=True)
     actualizado_en = models.DateTimeField(auto_now=True)
 
@@ -402,3 +405,124 @@ class CambioCatalogo(models.Model):
         ordering = ("-fecha", "-pk")
         verbose_name = "Cambio de catálogo"
         verbose_name_plural = "Cambios de catálogos"
+
+
+class SolicitudAsistencia(models.Model):
+    class Estado(models.TextChoices):
+        BORRADOR = "BORRADOR", "Borrador"
+        EN_REVISION = "EN_REVISION", "En revisión"
+        APROBADA = "APROBADA", "Aprobada"
+        OBSERVADA = "OBSERVADA", "Observada"
+        RECHAZADA = "RECHAZADA", "Rechazada"
+        CANCELADA = "CANCELADA", "Cancelada"
+        COMPLETADA = "COMPLETADA", "Completada"
+
+    class Destinatario(models.TextChoices):
+        PROPIA = "PROPIA", "Para mí"
+        ADULTO_CUIDADO = "ADULTO_CUIDADO", "Para un adulto mayor a mi cuidado"
+
+    solicitante = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                    related_name="solicitudes_asistencia_barrio")
+    tipo_ayuda = models.ForeignKey(ValorCatalogo, on_delete=models.PROTECT,
+                                   related_name="solicitudes_tipo_ayuda")
+    prioridad = models.ForeignKey(ValorCatalogo, on_delete=models.PROTECT,
+                                  related_name="solicitudes_prioridad")
+    destinatario = models.CharField(max_length=18, choices=Destinatario.choices)
+    descripcion = models.TextField(max_length=500)
+    fecha_requerida = models.DateField()
+    sector_referencia = models.CharField(max_length=160)
+    latitud = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitud = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    consentimiento_ubicacion_en = models.DateTimeField(null=True, blank=True)
+    persona_contacto = models.CharField(max_length=120)
+    telefono_contacto = models.CharField(max_length=15)
+    correo_contacto = models.EmailField(max_length=254, null=True, blank=True)
+    disponibilidad = models.CharField(max_length=25)
+    observaciones = models.TextField(max_length=500, blank=True)
+    estado = models.CharField(max_length=12, choices=Estado.choices, default=Estado.BORRADOR, db_index=True)
+    acepto_tratamiento_en = models.DateTimeField(null=True, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+    enviada_en = models.DateTimeField(null=True, blank=True)
+    confirmacion_enviada_en = models.DateTimeField(null=True, blank=True)
+    confirmacion_pendiente = models.BooleanField(default=False)
+    revisado_por = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                                     on_delete=models.SET_NULL, related_name="solicitudes_revisadas_barrio")
+    revisado_en = models.DateTimeField(null=True, blank=True)
+    nota_revision = models.CharField(max_length=300, blank=True)
+
+    class Meta:
+        ordering = ("-creado_en", "-pk")
+        verbose_name = "Solicitud de asistencia"
+        verbose_name_plural = "Solicitudes de asistencia"
+
+    @property
+    def codigo(self):
+        return f"SOL-{self.creado_en.year}-{self.pk:04d}" if self.pk and self.creado_en else "Pendiente"
+
+    @property
+    def disponibilidad_legible(self):
+        nombres = {"MANANA": "Mañana", "TARDE": "Tarde", "NOCHE": "Noche"}
+        return ", ".join(nombres.get(item, item) for item in self.disponibilidad.split(",") if item)
+
+    @property
+    def codigo_acceso(self):
+        """Identificador público opaco; no revela el consecutivo interno."""
+        import hashlib
+        import hmac
+        if not self.pk:
+            return ""
+        from django.conf import settings
+        clave = settings.SECRET_KEY.encode("utf-8")
+        contenido = f"barrio-solidario:solicitud:{self.pk}".encode("utf-8")
+        return hmac.new(clave, contenido, hashlib.sha256).hexdigest()[:32]
+
+
+class ActuacionSolicitud(models.Model):
+    solicitud = models.ForeignKey(SolicitudAsistencia, on_delete=models.CASCADE,
+                                 related_name="actuaciones")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+                              null=True, related_name="actuaciones_solicitud_barrio")
+    accion = models.CharField(max_length=32)
+    descripcion = models.CharField(max_length=350)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-fecha", "-pk")
+        verbose_name = "Actuación de solicitud"
+        verbose_name_plural = "Actuaciones de solicitudes"
+
+
+class PostulacionVoluntario(models.Model):
+    """Oferta del voluntario; su aceptación no asigna automáticamente la solicitud."""
+    class Estado(models.TextChoices):
+        BORRADOR = "BORRADOR", "Borrador"
+        ENVIADA = "ENVIADA", "Pendiente de revisión"
+        APROBADA = "APROBADA", "Aprobada"
+        RECHAZADA = "RECHAZADA", "Rechazada"
+        RETIRADA = "RETIRADA", "Retirada"
+
+    solicitud = models.ForeignKey(SolicitudAsistencia, on_delete=models.PROTECT, related_name="postulaciones")
+    voluntario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                  related_name="postulaciones_voluntariado")
+    estado = models.CharField(max_length=10, choices=Estado.choices, default=Estado.BORRADOR, db_index=True)
+    fecha_disponible = models.DateField(null=True, blank=True)
+    hora_desde = models.TimeField(null=True, blank=True)
+    hora_hasta = models.TimeField(null=True, blank=True)
+    tiene_transporte = models.BooleanField(default=False)
+    mensaje = models.CharField(max_length=400, blank=True)
+    confirmado_en = models.DateTimeField(null=True, blank=True)
+    acepto_revision_en = models.DateTimeField(null=True, blank=True)
+    enviada_en = models.DateTimeField(null=True, blank=True)
+    revisado_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                                    related_name="postulaciones_revisadas")
+    revisado_en = models.DateTimeField(null=True, blank=True)
+    nota_revision = models.CharField(max_length=300, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["solicitud", "voluntario"], name="bs_postulacion_unica")]
+        ordering = ("-actualizado_en",)
+        verbose_name = "Postulación de voluntario"
+        verbose_name_plural = "Postulaciones de voluntarios"

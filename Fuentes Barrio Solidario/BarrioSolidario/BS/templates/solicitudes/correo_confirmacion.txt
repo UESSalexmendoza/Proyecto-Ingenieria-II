@@ -1,0 +1,17 @@
+Barrio Solidario | Universidad Espíritu Santo (UEES)
+Hola {{ nombre }}:
+
+Recibimos la solicitud {{ solicitud.codigo }} y quedó {{ solicitud.get_estado_display }}.
+Tipo de ayuda: {{ solicitud.tipo_ayuda.nombre }}
+Prioridad: {{ solicitud.prioridad.nombre }}
+Fecha requerida: {{ solicitud.fecha_requerida|date:'d/m/Y' }}
+Sector: {{ solicitud.sector_referencia }}
+Persona de contacto: {{ solicitud.persona_contacto }}
+Teléfono: {{ solicitud.telefono_contacto }}
+Correo de contacto: {{ solicitud.correo_contacto|default:solicitud.solicitante.email }}
+Disponibilidad: {{ solicitud.disponibilidad }}
+Descripción: {{ solicitud.descripcion }}
+Observaciones: {{ solicitud.observaciones|default:'Ninguna' }}
+
+Consulta tu solicitud: {{ enlace }}
+La ubicación exacta del mapa no se incluye en este correo.

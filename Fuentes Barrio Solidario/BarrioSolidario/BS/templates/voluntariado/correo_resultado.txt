@@ -1,0 +1,7 @@
+Barrio Solidario | Universidad Espíritu Santo (UEES)
+Hola {{ nombre|default:'voluntario' }}:
+Tu postulación a la solicitud {{ postulacion.solicitud.codigo }} fue revisada.
+Estado: {{ postulacion.get_estado_display }}.
+{% if nota %}Nota de coordinación: {{ nota }}
+{% endif %}Una postulación aprobada no constituye por sí sola una asignación confirmada.
+Consulta tus postulaciones: {{ enlace }}

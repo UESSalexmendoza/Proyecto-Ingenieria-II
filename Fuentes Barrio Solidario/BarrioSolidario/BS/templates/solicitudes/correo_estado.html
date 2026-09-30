@@ -1,0 +1,8 @@
+{% extends "cuentas/correo_base.html" %}
+{% block correo_titulo %}Actualización de solicitud | Barrio Solidario{% endblock %}
+{% block correo_previa %}Tu solicitud {{ solicitud.codigo }} cambió de estado.{% endblock %}
+{% block correo_encabezado %}Actualización de tu solicitud{% endblock %}
+{% block correo_contenido %}<p style="font-size:15px;line-height:1.7;">La solicitud <strong>{{ solicitud.codigo }}</strong> cambió al estado <strong>{{ solicitud.get_estado_display }}</strong>.</p><p style="font-size:15px;line-height:1.7;">Nota del equipo: <strong>{{ nota }}</strong></p>{% endblock %}
+{% block correo_boton %}Consultar solicitud{% endblock %}
+{% block correo_aviso %}El estado y el historial están disponibles al ingresar en Barrio Solidario.{% endblock %}
+{% block correo_pie %}No compartas datos sensibles por respuesta a este correo.{% endblock %}

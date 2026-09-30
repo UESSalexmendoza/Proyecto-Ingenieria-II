@@ -1,0 +1,8 @@
+{% extends 'cuentas/correo_base.html' %}
+{% block correo_titulo %}Asistencia coordinada | Barrio Solidario{% endblock %}
+{% block correo_previa %}Se coordinó la asistencia {{ asignacion.solicitud.codigo }}.{% endblock %}
+{% block correo_encabezado %}Asistencia coordinada{% endblock %}
+{% block correo_contenido %}<p style="font-size:15px;line-height:1.7;">Hola {{ nombre|default:'participante' }}, se registró una asignación para la solicitud <strong>{{ asignacion.solicitud.codigo }}</strong>.</p><p style="font-size:15px;line-height:1.7;">Fecha: <strong>{{ asignacion.fecha_atencion|date:'d/m/Y' }}</strong>. Horario: <strong>{{ asignacion.hora_inicio|time:'H:i' }}–{{ asignacion.hora_fin|time:'H:i' }}</strong>.</p>{% if destino == 'voluntario' %}<p>Instrucciones: {{ asignacion.instrucciones_voluntario }}</p>{% else %}<p>Instrucciones: {{ asignacion.instrucciones_solicitante }}</p>{% endif %}{% endblock %}
+{% block correo_boton %}Consultar mi panel{% endblock %}
+{% block correo_aviso %}Ingresa en Barrio Solidario para consultar novedades.{% endblock %}
+{% block correo_pie %}No compartas datos sensibles por respuesta a este correo.{% endblock %}

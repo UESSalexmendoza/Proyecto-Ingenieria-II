@@ -17,7 +17,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
 from .distancias import distancia_km
 from .forms_voluntariado import PostulacionForm
-from .models import PerfilUsuario, PostulacionVoluntario, SolicitudAsistencia, UsuarioRol
+from .models import AsignacionAsistencia, PerfilUsuario, PostulacionVoluntario, SolicitudAsistencia, UsuarioRol
 from .views_cuentas import _adjuntar_logo_uees
 
 logger = logging.getLogger(__name__)
@@ -62,6 +62,7 @@ def _cercanas(request, perfil):
         return []
     qs = SolicitudAsistencia.objects.filter(estado=SolicitudAsistencia.Estado.APROBADA,
         fecha_requerida__gte=timezone.localdate(),
+        asignacion__isnull=True,
         latitud__isnull=False, longitud__isnull=False, consentimiento_ubicacion_en__isnull=False,
         solicitante__is_active=True).exclude(solicitante=request.user).select_related("tipo_ayuda", "prioridad")
     candidatos = []
@@ -105,14 +106,25 @@ def panel_voluntario(request):
 def detalle_voluntario(request, codigo):
     perfil = _perfil(request)
     encontrada = _encontrar(request, codigo, perfil)
+    asignacion = None
     if not encontrada:
-        raise Http404("Solicitud no disponible en tu zona de cobertura.")
+        # El voluntario asignado conserva el acceso al seguimiento aunque cambie su radio.
+        for a in AsignacionAsistencia.objects.filter(postulacion__voluntario=request.user).select_related("solicitud"):
+            if hmac.compare_digest(a.solicitud.codigo_acceso, codigo):
+                asignacion = a
+                encontrada = (a.solicitud, None)
+                break
+        if not encontrada:
+            raise Http404("Solicitud no disponible en tu zona de cobertura.")
     solicitud, km = encontrada
+    if asignacion is None:
+        asignacion = AsignacionAsistencia.objects.filter(solicitud=solicitud,
+            postulacion__voluntario=request.user).first()
     propia = PostulacionVoluntario.objects.filter(solicitud=solicitud, voluntario=request.user).first()
     otras = [(s, d) for s, d in _cercanas(request, perfil) if s.pk != solicitud.pk][:3]
     return render(request, "voluntariado/detalle.html", {"solicitud": solicitud, "distancia": km,
         "propia": propia, "otras": otras, "perfil": perfil,
-        "punto": _mapa_aproximado([(solicitud, km)])[0]})
+        "punto": _mapa_aproximado([(solicitud, km)])[0], "asignacion": asignacion})
 
 
 @login_required(login_url="acceso")

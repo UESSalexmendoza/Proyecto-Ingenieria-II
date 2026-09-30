@@ -18,7 +18,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods, require_POST
 from .forms_solicitudes import SolicitudAsistenciaForm, SolicitudEdicionForm, CancelacionSolicitudForm, opciones, CATALOGO_TIPOS, CATALOGO_PRIORIDADES
-from .models import ActuacionSolicitud, PerfilUsuario, SolicitudAsistencia, UsuarioRol
+from .models import ActuacionSolicitud, AsignacionAsistencia, PerfilUsuario, SolicitudAsistencia, UsuarioRol
 from .views_cuentas import _adjuntar_logo_uees
 
 logger = logging.getLogger(__name__)
@@ -245,6 +245,8 @@ def solicitud_detalle(request, codigo):
         return _no_disponible(request)
     return render(request, "solicitudes/detalle.html", {
         "solicitud": solicitud, "actuaciones": solicitud.actuaciones.select_related("actor"),
+        "asignacion": AsignacionAsistencia.objects.filter(solicitud=solicitud).select_related(
+            "postulacion__voluntario").first(),
     })
 
 
@@ -351,17 +353,19 @@ def reenviar_confirmacion(request, codigo):
 def _es_revisor(usuario):
     if not usuario.is_authenticated or not usuario.is_active:
         return False
-    return usuario.is_superuser or UsuarioRol.objects.filter(usuario=usuario, rol__codigo="COORDINADOR",
-        rol__activo=True, activo=True, estado_aprobacion=UsuarioRol.Aprobacion.APROBADO).exists()
+    if usuario.is_superuser:
+        return True
+    return PerfilUsuario.objects.filter(usuario=usuario, estado=PerfilUsuario.Estado.ACTIVA).exists() and UsuarioRol.objects.filter(
+        usuario=usuario, rol__codigo="COORDINADOR", rol__activo=True, activo=True,
+        estado_aprobacion=UsuarioRol.Aprobacion.APROBADO).exists()
 
 
 @login_required(login_url="acceso")
 def revisar_solicitudes(request):
     if not _es_revisor(request.user):
         raise PermissionDenied
-    lista = SolicitudAsistencia.objects.select_related("tipo_ayuda", "solicitante").filter(
-        estado__in=[SolicitudAsistencia.Estado.EN_REVISION, SolicitudAsistencia.Estado.OBSERVADA]).order_by("creado_en")[:100]
-    return render(request, "solicitudes/revision_lista.html", {"solicitudes": lista})
+    from .views_coordinacion import bandeja_coordinacion
+    return bandeja_coordinacion(request)
 
 
 @login_required(login_url="acceso")
@@ -412,4 +416,10 @@ def revisar_solicitud(request, pk):
             else:
                 messages.success(request, "Revisión guardada y notificada al solicitante.")
             return redirect("solicitud_revision", pk=pk)
-    return render(request, "solicitudes/revision_detalle.html", {"solicitud": solicitud})
+    from .models import PostulacionVoluntario
+    return render(request, "solicitudes/revision_detalle.html", {
+        "solicitud": solicitud,
+        "postulaciones": PostulacionVoluntario.objects.filter(solicitud=solicitud).exclude(
+            estado=PostulacionVoluntario.Estado.BORRADOR).select_related("voluntario")[:5],
+        "actuaciones": solicitud.actuaciones.select_related("actor")[:10],
+    })

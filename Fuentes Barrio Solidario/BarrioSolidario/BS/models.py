@@ -501,11 +501,12 @@ class PostulacionVoluntario(models.Model):
         APROBADA = "APROBADA", "Aprobada"
         RECHAZADA = "RECHAZADA", "Rechazada"
         RETIRADA = "RETIRADA", "Retirada"
+        NO_SELECCIONADA = "NO_SELECCIONADA", "No seleccionada"
 
     solicitud = models.ForeignKey(SolicitudAsistencia, on_delete=models.PROTECT, related_name="postulaciones")
     voluntario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
                                   related_name="postulaciones_voluntariado")
-    estado = models.CharField(max_length=10, choices=Estado.choices, default=Estado.BORRADOR, db_index=True)
+    estado = models.CharField(max_length=16, choices=Estado.choices, default=Estado.BORRADOR, db_index=True)
     fecha_disponible = models.DateField(null=True, blank=True)
     hora_desde = models.TimeField(null=True, blank=True)
     hora_hasta = models.TimeField(null=True, blank=True)
@@ -526,3 +527,33 @@ class PostulacionVoluntario(models.Model):
         ordering = ("-actualizado_en",)
         verbose_name = "Postulación de voluntario"
         verbose_name_plural = "Postulaciones de voluntarios"
+
+
+class AsignacionAsistencia(models.Model):
+    """Confirmación única para coordinar la atención de una solicitud."""
+    class Estado(models.TextChoices):
+        ASIGNADA = "ASIGNADA", "Asignada"
+        EN_ATENCION = "EN_ATENCION", "En atención"
+        CIERRE_PENDIENTE = "CIERRE_PENDIENTE", "Cierre por revisar"
+        COMPLETADA = "COMPLETADA", "Completada"
+
+    solicitud = models.OneToOneField(SolicitudAsistencia, on_delete=models.PROTECT, related_name="asignacion")
+    postulacion = models.OneToOneField(PostulacionVoluntario, on_delete=models.PROTECT,
+                                     related_name="asignacion")
+    coordinador = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                    related_name="asignaciones_coordinadas")
+    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.ASIGNADA, db_index=True)
+    fecha_atencion = models.DateField()
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
+    instrucciones_voluntario = models.CharField(max_length=400)
+    instrucciones_solicitante = models.CharField(max_length=400)
+    nota_interna = models.CharField(max_length=400, blank=True)
+    creada_en = models.DateTimeField(auto_now_add=True)
+    actualizada_en = models.DateTimeField(auto_now=True)
+    cierre_en = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-creada_en",)
+        verbose_name = "Asignación de asistencia"
+        verbose_name_plural = "Asignaciones de asistencia"

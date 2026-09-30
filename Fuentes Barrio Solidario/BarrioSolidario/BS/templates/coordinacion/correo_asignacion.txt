@@ -1,0 +1,6 @@
+Barrio Solidario | Universidad Espíritu Santo (UEES)
+Hola {{ nombre|default:'participante' }}:
+Se coordinó la asistencia {{ asignacion.solicitud.codigo }}.
+Fecha: {{ asignacion.fecha_atencion|date:'d/m/Y' }}. Horario: {{ asignacion.hora_inicio|time:'H:i' }}–{{ asignacion.hora_fin|time:'H:i' }}.
+{% if destino == 'voluntario' %}Instrucciones: {{ asignacion.instrucciones_voluntario }}{% else %}Instrucciones: {{ asignacion.instrucciones_solicitante }}{% endif %}
+Consulta el panel: {{ enlace }}

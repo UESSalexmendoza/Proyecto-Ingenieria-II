@@ -23,6 +23,10 @@ def _resumen(estados, conteos, total):
 @login_required(login_url="acceso")
 def panel_cuenta(request):
     usuario = request.user
+    from .views_coordinacion import panel_coordinacion
+    from .views_solicitudes import _es_revisor
+    if not usuario.is_superuser and _es_revisor(usuario):
+        return panel_coordinacion(request)
     if not usuario.is_superuser and not _puede_moderar(usuario):
         from .views_solicitudes import tiene_rol_solicitante, panel_solicitante
         if tiene_rol_solicitante(usuario):

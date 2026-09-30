@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views_cuentas, views_perfil, views_instituciones, views_contacto, views_panel, views_usuarios, views_roles, views_catalogos, views_solicitudes, views_ubicacion_voluntario, views_voluntariado
+from . import views_cuentas, views_perfil, views_instituciones, views_contacto, views_panel, views_usuarios, views_roles, views_catalogos, views_solicitudes, views_ubicacion_voluntario, views_voluntariado, views_coordinacion
 
 urlpatterns = [
     path("contacto/enviar/", views_contacto.registrar, name="contacto_enviar"),
@@ -28,6 +28,14 @@ urlpatterns = [
     path("panel/usuarios/activar/<str:uidb64>/<str:token>/", views_usuarios.activar_alta_administrativa, name="activar_alta_administrativa"),
     path("panel/solicitudes/revision/", views_solicitudes.revisar_solicitudes, name="revisar_solicitudes"),
     path("panel/solicitudes/revision/<int:pk>/", views_solicitudes.revisar_solicitud, name="solicitud_revision"),
+    path("panel/coordinacion/", views_coordinacion.panel_coordinacion, name="coord_panel"),
+    path("panel/coordinacion/solicitudes/", views_coordinacion.bandeja_coordinacion, name="coord_bandeja"),
+    path("panel/coordinacion/solicitudes/<int:pk>/decision/", views_coordinacion.decision_coordinacion, name="coord_decision"),
+    path("panel/coordinacion/solicitudes/<int:pk>/postulaciones/", views_coordinacion.postulaciones_coordinacion, name="coord_postulaciones"),
+    path("panel/coordinacion/postulaciones/<int:pk>/", views_coordinacion.revisar_postulacion, name="coord_postulacion"),
+    path("panel/coordinacion/solicitudes/<int:pk>/asignar/", views_coordinacion.asignar_voluntario, name="coord_asignar"),
+    path("panel/coordinacion/asignaciones/", views_coordinacion.asignaciones_coordinacion, name="coord_asignaciones"),
+    path("panel/coordinacion/asignaciones/<int:pk>/", views_coordinacion.asignacion_detalle, name="coord_asignacion_detalle"),
     path("panel/solicitudes/", views_solicitudes.mis_solicitudes, name="mis_solicitudes"),
     path("panel/solicitudes/nueva/", views_solicitudes.nueva_solicitud, name="solicitud_nueva"),
     path("panel/solicitudes/borrador/<slug:codigo>/", views_solicitudes.nueva_solicitud, name="solicitud_editar_borrador"),

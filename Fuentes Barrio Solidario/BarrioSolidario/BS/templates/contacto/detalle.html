@@ -35,7 +35,7 @@
       <tbody>{% for actuacion in actuaciones %}<tr>
         <td>{{ actuacion.fecha|date:"d/m/Y H:i:s" }}</td>
         <td>{{ actuacion.get_tipo_display }}</td>
-        <td>{{ actuacion.actor.get_full_name|default:actuacion.actor.username|default:"Formulario público" }}</td>
+        <td>{% if actuacion.actor %}{{ actuacion.actor.get_full_name|default:actuacion.actor.username }}{% else %}Formulario público{% endif %}</td>
         <td>{% if actuacion.estado_anterior and actuacion.estado_anterior != actuacion.estado_nuevo %}{{ actuacion.estado_anterior }} → {% endif %}{{ actuacion.estado_nuevo }}</td>
         <td style="white-space:pre-wrap;overflow-wrap:anywhere">{{ actuacion.nota|default:"—" }}</td>
         <td>{{ actuacion.get_resultado_correo_display }}</td>
